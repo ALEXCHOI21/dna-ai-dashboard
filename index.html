@@ -46,6 +46,7 @@
       background: var(--bg);
       color: var(--ink);
       line-height: 1.55;
+      word-break: keep-all;
       -webkit-font-smoothing: antialiased;
       font-feature-settings: "tnum" 1;
     }
@@ -487,11 +488,13 @@
       white-space: nowrap;
     }
     td {
-      padding: 13px 16px;
+      padding: 13px 14px;
       border-bottom: 1px solid var(--border);
       vertical-align: top;
       color: var(--ink);
     }
+    .nowrap { white-space: nowrap; }
+    .url-cell { white-space: nowrap; word-break: normal; }
     tr:last-child td { border-bottom: none; }
     code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -652,7 +655,7 @@
         <div>
           <div class="brand-eyebrow">
             <span class="dot-live" aria-hidden="true"></span>
-            EXECUTIVE STATUS CONTROL TOWER · 비공개 요약 대시보드
+            DNA AI SUIT · 통합 현황 요약 대시보드
           </div>
           <h1 class="hero-title">DNA AI 슈트 (DNA AI SUIT) 통합 사업 진행 현황</h1>
           <p class="hero-sub">
@@ -672,7 +675,7 @@
       <div class="tab-bar" role="tablist">
         <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="all">전체 한눈에 보기</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="actions">할 일 · 의사결정 (4)</button>
-        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="tracks">사업 트랙별 현황 (5)</button>
+        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="tracks">사업 트랙별 현황 (4)</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="live">라이브 링크 · 검증</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="structure">폴더 구조 · 라인업</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="timeline">누적 타임라인</button>
@@ -805,10 +808,10 @@
     <!-- SECTION 2: 5 BUSINESS TRACKS -->
     <section class="dash-section" data-section="tracks">
       <div class="section-head">
-        <h2 class="section-title">🧭 사업 트랙별 상세 진행 현황 (5대 영역)</h2>
+        <h2 class="section-title">🧭 사업 트랙별 상세 진행 현황 (5대 영역 · 4트랙)</h2>
         <div class="filter-row" role="group" aria-label="트랙 상태 필터">
-          <button type="button" class="filter-pill active" data-track-filter="all">전체 보기 (5)</button>
-          <button type="button" class="filter-pill" data-track-filter="ready">라이브·정리 중심 (3)</button>
+          <button type="button" class="filter-pill active" data-track-filter="all">전체 보기 (4)</button>
+          <button type="button" class="filter-pill" data-track-filter="ready">라이브·정리 완료 (2)</button>
           <button type="button" class="filter-pill" data-track-filter="blocked">의사결정·연동 대기 (2)</button>
         </div>
       </div>
@@ -945,39 +948,39 @@
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>DNA AI 슈트 공식 홈</strong></td>
-                  <td><a href="https://alexchoi21.github.io/" target="_blank" rel="noopener noreferrer">alexchoi21.github.io ↗</a></td>
-                  <td><span class="badge badge-ok">200 OK</span></td>
+                  <td class="nowrap"><strong>DNA AI 슈트 공식 홈</strong></td>
+                  <td class="url-cell"><a href="https://alexchoi21.github.io/" target="_blank" rel="noopener noreferrer">alexchoi21.github.io ↗</a></td>
+                  <td class="nowrap"><span class="badge badge-ok">200 OK</span></td>
                   <td>모바일 390px 넘침 0 · 3대 검색콘솔 등록</td>
                 </tr>
                 <tr>
-                  <td><strong>티스토리 공식 칼럼</strong></td>
-                  <td><a href="https://choigpt.tistory.com/263" target="_blank" rel="noopener noreferrer">choigpt.tistory.com/263 ↗</a></td>
-                  <td><span class="badge badge-ok">200 OK</span></td>
+                  <td class="nowrap"><strong>티스토리 공식 칼럼</strong></td>
+                  <td class="url-cell"><a href="https://choigpt.tistory.com/263" target="_blank" rel="noopener noreferrer">choigpt.tistory.com/263 ↗</a></td>
+                  <td class="nowrap"><span class="badge badge-ok">200 OK</span></td>
                   <td>공식 홈 백링크 &amp; OG 카드 확인</td>
                 </tr>
                 <tr>
-                  <td><strong>쓰레드 공식 포스트</strong></td>
-                  <td><a href="https://www.threads.com/@choigpt21/post/DflxO5NmAcH" target="_blank" rel="noopener noreferrer">@choigpt21 포스트 ↗</a></td>
-                  <td><span class="badge badge-ok">200 OK</span></td>
+                  <td class="nowrap"><strong>쓰레드 공식 포스트</strong></td>
+                  <td class="url-cell"><a href="https://www.threads.com/@choigpt21/post/DflxO5NmAcH" target="_blank" rel="noopener noreferrer">@choigpt21 포스트 ↗</a></td>
+                  <td class="nowrap"><span class="badge badge-ok">200 OK</span></td>
                   <td>자동 발행 검증 및 홈페이지 <code>sameAs</code> 연결</td>
                 </tr>
                 <tr>
-                  <td><strong>DNA Growth SaaS</strong></td>
-                  <td><a href="https://growth.104-207-80-198.sslip.io/healthz" target="_blank" rel="noopener noreferrer">growth...sslip.io ↗</a></td>
-                  <td><span class="badge badge-ok">200 OK</span></td>
+                  <td class="nowrap"><strong>DNA Growth SaaS</strong></td>
+                  <td class="url-cell"><a href="https://growth.104-207-80-198.sslip.io/healthz" target="_blank" rel="noopener noreferrer">growth...sslip.io ↗</a></td>
+                  <td class="nowrap"><span class="badge badge-ok">200 OK</span></td>
                   <td>TLS 자동 갱신 · Meta OAuth 승인 대기</td>
                 </tr>
                 <tr>
-                  <td><strong>DNA Mobility 실서버</strong></td>
-                  <td><a href="http://104.207.80.198/" target="_blank" rel="noopener noreferrer">104.207.80.198 ↗</a></td>
-                  <td><span class="badge badge-ok">200 OK</span></td>
+                  <td class="nowrap"><strong>DNA Mobility 실서버</strong></td>
+                  <td class="url-cell"><a href="http://104.207.80.198/" target="_blank" rel="noopener noreferrer">104.207.80.198 ↗</a></td>
+                  <td class="nowrap"><span class="badge badge-ok">200 OK</span></td>
                   <td>40석 셔틀 가동 중 · 고도화 시나리오 대기</td>
                 </tr>
                 <tr>
-                  <td><strong>로컬 상권/GEO 진단기</strong></td>
-                  <td><code>로컬 전용 (3456)</code></td>
-                  <td><span class="badge badge-neutral">대기 상태</span></td>
+                  <td class="nowrap"><strong>로컬 상권/GEO 진단기</strong></td>
+                  <td class="url-cell"><code>로컬 전용 (3456)</code></td>
+                  <td class="nowrap"><span class="badge badge-neutral">대기 상태</span></td>
                   <td>사내 진단 작업 시 실행 스크립트로 즉시 가동</td>
                 </tr>
               </tbody>
@@ -1100,33 +1103,33 @@
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>정밀 진단 · 컨설팅</strong></td>
-                  <td><strong>490,000원</strong></td>
-                  <td>539,000원</td>
+                  <td class="nowrap"><strong>정밀 진단 · 컨설팅</strong></td>
+                  <td class="nowrap"><strong>490,000원</strong></td>
+                  <td class="nowrap">539,000원</td>
                   <td>상권·경쟁사 비교 + 실행 가이드 + 60분 상담</td>
                 </tr>
                 <tr>
-                  <td><strong>기존 홈 검색·AI 풀 세팅</strong></td>
-                  <td><strong>790,000원</strong></td>
-                  <td>869,000원</td>
+                  <td class="nowrap"><strong>기존 홈 검색·AI 풀 세팅</strong></td>
+                  <td class="nowrap"><strong>790,000원</strong></td>
+                  <td class="nowrap">869,000원</td>
                   <td>실검색어·AI 구조 반영 + 3대 창구 등록·검수</td>
                 </tr>
                 <tr>
-                  <td><strong>⭐ 진단 + 풀 세팅 통합</strong></td>
-                  <td><strong>990,000원</strong></td>
-                  <td>1,089,000원</td>
+                  <td class="nowrap"><strong>⭐ 진단 + 풀 세팅 통합</strong></td>
+                  <td class="nowrap"><strong>990,000원</strong></td>
+                  <td class="nowrap">1,089,000원</td>
                   <td>진단(49만) + 직접 시공(79만) 결합 (29만 할인)</td>
                 </tr>
                 <tr>
-                  <td><strong>전용 홈 신규 + 풀 세팅</strong></td>
-                  <td><strong>1,290,000원~</strong></td>
-                  <td>1,419,000원~</td>
+                  <td class="nowrap"><strong>전용 홈 신규 + 풀 세팅</strong></td>
+                  <td class="nowrap"><strong>1,290,000원~</strong></td>
+                  <td class="nowrap">1,419,000원~</td>
                   <td>공식 원페이지 제작 + 공유 카드 + 풀 세팅 일체</td>
                 </tr>
                 <tr>
-                  <td><em>선택: 쓰레드 월 관리</em></td>
-                  <td><em>월 190,000원</em></td>
-                  <td>209,000원</td>
+                  <td class="nowrap"><em>선택: 쓰레드 월 관리</em></td>
+                  <td class="nowrap"><em>월 190,000원</em></td>
+                  <td class="nowrap">209,000원</td>
                   <td>위 세팅 동시 이용 시 초기 연결비 10만 원 우대</td>
                 </tr>
               </tbody>
