@@ -202,7 +202,7 @@ body {
   height: 96px;
   border-radius: 50%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center 10%;
   border: 3px solid var(--gold);
   background: #11284d;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
@@ -2322,6 +2322,8 @@ canvas {
   width: 44px;
   height: 44px;
   border-radius: 50%;
+  object-fit: cover;
+  object-position: center 10%;
   border: 2px solid var(--gold);
 }
 
@@ -2552,6 +2554,8 @@ canvas {
   width: 80px;
   height: 80px;
   border-radius: 50%;
+  object-fit: cover;
+  object-position: center 10%;
   border: 3px solid var(--gold);
   background: #11284d;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
