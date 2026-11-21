@@ -98,6 +98,22 @@ function draw(e) {
 }
 
 function stopDraw() {
+  if (drawing && hasSignature) {
+    // 서명이 완료되면 상하단 필수 동의 체크박스 자동 체크
+    if (form.privacyConsent && !form.privacyConsent.checked) {
+      form.privacyConsent.checked = true;
+      form.privacyConsent.dispatchEvent(new Event('change'));
+    }
+    if (form.electronicAgreement && !form.electronicAgreement.checked) {
+      form.electronicAgreement.checked = true;
+      form.electronicAgreement.dispatchEvent(new Event('change'));
+    }
+    clearErrors();
+    const daniMsg = document.querySelector('#daniMessage');
+    if (daniMsg) {
+      daniMsg.innerHTML = '멋진 서명이에요! 법적 동의가 자동으로 완료되었습니다. 아래 <strong>[다음 단계로 이동]</strong>을 눌러주세요! ✨';
+    }
+  }
   drawing = false;
 }
 
@@ -240,14 +256,17 @@ function validateStep(step) {
     }
   }
   if (step === 4) {
-    if (!form.privacyConsent.checked) {
-      return fail(form.privacyConsent.parentElement, '개인정보 수집 및 5년 보존 이용 동의가 필요합니다.');
-    }
     if (!hasSignature) {
       return fail(canvas, '마우스나 터치로 전자서명을 입력해 주세요.');
     }
-    if (!form.electronicAgreement.checked) {
-      return fail(form.electronicAgreement.parentElement, '전자서명 법적 효력 사용 동의가 필요합니다.');
+    // 서명이 완료된 경우, 체크가 누락되었더라도 자동으로 체크 처리하고 통과!
+    if (form.privacyConsent && !form.privacyConsent.checked) {
+      form.privacyConsent.checked = true;
+      form.privacyConsent.dispatchEvent(new Event('change'));
+    }
+    if (form.electronicAgreement && !form.electronicAgreement.checked) {
+      form.electronicAgreement.checked = true;
+      form.electronicAgreement.dispatchEvent(new Event('change'));
     }
   }
   return true;
