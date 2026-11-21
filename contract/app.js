@@ -75,6 +75,19 @@ function getPos(e) {
   };
 }
 
+function isCanvasBlank(cnv) {
+  if (!cnv) return true;
+  try {
+    const context = cnv.getContext('2d');
+    const pixelBuffer = new Uint32Array(
+      context.getImageData(0, 0, cnv.width, cnv.height).data.buffer
+    );
+    return !pixelBuffer.some(color => color !== 0);
+  } catch (e) {
+    return false;
+  }
+}
+
 function startDraw(e) {
   drawing = true;
   const p = getPos(e);
@@ -256,18 +269,21 @@ function validateStep(step) {
     }
   }
   if (step === 4) {
-    if (!hasSignature) {
+    const actuallyDrawn = hasSignature || !isCanvasBlank(canvas);
+    if (!actuallyDrawn) {
       return fail(canvas, '마우스나 터치로 전자서명을 입력해 주세요.');
     }
+    hasSignature = true;
     // 서명이 완료된 경우, 체크가 누락되었더라도 자동으로 체크 처리하고 통과!
-    if (form.privacyConsent && !form.privacyConsent.checked) {
+    if (form.privacyConsent) {
       form.privacyConsent.checked = true;
       form.privacyConsent.dispatchEvent(new Event('change'));
     }
-    if (form.electronicAgreement && !form.electronicAgreement.checked) {
+    if (form.electronicAgreement) {
       form.electronicAgreement.checked = true;
       form.electronicAgreement.dispatchEvent(new Event('change'));
     }
+    clearErrors();
   }
   return true;
 }
