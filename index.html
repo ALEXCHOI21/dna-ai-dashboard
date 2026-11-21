@@ -675,6 +675,17 @@
     .service-link small { color: var(--ink-subtle); font-size: 12px; }
     .service-link .launch { color: var(--accent); font-size: 12px; font-weight: 800; }
     .service-link.local-only .launch { color: #b45309; }
+    .service-link.security-highlight {
+      border: 1.5px solid #f0debb;
+      background: linear-gradient(145deg, #ffffff, #fdfaf3);
+    }
+    .service-link.security-highlight:hover {
+      border-color: #cfa852;
+      box-shadow: 0 10px 25px rgba(207, 168, 82, 0.18);
+    }
+    .service-link.security-highlight .launch {
+      color: #b88d37;
+    }
 
     /* Responsive Breakpoints */
     @media (max-width: 1024px) {
@@ -814,6 +825,10 @@
         <a class="service-link" href="http://104.207.80.198/" target="_blank" rel="noopener noreferrer">
           <span><strong>DNA Mobility 실서버</strong><br><small>대전↔서울 40석 셔틀 MVP</small></span>
           <span class="launch">가동 중 (200) · 고도화 시나리오 대기 · 열기 ↗</span>
+        </a>
+        <a class="service-link security-highlight" href="contract/" target="_blank" rel="noopener noreferrer">
+          <span><strong>📑 서비스 전자계약 & 거래명세표 (🔒 보안)</strong><br><small>DANI 비서 인터랙티브 계약 · 홈택스 엑셀 · 비밀번호: 1121</small></span>
+          <span class="launch">보안 게이트웨이 구역 · 입장 ↗</span>
         </a>
       </div>
     </section>
