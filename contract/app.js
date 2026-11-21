@@ -32,7 +32,7 @@ const daniMessages = {
   2: "전담 마케터 배정과 세금계산서 발행에 꼭 필요한 기본 정보를 입력해 주세요. 주민등록번호나 비밀번호 같은 민감정보는 일체 요구하지 않으니 안심하세요! 🔒",
   3: "서로 간의 투명한 신뢰를 위한 핵심 약관이에요. AI 생성물의 고객 검수 의무와 성과 책임 한계, 안전한 데이터 보호 방침을 차근차근 확인해 주세요. 📜",
   4: "이제 법적 효력을 갖는 전자서명 단계예요. 개인정보 5년 보존 동의를 확인하신 뒤, 터치나 마우스로 멋지게 서명해 주세요! ✍️",
-  5: "축하합니다, 대표님! <strong>계약서 및 공식 거래명세표</strong>가 함께 완성되었어요. 🎉 VAT 포함 <strong>최종 입금금액</strong>과 <strong>국민은행 입금계좌</strong>를 확인하시고, <strong>[PDF 저장]</strong> 후 <strong>[Gmail로 전송]</strong>을 누르시면 대표님의 메일함으로 즉시 발송됩니다!"
+  5: "축하합니다, 대표님! <strong>계약서 및 공식 거래명세표</strong>가 함께 완성되었어요. 🎉 VAT 포함 <strong>최종 입금금액</strong>과 <strong>카카오뱅크 입금계좌</strong>를 확인하시고, <strong>[PDF 저장]</strong> 후 <strong>[Gmail로 전송]</strong>을 누르시면 대표님의 메일함으로 즉시 발송됩니다!"
 };
 
 function updateDaniMessage(step) {
@@ -498,6 +498,7 @@ function showStep(step) {
   }
   if (step === 5) {
     buildSummary();
+    uploadContractToGoogleDrive('step5_entry');
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -516,12 +517,34 @@ prevBtn.addEventListener('click', () => {
 const btnCopyAccount = document.querySelector('#btnCopyAccount');
 if (btnCopyAccount) {
   btnCopyAccount.addEventListener('click', () => {
-    const account = '46800101294821';
+    const account = '3333389917516';
     navigator.clipboard.writeText(account).then(() => {
-      showToast('국민은행 계좌번호가 복사되었습니다: 468001-01-294821');
+      showToast('카카오뱅크 계좌번호가 복사되었습니다: 3333-38-9917516');
     }).catch(() => {
-      showToast('국민은행: 468001-01-294821 (정성윤 투어티플레이스)');
+      showToast('카카오뱅크: 3333-38-9917516 (정성윤 투어티플레이스)');
     });
+  });
+}
+
+// 8-1. 통장사본 모달 팝업 제어
+const btnViewBankbook = document.querySelector('#btnViewBankbook');
+const bankbookModal = document.querySelector('#bankbookModal');
+const btnCloseBankbookModal = document.querySelector('#btnCloseBankbookModal');
+const btnConfirmBankbookModal = document.querySelector('#btnConfirmBankbookModal');
+
+if (btnViewBankbook && bankbookModal) {
+  btnViewBankbook.addEventListener('click', () => {
+    bankbookModal.classList.add('active');
+  });
+}
+if (btnCloseBankbookModal && bankbookModal) {
+  btnCloseBankbookModal.addEventListener('click', () => {
+    bankbookModal.classList.remove('active');
+  });
+}
+if (btnConfirmBankbookModal && bankbookModal) {
+  btnConfirmBankbookModal.addEventListener('click', () => {
+    bankbookModal.classList.remove('active');
   });
 }
 
@@ -534,7 +557,62 @@ function showToast(msg) {
   }, 3000);
 }
 
-// 9. 공식 계약서 및 거래명세서 2페이지 합본 PDF 저장 (인쇄)
+// 9. Google Drive 자동 업로드 핵심 함수 (Apps Script WebApp 연동)
+async function uploadContractToGoogleDrive(triggerSource = 'auto') {
+  if (!GAS_WEBAPP_URL) return;
+  
+  try {
+    const fd = new FormData(form);
+    const customerName = (fd.get('customerName') || '고객사').trim();
+    const representative = (fd.get('representative') || '대표자').trim();
+    const phone = (fd.get('phone') || '-').trim();
+    const email = (fd.get('email') || '-').trim();
+    const { subtotal, vat, total, checked } = calculatePricing();
+    const products = checked.map(c => c.dataset.label).join(' + ');
+    const fileName = `${contractFileTitle()}.pdf`;
+
+    const contractDoc = document.querySelector('#contractDoc');
+    const statementDoc = document.querySelector('#statementDoc');
+    if (!contractDoc || !statementDoc) return;
+
+    const contractHtml = contractDoc.outerHTML;
+    const statementHtml = statementDoc.outerHTML;
+    const cssHref = document.querySelector('link[rel="stylesheet"]')?.href || '';
+    const combinedHtml = `<!doctype html><html><head><meta charset="utf-8"><title>${fileName}</title><style>${cssHref ? `@import url("${cssHref}");` : ''} body{font-family:sans-serif;padding:20px;color:#1e293b;background:#ffffff;}</style></head><body>${contractHtml}<div style="page-break-after:always;margin:40px 0;"></div>${statementHtml}</body></html>`;
+
+    const payload = {
+      customerName: customerName,
+      representative: representative,
+      phone: phone,
+      email: email,
+      products: products,
+      subtotal: subtotal,
+      vat: vat,
+      total: total,
+      fileName: fileName,
+      htmlContent: combinedHtml,
+      timestamp: new Date().toISOString(),
+      trigger: triggerSource
+    };
+
+    // Google Apps Script는 text/plain 전송 시 브라우저 CORS 차단(OPTIONS) 없이 100% 무결점 수신됨
+    fetch(GAS_WEBAPP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(() => {
+      showToast(`Google 드라이브에 [${customerName}] 계약서 및 거래명세서가 안전하게 전송되었습니다!`);
+    }).catch(err => {
+      console.warn('Google Drive Sync Notice:', err);
+    });
+
+  } catch (err) {
+    console.warn('Drive Upload Error:', err);
+  }
+}
+
+// 10. 공식 계약서 및 거래명세서 2페이지 합본 PDF 저장 (인쇄)
 const completeBtn = document.querySelector('#completeContract');
 if (completeBtn) {
   completeBtn.addEventListener('click', () => {
@@ -544,6 +622,9 @@ if (completeBtn) {
       fail(finalConfirm.parentElement, '계약 및 거래명세서 내역에 대한 최종 확인 체크가 필요합니다.');
       return;
     }
+    // 구글 드라이브 동기화 트리거
+    uploadContractToGoogleDrive('pdf_save');
+
     const msg = document.querySelector('#completeMessage');
     msg.textContent = '계약서(1P) 및 거래명세표(2P) 공식 출력이 준비되었습니다. 인쇄창에서 "PDF로 저장"을 선택해 주세요.';
     document.title = contractFileTitle();
@@ -592,8 +673,8 @@ ${itemsText}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 [2. 공식 지정 입금 계좌 안내]
-• 입금 은행: 국민은행 (KB)
-• 계좌 번호: 468001-01-294821
+• 입금 은행: 카카오뱅크 (KakaoBank)
+• 계좌 번호: 3333-38-9917516
 • 예금주: 정성윤 (투어티플레이스)
 * 입금 시 계약자 상호명(${customerName})으로 입금 부탁드립니다.
 
@@ -638,33 +719,8 @@ if (btnSendGmail) {
     const { gmailUrl, fileName } = generateGmailData();
     lastGeneratedGmailUrl = gmailUrl;
 
-    // 1) Google Apps Script 웹앱이 등록되어 있는 경우 구글 드라이브에 자동 업로드
-    if (GAS_WEBAPP_URL) {
-      try {
-        const contractHtml = document.querySelector('#contractDoc').outerHTML;
-        const statementHtml = document.querySelector('#statementDoc').outerHTML;
-        const combinedHtml = `<!doctype html><html><head><meta charset="utf-8"><style>${document.querySelector('link[rel="stylesheet"]').href}</style></head><body>${contractHtml}<div style="page-break-after:always;"></div>${statementHtml}</body></html>`;
-        
-        fetch(GAS_WEBAPP_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            customerName: customerName,
-            representative: representative,
-            fileName: fileName,
-            htmlContent: combinedHtml,
-            timestamp: new Date().toISOString()
-          })
-        }).then(() => {
-          showToast(`Google 드라이브에 [${customerName}] 계약서가 자동 저장되었습니다.`);
-        }).catch(err => {
-          console.warn('Google Drive Auto-upload background sync:', err);
-        });
-      } catch (e) {
-        console.warn('Drive sync error:', e);
-      }
-    }
+    // 1) Google Apps Script 웹앱으로 구글 드라이브에 안전하게 자동 업로드
+    uploadContractToGoogleDrive('gmail_send');
 
     // 2) 파일명 설정 및 PDF 저장 대화상자 선제적 호출
     document.title = contractFileTitle();
