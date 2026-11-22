@@ -616,6 +616,12 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
       const dayNum = now.getDate();
       const existingIdx = crmList.findIndex(c => c.customerName === customerName);
       
+      // 알파비전 가상 테스트 건은 제외
+      if (customerName.includes('알파비전')) {
+        console.log('Virtual test company excluded from CRM:', customerName);
+        return;
+      }
+
       const crmRecord = {
         no: existingIdx >= 0 ? crmList[existingIdx].no : (crmList.length + 1),
         customerName: customerName,
@@ -627,9 +633,12 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
         bizNumber: (fd.get('businessNumber') || '').trim() || '-',
         plan: products,
         monthlyFee: money(subtotal),
+        feeNumber: subtotal || 100000,
+        commitmentMonths: 6,
+        startDate: dateStr,
         vat: money(vat),
         totalFee: money(total),
-        paymentCycle: '월간 정기구독',
+        paymentCycle: '6개월 약정 (월 10만)',
         paymentDay: `매월 ${dayNum}일`,
         alertDay: `매월 ${Math.max(1, dayNum - 3)}일 (D-3 알림)`,
         paymentMethod: '계좌이체 (카카오뱅크 3333-38-9917516)',
@@ -637,7 +646,7 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
         updatedAt: dateStr,
         platformUrl: window.location.href,
         accessCode: document.querySelector('#cryptoHash')?.textContent || 'DNA-HASH-' + Math.random().toString(36).substring(2, 10).toUpperCase(),
-        memo: `공식 온라인 전자계약 체결 완료 (공급가: ${money(subtotal)}, VAT: ${money(vat)}, 총액: ${money(total)})`
+        memo: `공식 온라인 전자계약 체결 완료 (공급가: ${money(subtotal)}, VAT: ${money(vat)}, 6개월 약정총액: ${money((subtotal || 100000) * 6)})`
       };
 
       if (existingIdx >= 0) {

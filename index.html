@@ -930,6 +930,145 @@
     }
     .btn-copy-template:hover { background: #f1f5f9; border-color: #94a3b8; }
 
+  
+    /* -------------------------------------------------------------------------- */
+    /* CRM & Finance Dashboard Styles (6-Month Commitment & Operating Profit)      */
+    /* -------------------------------------------------------------------------- */
+    .finance-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .finance-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .finance-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .finance-card .f-label {
+      font-size: 12.5px;
+      color: var(--ink-subtle);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .finance-card .f-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      margin: 8px 0 4px;
+      font-feature-settings: "tnum" 1;
+    }
+    .finance-card .f-sub {
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      line-height: 1.4;
+    }
+    .finance-card.profit {
+      background: linear-gradient(135deg, #0f2347 0%, #1e3a8a 100%);
+      color: #ffffff;
+      border-color: #1e3a8a;
+    }
+    .finance-card.profit .f-label { color: #bfdbfe; }
+    .finance-card.profit .f-val { color: #60a5fa; }
+    .finance-card.profit .f-sub { color: #93c5fd; }
+
+    .finance-card.six-month {
+      background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+      color: #ffffff;
+      border-color: #047857;
+    }
+    .finance-card.six-month .f-label { color: #a7f3d0; }
+    .finance-card.six-month .f-val { color: #34d399; }
+    .finance-card.six-month .f-sub { color: #6ee7b7; }
+
+    .btn-edit-cost {
+      font-size: 11px;
+      padding: 3px 8px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .btn-edit-cost:hover { background: #e2e8f0; }
+
+    /* D-Day Badges */
+    .dday-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .dday-badge.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+    .dday-badge.warn {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+    .dday-badge.expired {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    .cycle-progress {
+      width: 100%;
+      height: 4px;
+      background: #e2e8f0;
+      border-radius: 2px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+    .cycle-progress-bar {
+      height: 100%;
+      background: #2563eb;
+      border-radius: 2px;
+    }
+
+    /* Modal for Fixed Cost Edit */
+    .cost-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(2px);
+    }
+    .cost-modal.active { display: flex; }
+    .cost-modal-box {
+      background: #ffffff;
+      border-radius: var(--radius);
+      max-width: 460px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+    }
+
   </style>
 </head>
 <body>
@@ -1707,13 +1846,65 @@
       <!-- 2. 인증 완료 시 노출되는 메인 콘텐츠 -->
       <div id="crm-content-unlocked" style="display:none;">
         
-        <!-- 실시간 요약 툴바 -->
+        <!-- 1. 재무 성과 및 6개월 약정/영업이익 지표 리본 (실시간 자동 연동) -->
+        <div class="finance-summary-grid">
+          <!-- 6개월 총 약정 매출 (기본 결제 단위) -->
+          <div class="finance-card six-month">
+            <div class="f-label">
+              <span>6개월 총 약정 매출 (Contract Value)</span>
+              <span class="status-tag ok" style="font-size:10px;background:rgba(255,255,255,0.2);color:#fff;">기본 6개월 약정</span>
+            </div>
+            <div class="f-val" id="stat-six-month-revenue">0원</div>
+            <div class="f-sub" id="stat-six-month-sub">고객당 60만원 (월 10만 × 6개월, VAT별도)</div>
+          </div>
+
+          <!-- 월 정기 매출 (MRR) -->
+          <div class="finance-card">
+            <div class="f-label">
+              <span>월 정기 매출 (MRR)</span>
+              <span class="status-tag ok" style="font-size:10px;">신규 계약 자동 합산</span>
+            </div>
+            <div class="f-val" id="stat-total-revenue">0원</div>
+            <div class="f-sub" id="stat-client-count-sub">계약 완료 고객사 0개사 기준</div>
+          </div>
+
+          <!-- 월 고정비 (OPEX) -->
+          <div class="finance-card">
+            <div class="f-label">
+              <span>월 추정 고정비 (OPEX)</span>
+              <button type="button" class="btn-edit-cost" id="btn-open-cost-modal">고정비 설정 ⚙️</button>
+            </div>
+            <div class="f-val" id="stat-fixed-cost" style="color:#d97706;">50,000원</div>
+            <div class="f-sub" id="stat-fixed-cost-sub">서버·API·호스팅 (6개월 300,000원)</div>
+          </div>
+
+          <!-- 월 영업이익 & 이익률 -->
+          <div class="finance-card profit">
+            <div class="f-label">
+              <span>월 영업이익 (Operating Profit)</span>
+              <span id="stat-profit-margin" style="font-size:11px;color:#93c5fd;font-weight:700;">이익률: 0%</span>
+            </div>
+            <div class="f-val" id="stat-operating-profit">0원</div>
+            <div class="f-sub" id="stat-six-month-profit-sub">6개월 영업이익: 0원</div>
+          </div>
+
+          <!-- 5:5 파트너 배분 (정성윤 대표 / 최두리 수석) -->
+          <div class="finance-card">
+            <div class="f-label">
+              <span>정성윤 대표 순이익 (50%)</span>
+              <span style="font-size:10px;color:#059669;font-weight:700;">투어티플레이스</span>
+            </div>
+            <div class="f-val" id="stat-partner-profit" style="color:#059669;">0원</div>
+            <div class="f-sub" id="stat-split-detail-sub">월 0원 / 6개월 0원 (최두리 수석 5:5 동일)</div>
+          </div>
+        </div>
+
+        <!-- 2. 실시간 조작 및 필터 툴바 -->
         <div class="crm-toolbar">
           <div class="crm-stat-badges">
-            <span class="crm-badge">총 등록 고객사: <strong id="stat-total-clients">0개사</strong></span>
-            <span class="crm-badge highlight">월 정기 구독: <strong id="stat-active-subs">0개사</strong></span>
-            <span class="crm-badge highlight">총 월 구독료: <strong id="stat-total-revenue">0원</strong></span>
-            <span class="crm-badge">최근 갱신: <strong id="stat-last-update">-</strong></span>
+            <span class="crm-badge">활성 고객사: <strong id="stat-total-clients">0개사</strong></span>
+            <span class="crm-badge highlight">6개월 정기구독: <strong id="stat-active-subs">0개사</strong></span>
+            <span class="crm-badge">최근 대장 갱신: <strong id="stat-last-update">-</strong></span>
           </div>
           <div class="crm-actions">
             <div class="crm-search-box">
@@ -1753,6 +1944,29 @@
               <!-- JS 동적 렌더링 -->
             </tbody>
           </table>
+        </div>
+
+        
+        <!-- 고정비 설정 모달 -->
+        <div id="costModal" class="cost-modal">
+          <div class="cost-modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <h4 style="margin:0;font-size:16px;color:var(--navy);font-weight:700;">⚙️ 월 고정비(OPEX) 설정</h4>
+              <button type="button" id="btn-close-cost-modal" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink-muted);">&times;</button>
+            </div>
+            <p style="font-size:13px;color:var(--ink-muted);margin:0 0 16px;line-height:1.5;">
+              현재 사업의 월 고정비(서버비, API 호출료, 도메인/호스팅, 기본 운영비 등)를 설정하시면 <strong>영업이익 및 5:5 파트너 배분금이 실시간 자동 산출</strong>됩니다. (향후 상세 항목별 재정리 예정)
+            </p>
+            <div style="margin-bottom:18px;">
+              <label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--ink);">월 고정비 총액 (원)</label>
+              <input type="number" id="input-fixed-cost" style="width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:6px;font-size:16px;font-weight:700;color:var(--navy);" value="50000" step="5000">
+              <span style="font-size:11.5px;color:var(--ink-subtle);margin-top:4px;display:block;">* 6개월 환산 고정비: <strong id="preview-six-cost">300,000원</strong></span>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;">
+              <button type="button" class="crm-btn" id="btn-cancel-cost-modal">취소</button>
+              <button type="button" class="crm-btn primary" id="btn-save-cost-modal">저장 및 실시간 재계산</button>
+            </div>
+          </div>
         </div>
 
         <!-- 운영 & 보안 가이드 섹션 -->
@@ -1906,14 +2120,18 @@
     })();
 
     // ==============================================================================
-    // 4. CLIENT CRM & OPERATIONS MANAGEMENT (INTERNAL ONLY)
+    // ==============================================================================
+    // 4. CLIENT CRM & OPERATIONS MANAGEMENT (6-MONTH COMMITMENT & OPERATING PROFIT)
     // ==============================================================================
     (function () {
       const CRM_STORAGE_KEY = 'dna_client_crm_data';
       const CRM_AUTH_KEY = 'dna_dashboard_crm_auth';
+      const CRM_COST_KEY = 'dna_fixed_cost_amount';
 
-      // 초기 기본 등록 데이터 (디에르치과, 양식당, (주)알파비전 등)
-      const defaultClients = [
+      // 1. 공식 계약 완료 고객사 데이터셋
+      // (알파비전 영구 제외, 양식당 현금 결제 반영, 디에르치과, 씨엘키즈어린이수영장)
+      // 기본 결제 단위: 최소 6개월 약정 (월 100,000원 × 6개월 = 600,000원, VAT 별도)
+      const officialClients = [
         {
           no: 1,
           customerName: "디에르치과",
@@ -1927,19 +2145,23 @@
           threadsUrl: "https://www.threads.net/@dental_dier",
           oauthStatus: "연동 진행 중",
           monthlyFee: "100,000원",
-          paymentCycle: "월간 정기구독",
+          feeNumber: 100000,
+          commitmentMonths: 6,
+          startDate: "2026-10-28", // 계약 시작일
+          paymentCycle: "6개월 약정 (월 10만)",
           paymentDay: "매월 28일",
           alertDay: "매월 25일 (D-3 알림)",
+          paymentMethod: "계좌이체 (세금계산서)",
           paymentStatus: "입금완료 (10/28)",
           updatedAt: "2026-11-18",
           platformUrl: "https://growth.104-207-80-198.sslip.io/",
           accessCode: "9ac52f12c348e20df5a402c06d505b6a03dfaebc799be194e2340c6b93fcee7e",
-          memo: "1회차 10만원 입금 확인 완료 (운영: 10/28~11/27) / 차기 결제: 11월 28일"
+          memo: "1차 6개월 약정 (2026-10-28 ~ 2027-04-27) / 1회차 10만원 입금 확인 완료 / 차기 결제일 11월 28일"
         },
         {
           no: 2,
           customerName: "양식당",
-          industry: "육류, 고기요리 (양갈비 화로구이)",
+          industry: "육류, 고기요리 (양갈비 화로구이 다이닝)",
           representative: "대표 / 총괄셰프",
           phone: "042-486-8883",
           address: "대전 서구 둔산중로64번길 26 2층 202호 (위너펠리스)",
@@ -1949,69 +2171,152 @@
           threadsUrl: "https://www.threads.net/@yangsikdang_daejeon",
           oauthStatus: "1호 샘플 실발행 완료",
           monthlyFee: "100,000원",
-          paymentCycle: "월간 정기구독",
+          feeNumber: 100000,
+          commitmentMonths: 6,
+          startDate: "2026-11-18", // 계약 시작일
+          paymentCycle: "6개월 약정 (월 10만)",
           paymentDay: "매월 18일",
-          alertDay: "매월 15일 (D-3 알림)",
-          paymentStatus: "입금완료 (11/17)",
+          alertDay: "매월 15일 (D-3 사전 알림)",
+          paymentMethod: "현금 결제 (대표님 확인 완료)",
+          paymentStatus: "입금완료 (11/17 확인)",
           updatedAt: "2026-11-19",
           platformUrl: "https://growth.104-207-80-198.sslip.io/yangsikdang/",
           accessCode: "065cc3a8f96636c52c9eff7f18d80feb0e6d23fb399efedc091f55d0f407c39d",
-          memo: "1일 5회 골든타임(11:30, 15:30, 17:30, 20:30, 22:30) 자동 순차 발행"
+          memo: "현금 결제 완료. 1차 6개월 약정 (2026-11-18 ~ 2027-05-17). 인스타/쓰레드 1일 5회 골든타임 자동 발행"
         },
         {
           no: 3,
-          customerName: "(주)알파비전",
-          industry: "IT / 소프트웨어 및 비전 솔루션",
-          representative: "이민우 대표",
-          phone: "010-9876-5432",
-          address: "대전광역시 서구 둔산로 123, 알파빌딩 4층",
-          instaAccount: "-",
-          instaUrl: "-",
-          threadsAccount: "@alphavision_ai",
-          threadsUrl: "https://www.threads.net/",
-          oauthStatus: "전자계약 체결 완료",
-          monthlyFee: "190,000원 (셋업비 10만 별도)",
-          paymentCycle: "월간 정기구독",
-          paymentDay: "매월 22일",
-          alertDay: "매월 19일 (D-3 알림)",
-          paymentStatus: "입금대기 (계약체결완료)",
-          updatedAt: "2026-11-22",
-          platformUrl: "https://dnaai.co.kr/dna-ai-dashboard/contract/",
-          accessCode: "DNA-HASH-3E6D9BEB70199A38787342A2",
-          memo: "2026-11-22 공식 온라인 전자계약 체결본 실시간 연동 (총 319,000원)"
+          customerName: "씨엘키즈어린이수영장",
+          industry: "스포츠/교육 (친환경 해수풀 어린이수영장)",
+          representative: "씨엘키즈 대표원장",
+          phone: "042-541-7944",
+          address: "대전 서구 계백로 1186 지하 1층 (가수원 사거리)",
+          instaAccount: "@sealkids_swimming",
+          instaUrl: "https://www.instagram.com/",
+          threadsAccount: "-",
+          threadsUrl: "-",
+          oauthStatus: "GEO 최적화 웹 구축완료",
+          monthlyFee: "100,000원",
+          feeNumber: 100000,
+          commitmentMonths: 6,
+          startDate: "2026-11-21", // 계약 시작일
+          paymentCycle: "6개월 약정 (월 10만)",
+          paymentDay: "매월 21일",
+          alertDay: "매월 18일 (D-3 알림)",
+          paymentMethod: "계좌이체 (카카오뱅크 3333-38-9917516)",
+          paymentStatus: "셋업진행 / 청구대기",
+          updatedAt: "2026-11-21",
+          platformUrl: "clients/sealkids-swimming/index.html",
+          accessCode: "GEO-SEALKIDS-261121",
+          memo: "1차 6개월 약정 (2026-11-21 ~ 2027-05-20). 생성형 AI(GEO) 최적화 4대 자산(Schema, robots, llms, sitemap) 풀세트 탑재"
         }
       ];
 
-      // 데이터 로드 & 신규 계약 자동 머지
+      // 고정비 읽기 / 저장 (기본 50,000원)
+      function getFixedCost() {
+        const val = localStorage.getItem(CRM_COST_KEY);
+        return val ? parseInt(val, 10) : 50000;
+      }
+      function setFixedCost(val) {
+        localStorage.setItem(CRM_COST_KEY, val);
+      }
+
+      // 6개월 계약 주기 및 D-Day 계산 유틸리티
+      function calculateSixMonthCycle(startDateStr) {
+        if (!startDateStr) {
+          return {
+            start: '-',
+            end: '-',
+            diffDays: 0,
+            elapsedMonths: 1,
+            progressPct: 0,
+            badgeClass: 'active',
+            badgeText: '약정 진행 중'
+          };
+        }
+
+        const start = new Date(startDateStr);
+        // 6개월 만료일 계산
+        const end = new Date(start);
+        end.setMonth(end.getMonth() + 6);
+        end.setDate(end.getDate() - 1); // 6개월 만료일
+
+        const today = new Date();
+        // 잔여 일수 (D-Day)
+        const diffMs = end.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        // 전체 약정 기간 대비 진행률
+        const totalDurationMs = end.getTime() - start.getTime();
+        const elapsedMs = Math.max(0, today.getTime() - start.getTime());
+        const progressPct = Math.min(100, Math.max(0, Math.round((elapsedMs / totalDurationMs) * 100)));
+
+        // 진행 개월차
+        const elapsedMonths = Math.min(6, Math.max(1, Math.floor(elapsedMs / (1000 * 60 * 60 * 24 * 30.4)) + 1));
+
+        let badgeClass = 'active';
+        let badgeText = `D-${diffDays}일 (${elapsedMonths}/6개월)`;
+
+        if (diffDays <= 0) {
+          badgeClass = 'expired';
+          badgeText = '만료 (갱신 요망)';
+        } else if (diffDays <= 30) {
+          badgeClass = 'warn';
+          badgeText = `D-${diffDays}일 (갱신 준비)`;
+        }
+
+        const fmt = d => d.toISOString().slice(0, 10);
+
+        return {
+          start: fmt(start),
+          end: fmt(end),
+          diffDays: diffDays,
+          elapsedMonths: elapsedMonths,
+          progressPct: progressPct,
+          badgeClass: badgeClass,
+          badgeText: badgeText
+        };
+      }
+
+      // 데이터 로드 & 전자계약 자동 머지 (알파비전 필터링)
       function getClientsList() {
         let savedList = [];
         try {
           savedList = JSON.parse(localStorage.getItem(CRM_STORAGE_KEY) || '[]');
         } catch (e) { savedList = []; }
 
-        // 기본 목록과 로컬스토리지 목록 머지 (중복 제거)
         const map = new Map();
-        defaultClients.forEach(c => map.set(c.customerName, c));
+        // 1. 공식 데이터 먼저 등록
+        officialClients.forEach(c => map.set(c.customerName, c));
+
+        // 2. 전자계약 등에서 들어온 신규 계약 자동 머지
         savedList.forEach(c => {
+          if (!c.customerName) return;
+          // 알파비전 가상 계약은 원천 제외
+          if (c.customerName.includes('알파비전')) return;
+
           if (map.has(c.customerName)) {
             map.set(c.customerName, { ...map.get(c.customerName), ...c });
           } else {
-            map.set(c.customerName, c);
+            // 신규 전자계약자
+            const feeNum = 100000;
+            const startD = c.createdAt ? c.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
+            map.set(c.customerName, {
+              ...c,
+              feeNumber: feeNum,
+              commitmentMonths: 6,
+              startDate: startD,
+              paymentCycle: "6개월 약정 (월 10만)"
+            });
           }
         });
 
-        const list = Array.from(map.values());
+        const list = Array.from(map.values()).filter(c => !(c.customerName || '').includes('알파비전'));
         list.forEach((item, idx) => { item.no = idx + 1; });
         return list;
       }
 
-      function saveClientsList(list) {
-        try {
-          localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(list));
-        } catch (e) {}
-      }
-
-      // 보안 게이트 제어
+      // 보안 잠금 게이트웨이
       const gateLocked = document.getElementById('crm-gate-locked');
       const contentUnlocked = document.getElementById('crm-content-unlocked');
       const passInput = document.getElementById('crm-pass-input');
@@ -2053,12 +2358,62 @@
         });
       }
 
-      // 테이블 렌더링 & 검색
+      // 고정비 모달 제어
+      const costModal = document.getElementById('costModal');
+      const btnOpenCostModal = document.getElementById('btn-open-cost-modal');
+      const btnCloseCostModal = document.getElementById('btn-close-cost-modal');
+      const btnCancelCostModal = document.getElementById('btn-cancel-cost-modal');
+      const btnSaveCostModal = document.getElementById('btn-save-cost-modal');
+      const inputFixedCost = document.getElementById('input-fixed-cost');
+      const previewSixCost = document.getElementById('preview-six-cost');
+
+      if (btnOpenCostModal && costModal) {
+        btnOpenCostModal.addEventListener('click', () => {
+          const cur = getFixedCost();
+          if (inputFixedCost) {
+            inputFixedCost.value = cur;
+            if (previewSixCost) previewSixCost.textContent = (cur * 6).toLocaleString() + '원';
+          }
+          costModal.classList.add('active');
+        });
+      }
+      if (inputFixedCost && previewSixCost) {
+        inputFixedCost.addEventListener('input', () => {
+          const v = parseInt(inputFixedCost.value, 10) || 0;
+          previewSixCost.textContent = (v * 6).toLocaleString() + '원';
+        });
+      }
+      function closeCostModal() {
+        if (costModal) costModal.classList.remove('active');
+      }
+      if (btnCloseCostModal) btnCloseCostModal.addEventListener('click', closeCostModal);
+      if (btnCancelCostModal) btnCancelCostModal.addEventListener('click', closeCostModal);
+      if (btnSaveCostModal) {
+        btnSaveCostModal.addEventListener('click', () => {
+          const val = parseInt(inputFixedCost.value, 10) || 0;
+          setFixedCost(val);
+          closeCostModal();
+          renderTable();
+          alert(`월 고정비가 ${val.toLocaleString()}원(6개월 ${(val*6).toLocaleString()}원)으로 저장되어 영업이익이 실시간 재계산되었습니다.`);
+        });
+      }
+
+      // 대장 렌더링 & 금융/약정 지표 산출
       const tableBody = document.getElementById('crmTableBody');
       const searchInput = document.getElementById('crm-search-input');
       const statTotalClients = document.getElementById('stat-total-clients');
       const statActiveSubs = document.getElementById('stat-active-subs');
+      const statSixMonthRevenue = document.getElementById('stat-six-month-revenue');
+      const statSixMonthSub = document.getElementById('stat-six-month-sub');
       const statTotalRevenue = document.getElementById('stat-total-revenue');
+      const statClientCountSub = document.getElementById('stat-client-count-sub');
+      const statFixedCost = document.getElementById('stat-fixed-cost');
+      const statFixedCostSub = document.getElementById('stat-fixed-cost-sub');
+      const statOperatingProfit = document.getElementById('stat-operating-profit');
+      const statProfitMargin = document.getElementById('stat-profit-margin');
+      const statSixMonthProfitSub = document.getElementById('stat-six-month-profit-sub');
+      const statPartnerProfit = document.getElementById('stat-partner-profit');
+      const statSplitDetailSub = document.getElementById('stat-split-detail-sub');
       const statLastUpdate = document.getElementById('stat-last-update');
 
       function renderTable(filterKeyword = '') {
@@ -2075,24 +2430,68 @@
           );
         });
 
-        // 통계 계산
-        if (statTotalClients) statTotalClients.textContent = `${clients.length}개사`;
-        const activeCount = clients.filter(c => (c.paymentStatus || '').includes('완료') || (c.paymentStatus || '').includes('대기')).length;
-        if (statActiveSubs) statActiveSubs.textContent = `${activeCount}개사`;
-        
-        let revSum = 0;
+        // 1. 총 매출(MRR) 및 6개월 약정 매출 정밀 집계 (정규식 오작동 원천 방지)
+        let monthlyRevenue = 0;
+        let sixMonthRevenue = 0;
+
         clients.forEach(c => {
-          const num = parseInt((c.monthlyFee || '').replace(/[^0-9]/g, ''), 10) || 0;
-          revSum += num;
+          // 순수 숫자값 우선 참조, 없으면 선두 숫자만 추출
+          let fee = c.feeNumber;
+          if (!fee) {
+            const m = (c.monthlyFee || '').match(/^([0-9,]+)/);
+            fee = m ? parseInt(m[1].replace(/,/g, ''), 10) : 100000;
+          }
+          monthlyRevenue += fee;
+          sixMonthRevenue += (fee * 6);
         });
-        if (statTotalRevenue) statTotalRevenue.textContent = revSum.toLocaleString() + '원';
+
+        // 2. 고정비
+        const fixedCost = getFixedCost();
+        const sixMonthFixedCost = fixedCost * 6;
+
+        // 3. 영업이익 산출 (월 및 6개월)
+        const monthlyProfit = Math.max(0, monthlyRevenue - fixedCost);
+        const sixMonthProfit = Math.max(0, sixMonthRevenue - sixMonthFixedCost);
+        const marginPct = monthlyRevenue > 0 ? Math.round((monthlyProfit / monthlyRevenue) * 100) : 0;
+
+        // 4. 파트너 5:5 배분 (정성윤 대표 50% : 최두리 수석 50%)
+        const partnerMonthly = Math.round(monthlyProfit * 0.5);
+        const partnerSixMonth = Math.round(sixMonthProfit * 0.5);
+
+        // 5. 금융 지표 화면 반영
+        if (statTotalClients) statTotalClients.textContent = `${clients.length}개사`;
+        const activeCount = clients.filter(c => (c.paymentStatus || '').includes('완료') || (c.paymentStatus || '').includes('진행') || (c.paymentStatus || '').includes('대기')).length;
+        if (statActiveSubs) statActiveSubs.textContent = `${activeCount}개사`;
+
+        // 6개월 약정 총매출
+        if (statSixMonthRevenue) statSixMonthRevenue.textContent = sixMonthRevenue.toLocaleString() + '원';
+        if (statSixMonthSub) statSixMonthSub.textContent = `고객 ${clients.length}개사 6개월 총액 (VAT별도 60만/사)`;
+
+        // 월 정기매출 (MRR)
+        if (statTotalRevenue) statTotalRevenue.textContent = monthlyRevenue.toLocaleString() + '원';
+        if (statClientCountSub) statClientCountSub.textContent = `계약 고객사 ${clients.length}개사 (월 100,000원/사)`;
+
+        // 고정비
+        if (statFixedCost) statFixedCost.textContent = fixedCost.toLocaleString() + '원';
+        if (statFixedCostSub) statFixedCostSub.textContent = `서버·인프라 (6개월: ${sixMonthFixedCost.toLocaleString()}원)`;
+
+        // 영업이익
+        if (statOperatingProfit) statOperatingProfit.textContent = monthlyProfit.toLocaleString() + '원';
+        if (statProfitMargin) statProfitMargin.textContent = `영업이익률: ${marginPct}%`;
+        if (statSixMonthProfitSub) statSixMonthProfitSub.textContent = `6개월 영업이익: ${sixMonthProfit.toLocaleString()}원`;
+
+        // 5:5 배분
+        if (statPartnerProfit) statPartnerProfit.textContent = partnerMonthly.toLocaleString() + '원';
+        if (statSplitDetailSub) statSplitDetailSub.textContent = `월 ${partnerMonthly.toLocaleString()}원 / 6개월 ${partnerSixMonth.toLocaleString()}원 (5:5 배분)`;
+
         if (statLastUpdate) statLastUpdate.textContent = new Date().toISOString().slice(0, 10);
 
+        // 테이블 렌더링
         if (!tableBody) return;
         tableBody.innerHTML = '';
 
         if (filtered.length === 0) {
-          tableBody.innerHTML = '<tr><td colspan="17" style="text-align:center;padding:30px;color:var(--ink-subtle);">검색 조건에 맞는 고객사가 없습니다.</td></tr>';
+          tableBody.innerHTML = '<tr><td colspan="18" style="text-align:center;padding:30px;color:var(--ink-subtle);">검색 조건에 맞는 고객사가 없습니다.</td></tr>';
           return;
         }
 
@@ -2100,7 +2499,12 @@
           const tr = document.createElement('tr');
           let stClass = 'pending';
           if ((c.paymentStatus || '').includes('완료')) stClass = 'ok';
-          else if ((c.paymentStatus || '').includes('대기')) stClass = 'wait';
+          else if ((c.paymentStatus || '').includes('대기') || (c.paymentStatus || '').includes('진행')) stClass = 'wait';
+
+          const isCash = (c.paymentMethod || '').includes('현금');
+
+          // 6개월 계약 주기 및 D-Day 카운트다운 계산
+          const cycle = calculateSixMonthCycle(c.startDate || c.createdAt);
 
           tr.innerHTML = `
             <td><strong>${c.no}</strong></td>
@@ -2108,17 +2512,34 @@
             <td>${escapeHtml(c.industry || '-')}</td>
             <td>${escapeHtml(c.representative || '-')}</td>
             <td>${escapeHtml(c.phone || '-')}</td>
-            <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(c.address || '')}">${escapeHtml(c.address || '-')}</td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(c.address || '')}">${escapeHtml(c.address || '-')}</td>
             <td>${c.instaAccount && c.instaAccount !== '-' ? `<a href="${c.instaUrl}" target="_blank">${escapeHtml(c.instaAccount)}</a>` : '-'}</td>
             <td>${c.threadsAccount && c.threadsAccount !== '-' ? `<a href="${c.threadsUrl}" target="_blank">${escapeHtml(c.threadsAccount)}</a>` : '-'}</td>
             <td><span class="status-tag ${stClass}">${escapeHtml(c.oauthStatus || '연동대기')}</span></td>
-            <td><strong>${escapeHtml(c.monthlyFee || '100,000원')}</strong></td>
-            <td>${escapeHtml(c.paymentDay || '매월 28일')}</td>
-            <td>${escapeHtml(c.alertDay || '매월 25일')}</td>
-            <td><span class="status-tag ${stClass}">${escapeHtml(c.paymentStatus || '청구대기')}</span></td>
-            <td>${escapeHtml(c.updatedAt || '-')}</td>
-            <td>${c.platformUrl ? `<a href="${c.platformUrl}" target="_blank" style="font-size:11px;">접속하기 ↗</a>` : '-'}</td>
-            <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(c.memo || '')}">${escapeHtml(c.memo || '-')}</td>
+            <td>
+              <strong>월 100,000원</strong>
+              <div style="font-size:11px;color:#2563eb;font-weight:700;margin-top:2px;">6개월 600,000원</div>
+            </td>
+            <td>
+              <div style="font-size:11.5px;font-weight:600;color:var(--navy);">${cycle.start} ~ ${cycle.end}</div>
+              <div class="cycle-progress" title="약정 진행률: ${cycle.progressPct}%">
+                <div class="cycle-progress-bar" style="width:${cycle.progressPct}%;"></div>
+              </div>
+            </td>
+            <td>
+              <span class="dday-badge ${cycle.badgeClass}">⏳ ${cycle.badgeText}</span>
+            </td>
+            <td>
+              <div>${escapeHtml(c.paymentDay || '매월 28일')}</div>
+              <div style="font-size:10.5px;color:var(--ink-muted);">${escapeHtml(c.alertDay || 'D-3 알림')}</div>
+            </td>
+            <td>
+              <span class="status-tag ${stClass}">${escapeHtml(c.paymentStatus || '청구대기')}</span>
+              ${isCash ? '<span style="font-size:10.5px;color:#d97706;font-weight:700;display:block;margin-top:2px;">(현금 결제)</span>' : ''}
+            </td>
+            <td>${escapeHtml(c.updatedAt || cycle.start)}</td>
+            <td>${c.platformUrl ? `<a href="${c.platformUrl}" target="_blank" style="font-size:11px;font-weight:600;">접속 ↗</a>` : '-'}</td>
+            <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(c.memo || '')}">${escapeHtml(c.memo || '-')}</td>
             <td><a href="contract/" target="_blank" style="font-weight:600;color:var(--accent);">계약서 ↗</a></td>
           `;
           tableBody.appendChild(tr);
@@ -2140,7 +2561,7 @@
       if (refreshBtn) {
         refreshBtn.addEventListener('click', () => {
           renderTable(searchInput ? searchInput.value : '');
-          alert('고객사 관리 대장이 최신 상태로 새로고침되었습니다.');
+          alert('고객사 관리 대장, 6개월 D-Day 카운트 및 금융 지표가 최신 상태로 새로고침되었습니다.');
         });
       }
 
@@ -2149,10 +2570,15 @@
       if (exportBtn) {
         exportBtn.addEventListener('click', () => {
           const clients = getClientsList();
-          const headers = ["No","고객사명","업종/진료과목","대표자","연락처","사업장주소","인스타그램","쓰레드","OAuth상태","월이용료","정기결제일","D-3알림일","수금상태","최근갱신일","플랫폼접속주소","특이사항"];
+          const headers = [
+            "No", "고객사명", "업종/진료과목", "대표자", "연락처", "사업장주소",
+            "인스타그램", "쓰레드", "OAuth상태", "월이용료", "6개월약정총액",
+            "6개월계약시작일", "6개월계약만료일", "잔여D-Day", "정기결제일", "결제수단", "수금상태", "최근갱신일", "특이사항"
+          ];
           
           let csv = "\uFEFF" + headers.join(",") + "\n";
           clients.forEach(c => {
+            const cycle = calculateSixMonthCycle(c.startDate || c.createdAt);
             const row = [
               c.no,
               `"${(c.customerName || '').replace(/"/g, '""')}"`,
@@ -2163,12 +2589,15 @@
               `"${(c.instaAccount || '').replace(/"/g, '""')}"`,
               `"${(c.threadsAccount || '').replace(/"/g, '""')}"`,
               `"${(c.oauthStatus || '').replace(/"/g, '""')}"`,
-              `"${(c.monthlyFee || '').replace(/"/g, '""')}"`,
+              `"100,000원"`,
+              `"600,000원"`,
+              `"${cycle.start}"`,
+              `"${cycle.end}"`,
+              `"${cycle.badgeText}"`,
               `"${(c.paymentDay || '').replace(/"/g, '""')}"`,
-              `"${(c.alertDay || '').replace(/"/g, '""')}"`,
+              `"${(c.paymentMethod || '').replace(/"/g, '""')}"`,
               `"${(c.paymentStatus || '').replace(/"/g, '""')}"`,
               `"${(c.updatedAt || '').replace(/"/g, '""')}"`,
-              `"${(c.platformUrl || '').replace(/"/g, '""')}"`,
               `"${(c.memo || '').replace(/"/g, '""')}"`
             ];
             csv += row.join(",") + "\n";
@@ -2178,7 +2607,7 @@
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `DNA_AI_고객사_통합관리대장_${new Date().toISOString().slice(0, 10)}.csv`;
+          a.download = `DNA_AI_고객사_6개월약정_정산관리대장_${new Date().toISOString().slice(0, 10)}.csv`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
