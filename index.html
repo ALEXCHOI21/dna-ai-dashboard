@@ -2726,6 +2726,91 @@
       }
 
       // 초기 실행: 무조건 잠금 상태(게이트웨이 노출)로 대기!
+      
+      // ------------------------------------------------------------------------
+      // 금액 수정 모달 제어 (현장 네고/인상 유연 책정)
+      // ------------------------------------------------------------------------
+      const priceModal = document.getElementById('priceModal');
+      const btnClosePriceModal = document.getElementById('btn-close-price-modal');
+      const btnCancelPriceModal = document.getElementById('btn-cancel-price-modal');
+      const btnSavePriceModal = document.getElementById('btn-save-price-modal');
+      const editClientName = document.getElementById('edit-client-name');
+      const editClientNameDisplay = document.getElementById('edit-client-name-display');
+      const inputEditFee = document.getElementById('input-edit-fee');
+      const inputEditSetup = document.getElementById('input-edit-setup');
+      const inputEditMemo = document.getElementById('input-edit-memo');
+      const previewSixFee = document.getElementById('preview-six-fee');
+
+      window.openPriceModal = function(customerName) {
+        const clients = getClientsList();
+        const client = clients.find(c => c.customerName === customerName);
+        if (!client) return;
+
+        editClientName.value = customerName;
+        editClientNameDisplay.textContent = customerName;
+
+        let fee = client.feeNumber;
+        if (!fee) {
+          const m = (client.monthlyFee || '').match(/^([0-9,]+)/);
+          fee = m ? parseInt(m[1].replace(/,/g, ''), 10) : 190000;
+        }
+        inputEditFee.value = fee;
+        inputEditSetup.value = client.setupFee !== undefined ? client.setupFee : (fee === 100000 ? 0 : 100000);
+        inputEditMemo.value = client.discountReason || client.memo || '';
+        previewSixFee.textContent = (fee * 6).toLocaleString() + '원';
+
+        if (priceModal) priceModal.classList.add('active');
+      };
+
+      if (inputEditFee && previewSixFee) {
+        inputEditFee.addEventListener('input', () => {
+          const v = parseInt(inputEditFee.value, 10) || 0;
+          previewSixFee.textContent = (v * 6).toLocaleString() + '원';
+        });
+      }
+
+      function closePriceModal() {
+        if (priceModal) priceModal.classList.remove('active');
+      }
+      if (btnClosePriceModal) btnClosePriceModal.addEventListener('click', closePriceModal);
+      if (btnCancelPriceModal) btnCancelPriceModal.addEventListener('click', closePriceModal);
+
+      if (btnSavePriceModal) {
+        btnSavePriceModal.addEventListener('click', () => {
+          const cName = editClientName.value;
+          const fee = parseInt(inputEditFee.value, 10) || 0;
+          const setup = parseInt(inputEditSetup.value, 10) || 0;
+          const memo = (inputEditMemo.value || '').trim();
+
+          let savedList = [];
+          try {
+            savedList = JSON.parse(localStorage.getItem(CRM_STORAGE_KEY) || '[]');
+          } catch(e) { savedList = []; }
+
+          const idx = savedList.findIndex(c => c.customerName === cName);
+          const updateData = {
+            customerName: cName,
+            feeNumber: fee,
+            monthlyFee: `${fee.toLocaleString()}원`,
+            setupFee: setup,
+            isDiscounted: (fee < 190000),
+            discountReason: memo,
+            memo: memo || `월 ${fee.toLocaleString()}원 책정 (6개월 ${(fee*6).toLocaleString()}원)`
+          };
+
+          if (idx >= 0) {
+            savedList[idx] = { ...savedList[idx], ...updateData };
+          } else {
+            savedList.push(updateData);
+          }
+          localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(savedList));
+
+          closePriceModal();
+          renderTable(searchInput ? searchInput.value : '');
+          alert(`[${cName}]의 이용료가 월 ${fee.toLocaleString()}원(6개월 ${(fee*6).toLocaleString()}원)으로 수정되어 대장에 즉시 반영되었습니다.`);
+        });
+      }
+
       renderGateState();
     })();
 
