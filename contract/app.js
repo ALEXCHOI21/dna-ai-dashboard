@@ -268,29 +268,68 @@ form.querySelectorAll('input[name="products"]').forEach(input => {
   }
 });
 
-// 프리셋 버튼
-const btnPresetStd = document.querySelector('#btnPresetStandard');
-const btnPresetEarly = document.querySelector('#btnPresetEarlyBird');
-if (btnPresetStd) {
-  btnPresetStd.addEventListener('click', (e) => {
+// 프리셋 버튼 (현장 영업 네고/인상/할인 원클릭 적용)
+function setupPresetButton(btnId, targetCheckboxValue, callback) {
+  const btn = document.querySelector(btnId);
+  if (!btn) return;
+  btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const p = document.querySelector('#inputThreadsPrice');
-    const s = document.querySelector('#inputThreadsSetup');
-    if (p) p.value = 190000;
-    if (s) s.value = 100000;
+    // 해당 상품 체크박스 자동 선택
+    if (targetCheckboxValue) {
+      const chk = form.querySelector(`input[name="products"][value="${targetCheckboxValue}"]`);
+      if (chk && !chk.checked) {
+        chk.checked = true;
+        chk.dispatchEvent(new Event('change'));
+      }
+    }
+    callback();
     updateLivePricing();
   });
 }
-if (btnPresetEarly) {
-  btnPresetEarly.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const p = document.querySelector('#inputThreadsPrice');
-    const s = document.querySelector('#inputThreadsSetup');
-    if (p) p.value = 100000;
-    if (s) s.value = 0;
-    updateLivePricing();
-  });
-}
+
+// 스탠다드 자동화 프리셋
+setupPresetButton('#btnPresetStandard', 'threads', () => {
+  const p = document.querySelector('#inputThreadsPrice');
+  const s = document.querySelector('#inputThreadsSetup');
+  if (p) p.value = 190000;
+  if (s) s.value = 100000;
+});
+setupPresetButton('#btnPresetNego15', 'threads', () => {
+  const p = document.querySelector('#inputThreadsPrice');
+  const s = document.querySelector('#inputThreadsSetup');
+  if (p) p.value = 150000;
+  if (s) s.value = 0;
+});
+setupPresetButton('#btnPresetEarlyBird', 'threads', () => {
+  const p = document.querySelector('#inputThreadsPrice');
+  const s = document.querySelector('#inputThreadsSetup');
+  if (p) p.value = 100000;
+  if (s) s.value = 0;
+});
+setupPresetButton('#btnPresetRaise25', 'threads', () => {
+  const p = document.querySelector('#inputThreadsPrice');
+  const s = document.querySelector('#inputThreadsSetup');
+  if (p) p.value = 250000;
+  if (s) s.value = 100000;
+});
+
+// 마케팅 컨설팅 프리셋
+setupPresetButton('#btnPresetConsultStd', 'consulting', () => {
+  const c = document.querySelector('#inputConsultingPrice');
+  if (c) c.value = 490000;
+});
+setupPresetButton('#btnPresetConsult39', 'consulting', () => {
+  const c = document.querySelector('#inputConsultingPrice');
+  if (c) c.value = 390000;
+});
+setupPresetButton('#btnPresetConsult29', 'consulting', () => {
+  const c = document.querySelector('#inputConsultingPrice');
+  if (c) c.value = 290000;
+});
+setupPresetButton('#btnPresetConsult59', 'consulting', () => {
+  const c = document.querySelector('#inputConsultingPrice');
+  if (c) c.value = 590000;
+});
 
 updateLivePricing();
 
