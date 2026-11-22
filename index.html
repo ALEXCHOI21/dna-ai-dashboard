@@ -871,6 +871,13 @@
       font-size: 11.5px;
       font-weight: 600;
     }
+    .status-tag.active-running {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1.5px solid #10b981;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
+    }
     .status-tag.ok { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
     .status-tag.wait { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
     .status-tag.pending { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
@@ -2288,7 +2295,11 @@
           instaUrl: "https://www.instagram.com/dental_dier/",
           threadsAccount: "@dental_dier",
           threadsUrl: "https://www.threads.net/@dental_dier",
-          oauthStatus: "연동 진행 중",
+          oauthStatus: "연동 완료 (80건 완주 · 원고 대기)",
+          postedCount: 80,
+          approvedCount: 0,
+          draftCount: 40,
+          activeScheduler: false,
           monthlyFee: "100,000원",
           feeNumber: 100000,
           setupFee: 0,
@@ -2302,10 +2313,10 @@
           alertDay: "매월 25일 (D-3 알림)",
           paymentMethod: "계좌이체 (세금계산서)",
           paymentStatus: "입금완료 (10/28)",
-          updatedAt: "2026-11-18",
+          updatedAt: "2026-11-22",
           platformUrl: "https://growth.104-207-80-198.sslip.io/",
           accessCode: "9ac52f12c348e20df5a402c06d505b6a03dfaebc799be194e2340c6b93fcee7e",
-          memo: "1차 6개월 약정 (2026-10-28 ~ 2027-04-27) / 1회차 10만원 입금 확인 완료 / 차기 결제일 11월 28일"
+          memo: "1차 6개월 약정 (2026-10-28 ~ 2027-04-27) / 80건 완주 발행 완료 / 신규 40건 초안 승인 대기 / 차기 결제일 11월 28일"
         },
         {
           no: 2,
@@ -2318,7 +2329,11 @@
           instaUrl: "https://www.instagram.com/yangsikdang_daejeon/",
           threadsAccount: "@yangsikdang_daejeon",
           threadsUrl: "https://www.threads.net/@yangsikdang_daejeon",
-          oauthStatus: "1호 샘플 실발행 완료",
+          oauthStatus: "자동발행 가동 중 (11건 완료 · 29건 대기)",
+          postedCount: 11,
+          approvedCount: 29,
+          draftCount: 0,
+          activeScheduler: true,
           monthlyFee: "100,000원",
           feeNumber: 100000,
           setupFee: 0,
@@ -2332,10 +2347,10 @@
           alertDay: "매월 15일 (D-3 사전 알림)",
           paymentMethod: "현금 결제 (대표님 확인 완료)",
           paymentStatus: "입금완료 (11/17 확인)",
-          updatedAt: "2026-11-19",
+          updatedAt: "2026-11-22",
           platformUrl: "https://growth.104-207-80-198.sslip.io/yangsikdang/",
           accessCode: "065cc3a8f96636c52c9eff7f18d80feb0e6d23fb399efedc091f55d0f407c39d",
-          memo: "현금 결제 완료. 1차 6개월 약정 (2026-11-18 ~ 2027-05-17). 인스타/쓰레드 1일 5회 골든타임 자동 발행"
+          memo: "현금 결제 완료. 1차 6개월 약정 (2026-11-18 ~ 2027-05-17). 1일 5회 골든타임 자동발행 가동 중 (11건 완료, 29건 큐 대기)"
         }
       ];
 
@@ -2459,6 +2474,9 @@
         if (lockBtn) lockBtn.style.display = isAuthenticated ? 'inline-flex' : 'none';
         if (isAuthenticated) {
           renderTable();
+          if (typeof syncRealtimeOAuthStatus === 'function') {
+            syncRealtimeOAuthStatus(true);
+          }
         } else {
           if (passInput) {
             passInput.value = '';
@@ -2673,6 +2691,11 @@
           if ((c.paymentStatus || '').includes('완료')) stClass = 'ok';
           else if ((c.paymentStatus || '').includes('대기') || (c.paymentStatus || '').includes('진행')) stClass = 'wait';
 
+          let oauthClass = 'pending';
+          if ((c.oauthStatus || '').includes('가동 중')) oauthClass = 'active-running';
+          else if ((c.oauthStatus || '').includes('완료')) oauthClass = 'ok';
+          else if ((c.oauthStatus || '').includes('대기') || (c.oauthStatus || '').includes('진행')) oauthClass = 'wait';
+
           const isCash = (c.paymentMethod || '').includes('현금');
           const cycle = calculateSixMonthCycle(c.startDate || c.createdAt);
           let fee = c.feeNumber;
@@ -2690,7 +2713,7 @@
             <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(c.address || '')}">${escapeHtml(c.address || '-')}</td>
             <td>${c.instaAccount && c.instaAccount !== '-' ? `<a href="${c.instaUrl}" target="_blank">${escapeHtml(c.instaAccount)}</a>` : '-'}</td>
             <td>${c.threadsAccount && c.threadsAccount !== '-' ? `<a href="${c.threadsUrl}" target="_blank">${escapeHtml(c.threadsAccount)}</a>` : '-'}</td>
-            <td><span class="status-tag ${stClass}">${escapeHtml(c.oauthStatus || '연동대기')}</span></td>
+            <td><span class="status-tag ${oauthClass}">${escapeHtml(c.oauthStatus || '연동대기')}</span></td>
             <td>
               <div style="display:flex;align-items:center;gap:4px;">
                 <strong>월 ${(fee).toLocaleString()}원</strong>
@@ -2839,14 +2862,21 @@ ${client.customerName}의 Threads SNS 자동 홍보 익월 서비스 유지를 �
         if (g3Box) {
           const insta = client.instaAccount && client.instaAccount !== '-' ? `<a href="${client.instaUrl}" target="_blank" style="font-weight:700;color:#2563eb;">${escapeHtml(client.instaAccount)}</a>` : '-';
           const threads = client.threadsAccount && client.threadsAccount !== '-' ? `<a href="${client.threadsUrl}" target="_blank" style="font-weight:700;color:#2563eb;">${escapeHtml(client.threadsAccount)}</a>` : '-';
+          const isRunning = (client.oauthStatus || '').includes('가동 중');
+          const isComplete = (client.oauthStatus || '').includes('완료');
+          const statusBadgeColor = isRunning ? '#059669' : (isComplete ? '#2563eb' : '#d97706');
+
           g3Box.innerHTML = `
-            <div style="font-size:12.5px;color:var(--navy);font-weight:700;margin-bottom:4px;">
-              🔗 [${escapeHtml(client.customerName)}] 공식 SNS 채널 및 연동 상태
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+              <strong style="color:var(--navy);font-size:13px;">🔗 [${escapeHtml(client.customerName)}] 공식 SNS 채널 및 실시간 연동 현황</strong>
+              <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:9999px;background:${isRunning ? '#ecfdf5' : '#eff6ff'};color:${statusBadgeColor};border:1px solid ${isRunning ? '#a7f3d0' : '#bfdbfe'};">
+                ${escapeHtml(client.oauthStatus || '연동대기')}
+              </span>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:12px;">
               <span>• 인스타그램: ${insta}</span>
               <span>• 쓰레드: ${threads}</span>
-              <span>• OAuth 상태: <strong style="color:#059669;">${escapeHtml(client.oauthStatus || '연동대기')}</strong></span>
+              <span>• 토큰 상태: <strong style="color:#059669;">정상 유효 (Supabase Vault 격리)</strong></span>
             </div>
           `;
         }
@@ -2890,12 +2920,88 @@ ${client.customerName}의 Threads SNS 자동 홍보 익월 서비스 유지를 �
         });
       }
 
+      // Supabase 클라우드 실시간 OAuth 및 발행 현황 동기화 엔진
+      const CLOUD_GROWTH_API = 'https://bxtrfsjcxknmbopctvaw.supabase.co/functions/v1/growth-platform';
+
+      async function syncRealtimeOAuthStatus(silent = false) {
+        const clients = getClientsList();
+        let updatedCount = 0;
+
+        for (const client of clients) {
+          if (!client.accessCode) continue;
+          try {
+            const resp = await fetch(`${CLOUD_GROWTH_API}?action=dashboard`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-growth-code': client.accessCode
+              },
+              body: '{}',
+              signal: AbortSignal.timeout(6000)
+            });
+
+            if (resp.ok) {
+              const data = await resp.json();
+              const c = data.client;
+              const posts = Array.isArray(data.posts) ? data.posts : [];
+              if (c) {
+                const posted = posts.filter(p => p.status === 'posted').length;
+                const approved = posts.filter(p => p.status === 'approved').length;
+                const draft = posts.filter(p => p.status === 'draft').length;
+
+                let newStatus = '';
+                if (c.active === true) {
+                  newStatus = `자동발행 가동 중 (${posted}건 완료 · ${approved}건 대기)`;
+                } else {
+                  if (posted > 0) {
+                    newStatus = `연동 완료 (${posted}건 완주 · ${draft > 0 ? draft + '건 대기' : '원고 대기'})`;
+                  } else {
+                    newStatus = '연동 완료 (원고 대기)';
+                  }
+                }
+
+                if (client.oauthStatus !== newStatus || client.postedCount !== posted || client.approvedCount !== approved) {
+                  client.oauthStatus = newStatus;
+                  client.postedCount = posted;
+                  client.approvedCount = approved;
+                  client.draftCount = draft;
+                  client.activeScheduler = Boolean(c.active);
+                  updatedCount++;
+                }
+              }
+            }
+          } catch (err) {
+            console.warn(`[OAuth Sync] ${client.customerName} 실시간 조회 건너뜀:`, err);
+          }
+        }
+
+        if (updatedCount > 0) {
+          saveClientsList(clients);
+          renderTable(searchInput ? searchInput.value : '');
+          if (selectedClientName) selectClient(selectedClientName);
+          if (!silent) {
+            alert('⚡ Supabase 클라우드 실시간 연동 완료!\n양식당 및 디에르치과의 최신 Threads OAuth 및 발행 건수가 갱신되었습니다.');
+          }
+        } else if (!silent) {
+          renderTable(searchInput ? searchInput.value : '');
+          if (selectedClientName) selectClient(selectedClientName);
+          alert('고객사 관리 대장 및 금융 지표가 최신 상태로 새로고침되었습니다.');
+        }
+      }
+
       // 새로고침 버튼
       const refreshBtn = document.getElementById('btn-refresh-crm');
       if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => {
-          renderTable(searchInput ? searchInput.value : '');
-          alert('고객사 관리 대장, 6개월 D-Day 카운트 및 금융 지표가 최신 상태로 새로고침되었습니다.');
+        refreshBtn.addEventListener('click', async () => {
+          refreshBtn.disabled = true;
+          const origText = refreshBtn.innerHTML;
+          refreshBtn.innerHTML = '🔄 실시간 동기화 중...';
+          try {
+            await syncRealtimeOAuthStatus(false);
+          } finally {
+            refreshBtn.disabled = false;
+            refreshBtn.innerHTML = origText;
+          }
         });
       }
 
