@@ -1197,7 +1197,7 @@
           <span class="launch">가동 중 (200) · 고도화 시나리오 대기 · 열기 ↗</span>
         </a>
         <a class="service-link security-highlight" href="contract/" target="_blank" rel="noopener noreferrer">
-          <span><strong>📑 서비스 전자계약 & 거래명세표 (🔒 보안)</strong><br><small>DANI 비서 인터랙티브 계약 · 홈택스 엑셀 · 비밀번호: 1121</small></span>
+          <span><strong>📑 서비스 전자계약 & 거래명세표 (🔒 보안)</strong><br><small>DANI 비서 인터랙티브 계약 · 홈택스 엑셀 · 인가된 관리자 전용</small></span>
           <span class="launch">보안 게이트웨이 구역 · 입장 ↗</span>
         </a>
       </div>
@@ -1837,10 +1837,10 @@
         <h3>사내 보안 인증이 필요합니다</h3>
         <p>고객사의 민감한 개인정보, SNS 계정 정보, 정산 내역 및 플랫폼 관리자 코드가 포함되어 있습니다.<br>사내 보안 비밀번호(4자리)를 입력해 주세요.</p>
         <div class="gate-input-row">
-          <input type="password" id="crm-pass-input" placeholder="비밀번호 입력 (1121)" maxlength="10">
+          <input type="password" id="crm-pass-input" placeholder="사내 보안 비밀번호를 입력하세요" maxlength="10">
           <button type="button" id="btn-unlock-crm">인증하고 열기</button>
         </div>
-        <div class="gate-tip">※ 사내 표준 보안 비밀번호: <code>1121</code></div>
+        <div class="gate-tip">※ 인가된 사내 보안 비밀번호로 인증 후 열람 가능합니다.</div>
       </div>
 
       <!-- 2. 인증 완료 시 노출되는 메인 콘텐츠 -->
@@ -2129,7 +2129,7 @@
       const CRM_COST_KEY = 'dna_fixed_cost_amount';
 
       // 1. 공식 계약 완료 고객사 데이터셋
-      // (알파비전 영구 제외, 양식당 현금 결제 반영, 디에르치과, 씨엘키즈어린이수영장)
+      // (알파비전 및 씨엘키즈 영구 제외, 양식당 현금 결제 반영, 디에르치과)
       // 기본 결제 단위: 최소 6개월 약정 (월 100,000원 × 6개월 = 600,000원, VAT 별도)
       const officialClients = [
         {
@@ -2183,32 +2183,6 @@
           platformUrl: "https://growth.104-207-80-198.sslip.io/yangsikdang/",
           accessCode: "065cc3a8f96636c52c9eff7f18d80feb0e6d23fb399efedc091f55d0f407c39d",
           memo: "현금 결제 완료. 1차 6개월 약정 (2026-11-18 ~ 2027-05-17). 인스타/쓰레드 1일 5회 골든타임 자동 발행"
-        },
-        {
-          no: 3,
-          customerName: "씨엘키즈어린이수영장",
-          industry: "스포츠/교육 (친환경 해수풀 어린이수영장)",
-          representative: "씨엘키즈 대표원장",
-          phone: "042-541-7944",
-          address: "대전 서구 계백로 1186 지하 1층 (가수원 사거리)",
-          instaAccount: "@sealkids_swimming",
-          instaUrl: "https://www.instagram.com/",
-          threadsAccount: "-",
-          threadsUrl: "-",
-          oauthStatus: "GEO 최적화 웹 구축완료",
-          monthlyFee: "100,000원",
-          feeNumber: 100000,
-          commitmentMonths: 6,
-          startDate: "2026-11-21", // 계약 시작일
-          paymentCycle: "6개월 약정 (월 10만)",
-          paymentDay: "매월 21일",
-          alertDay: "매월 18일 (D-3 알림)",
-          paymentMethod: "계좌이체 (카카오뱅크 3333-38-9917516)",
-          paymentStatus: "셋업진행 / 청구대기",
-          updatedAt: "2026-11-21",
-          platformUrl: "clients/sealkids-swimming/index.html",
-          accessCode: "GEO-SEALKIDS-261121",
-          memo: "1차 6개월 약정 (2026-11-21 ~ 2027-05-20). 생성형 AI(GEO) 최적화 4대 자산(Schema, robots, llms, sitemap) 풀세트 탑재"
         }
       ];
 
@@ -2293,7 +2267,7 @@
         savedList.forEach(c => {
           if (!c.customerName) return;
           // 알파비전 가상 계약은 원천 제외
-          if (c.customerName.includes('알파비전')) return;
+          if (c.customerName.includes('알파비전') || c.customerName.includes('씨엘키즈')) return;
 
           if (map.has(c.customerName)) {
             map.set(c.customerName, { ...map.get(c.customerName), ...c });
@@ -2311,7 +2285,7 @@
           }
         });
 
-        const list = Array.from(map.values()).filter(c => !(c.customerName || '').includes('알파비전'));
+        const list = Array.from(map.values()).filter(c => !(c.customerName || '').includes('알파비전') && !(c.customerName || '').includes('씨엘키즈'));
         list.forEach((item, idx) => { item.no = idx + 1; });
         return list;
       }
@@ -2338,7 +2312,7 @@
             sessionStorage.setItem(CRM_AUTH_KEY, 'true');
             checkAuth();
           } else {
-            alert('비밀번호가 일치하지 않습니다. (사내 보안: 1121)');
+            alert('비밀번호가 일치하지 않습니다. 인가된 관리자에게 문의하세요.');
             passInput.value = '';
             passInput.focus();
           }
