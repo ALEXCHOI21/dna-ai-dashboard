@@ -501,13 +501,13 @@ body {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
 }
 
-.product-card:has(input:checked) {
+.product-card:has(> input[type="checkbox"]:checked) {
   border-color: var(--blue);
   background: #fafcff;
   box-shadow: 0 12px 28px rgba(37, 99, 235, 0.08);
 }
 
-.product-card input {
+.product-card > input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   pointer-events: none;
@@ -2699,63 +2699,116 @@ canvas {
 
 
 /* ==========================================================================
-   Custom Price & 6-Month Commitment Styles
+   Custom Price & 6-Month Commitment Styles (현장 유연 가격 네고/인상 지원)
    ========================================================================== */
 .custom-price-control {
   margin: 12px 0 8px;
-  padding: 10px 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 12px 14px;
+  background: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
   cursor: default;
+  transition: all 0.2s ease;
+}
+.custom-price-control:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
 }
 .price-input-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   gap: 8px;
 }
 .price-input-row label {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
   color: #1e293b;
   white-space: nowrap;
 }
+.price-input-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
 .input-inline-price {
-  width: 130px;
-  padding: 6px 8px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #0f2347;
+  position: static !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  width: 140px;
+  height: 38px;
+  padding: 6px 28px 6px 10px;
+  border: 2px solid #2563eb !important;
+  border-radius: 7px;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0f172a;
   text-align: right;
-  background: #ffffff;
+  background: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.1);
+  transition: all 0.2s ease;
 }
 .input-inline-price:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  background: #ffffff !important;
+}
+.price-unit-tag {
+  position: absolute;
+  right: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  pointer-events: none;
 }
 .quick-preset-row {
   display: flex;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 5px;
+  margin-top: 8px;
   flex-wrap: wrap;
 }
 .btn-preset {
-  font-size: 10.5px;
-  padding: 3px 7px;
+  font-size: 11px;
+  padding: 4px 8px;
   background: #eff6ff;
   border: 1px solid #bfdbfe;
   color: #1d4ed8;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   font-weight: 700;
+  transition: all 0.15s ease;
 }
 .btn-preset:hover {
-  background: #dbeafe;
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+.btn-preset.active {
+  background: #1e40af;
+  color: #ffffff;
+  border-color: #1e40af;
+}
+.btn-preset.nego {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #92400e;
+}
+.btn-preset.nego:hover {
+  background: #d97706;
+  color: #ffffff;
+  border-color: #d97706;
+}
+.btn-preset.raise {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+  color: #9d174d;
+}
+.btn-preset.raise:hover {
+  background: #db2777;
+  color: #ffffff;
+  border-color: #db2777;
 }
 .price-notice-text {
   font-size: 11px;
