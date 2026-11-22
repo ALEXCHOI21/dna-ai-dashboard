@@ -700,6 +700,236 @@
       .panel-pad { padding: 14px 15px; }
       th, td { padding: 10px 12px; font-size: 12.5px; }
     }
+  
+    /* CRM & Client Management Styles */
+    .crm-security-gate {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 40px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      max-width: 520px;
+      margin: 40px auto;
+    }
+    .crm-security-gate .gate-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .crm-security-gate h3 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: 20px;
+    }
+    .crm-security-gate p {
+      color: var(--ink-muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .gate-input-row {
+      display: flex;
+      gap: 8px;
+      max-width: 360px;
+      margin: 0 auto 16px;
+    }
+    .gate-input-row input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+    .gate-input-row button {
+      padding: 12px 20px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .gate-input-row button:hover { background: #1a3260; }
+    .gate-tip {
+      font-size: 12px;
+      color: var(--ink-subtle);
+    }
+
+    .crm-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 16px 20px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+    .crm-stat-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .crm-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+    .crm-badge strong { color: var(--navy); font-weight: 700; }
+    .crm-badge.highlight { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+    .crm-badge.highlight strong { color: #1e40af; }
+
+    .crm-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .crm-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .crm-btn:hover { background: var(--surface-soft); border-color: var(--accent); }
+    .crm-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .crm-btn.primary:hover { background: #1d4ed8; }
+    .crm-btn.success { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .crm-btn.success:hover { background: #047857; }
+
+    .crm-search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .crm-search-box input {
+      padding: 8px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      min-width: 220px;
+    }
+
+    .crm-table-container {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+      margin-bottom: 24px;
+      max-height: 580px;
+    }
+    .crm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .crm-table th {
+      background: #0f2347;
+      color: #ffffff;
+      padding: 12px 14px;
+      font-weight: 600;
+      font-size: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .crm-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .crm-table tr:hover td { background: #f8fafc; }
+    .crm-table tr:last-child td { border-bottom: none; }
+
+    .status-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    .status-tag.ok { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+    .status-tag.wait { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+    .status-tag.pending { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+    .crm-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .crm-guide-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .crm-guide-card h4 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .crm-guide-card p, .crm-guide-card li {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+    .crm-guide-card ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+    .template-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #1e293b;
+      margin-top: 10px;
+      white-space: pre-line;
+      line-height: 1.6;
+      position: relative;
+    }
+    .btn-copy-template {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 11px;
+      padding: 3px 8px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-copy-template:hover { background: #f1f5f9; border-color: #94a3b8; }
+
   </style>
 </head>
 <body>
@@ -734,6 +964,7 @@
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="live">라이브 링크 · 검증</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="structure">폴더 구조 · 라인업</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="timeline">누적 타임라인</button>
+        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="crm" style="color:#2563eb;font-weight:700;border-color:#bfdbfe;background:#eff6ff;">🔒 고객사 통합 관리 대장 (CRM)</button>
       </div>
     </div>
   </nav>
@@ -1445,6 +1676,147 @@
         <a href="https://dnaai.co.kr/" target="_blank" rel="noopener noreferrer">공식 홈페이지 바로가기 ↗</a>
       </div>
     </footer>
+  
+    <!-- SECTION 7: CLIENT CRM & OPERATIONS (INTERNAL ONLY) -->
+    <section class="dash-section hidden" data-section="crm" id="section-crm">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">🏢 고객사 계정·정산 통합 관리 대장 (Client CRM & Operations)</h2>
+          <p style="margin:4px 0 0;font-size:13px;color:var(--ink-muted);">
+            SNS 마케팅 정기구독 고객사 기본정보, SNS 계정, 요금/정기결제일, 수금 상태, 플랫폼 접속 주소 및 운영 가이드가 실시간으로 관리되는 대장입니다.
+          </p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="status-tag ok">🔒 내부 보안 잠금 구역</span>
+          <button type="button" class="crm-btn" id="btn-lock-crm" style="display:none;">다시 잠그기</button>
+        </div>
+      </div>
+
+      <!-- 1. 보안 잠금 게이트 (미인증 시 노출) -->
+      <div id="crm-gate-locked" class="crm-security-gate">
+        <span class="gate-icon">🔐</span>
+        <h3>사내 보안 인증이 필요합니다</h3>
+        <p>고객사의 민감한 개인정보, SNS 계정 정보, 정산 내역 및 플랫폼 관리자 코드가 포함되어 있습니다.<br>사내 보안 비밀번호(4자리)를 입력해 주세요.</p>
+        <div class="gate-input-row">
+          <input type="password" id="crm-pass-input" placeholder="비밀번호 입력 (1121)" maxlength="10">
+          <button type="button" id="btn-unlock-crm">인증하고 열기</button>
+        </div>
+        <div class="gate-tip">※ 사내 표준 보안 비밀번호: <code>1121</code></div>
+      </div>
+
+      <!-- 2. 인증 완료 시 노출되는 메인 콘텐츠 -->
+      <div id="crm-content-unlocked" style="display:none;">
+        
+        <!-- 실시간 요약 툴바 -->
+        <div class="crm-toolbar">
+          <div class="crm-stat-badges">
+            <span class="crm-badge">총 등록 고객사: <strong id="stat-total-clients">0개사</strong></span>
+            <span class="crm-badge highlight">월 정기 구독: <strong id="stat-active-subs">0개사</strong></span>
+            <span class="crm-badge highlight">총 월 구독료: <strong id="stat-total-revenue">0원</strong></span>
+            <span class="crm-badge">최근 갱신: <strong id="stat-last-update">-</strong></span>
+          </div>
+          <div class="crm-actions">
+            <div class="crm-search-box">
+              <input type="text" id="crm-search-input" placeholder="고객사명, 대표자, 업종 검색...">
+            </div>
+            <button type="button" class="crm-btn success" id="btn-export-crm-csv">📥 엑셀(CSV) 다운로드</button>
+            <button type="button" class="crm-btn" id="btn-refresh-crm">🔄 실시간 동기화</button>
+            <a href="contract/" target="_blank" class="crm-btn primary">➕ 신규 전자계약 체결</a>
+          </div>
+        </div>
+
+        <!-- 고객 관리 대장 테이블 (24컬럼) -->
+        <div class="crm-table-container">
+          <table class="crm-table" id="crmTable">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>고객사명</th>
+                <th>업종 / 진료과목</th>
+                <th>대표자 / 담당자</th>
+                <th>병원/매장 연락처</th>
+                <th>사업장 공식 주소 / 웹사이트</th>
+                <th>인스타그램 (@)</th>
+                <th>쓰레드 (@)</th>
+                <th>OAuth 연동상태</th>
+                <th>월 이용료 (VAT별도)</th>
+                <th>정기 결제일</th>
+                <th>D-3 알림일</th>
+                <th>수금 상태</th>
+                <th>최근 갱신일</th>
+                <th>플랫폼 접속 주소</th>
+                <th>특이사항 및 마케팅 메모</th>
+                <th>전자계약</th>
+              </tr>
+            </thead>
+            <tbody id="crmTableBody">
+              <!-- JS 동적 렌더링 -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 운영 & 보안 가이드 섹션 -->
+        <h3 style="margin:24px 0 12px;font-size:16px;color:var(--navy);display:flex;align-items:center;gap:8px;">
+          <span>📘</span> ChoiGPT Growth — SNS 자동화 고객 계정 통합 관리 및 비즈니스 가이드
+        </h3>
+
+        <div class="crm-guide-grid">
+          <!-- 가이드 1: 서비스 가격 정책 및 정산 수칙 -->
+          <div class="crm-guide-card">
+            <h4><span>💰</span> 1. 서비스 가격 정책 및 정산 수칙</h4>
+            <ul>
+              <li><strong>기본 요금:</strong> 업체당 월 100,000원 (VAT 별도 / 공급가 100,000원, 세액 10,000원, 총액 110,000원)</li>
+              <li><strong>제공 서비스 범위:</strong> Threads 공식 API 자동 스케줄링 발행 (1일 5회 골든타임), 원문 기반 40개 맞춤 초안 생성 및 대시보드 검토/수정 도구, 실시간 링크 추적</li>
+              <li><strong>정기 결제일 및 청구 주기:</strong> 10월 28일 시작, 매월 28일 갱신 기준 (선불제 정기구독)</li>
+              <li><strong>입금 독려 알림 (D-3):</strong> 결제일 3일 전(매월 25일) 알림 배너 표출 및 카톡/문자 안내 발송</li>
+              <li><strong>결제 완료 처리:</strong> 입금 확인 즉시 전자세금계산서 발행 및 수금 상태를 '입금완료'로 갱신하여 익월 슬롯 유지</li>
+            </ul>
+          </div>
+
+          <!-- 가이드 2: 입금 독려 알림 메시지 표준 템플릿 -->
+          <div class="crm-guide-card">
+            <h4><span>📱</span> 2. 고객 입금 독려 알림 템플릿 (D-3, 매월 25일용)</h4>
+            <p>담당자에게 발송할 표준 알림 문구입니다. 버튼을 누르면 클립보드에 복사됩니다.</p>
+            <div class="template-box">
+              <button type="button" class="btn-copy-template" id="btn-copy-d3-msg">문구 복사</button>
+              <div id="d3-template-text">[ChoiGPT Growth] 안녕하세요, 디에르치과 이정성 원장님/담당자님.
+디에르치과의 Threads SNS 자동 홍보 익월 서비스 유지를 위한 정기 결제일(매월 28일) 3일 전 안내드립니다.
+• 서비스: Threads 공식 자동 발행 및 키워드 마케팅 플랫폼
+• 월 구독료: 100,000원 (VAT 포함 110,000원 / 전자세금계산서 발행)
+• 입금 계좌: 카카오뱅크 3333-38-9917516 (예금주: 정성윤 투어티플레이스)
+입금 확인 후 익월 자동 발행 큐가 지속 유지됩니다. 성원해 주셔서 감사드립니다.</div>
+            </div>
+          </div>
+
+          <!-- 가이드 3: Meta 공식 OAuth 연동 & 2FA 원칙 -->
+          <div class="crm-guide-card">
+            <h4><span>🔒</span> 3. Meta 공식 OAuth 2.0 연동 & 2FA 보안 원칙</h4>
+            <ul>
+              <li><strong>비밀번호 불보존 원칙:</strong> 우리 플랫폼은 고객의 비밀번호를 서버 DB나 텍스트 파일에 절대 저장하지 않습니다.</li>
+              <li><strong>즉시 삭제:</strong> [Threads 연결] OAuth 공식 인증을 대행하는 즉시 메모리 및 대화창에서 안전하게 삭제합니다.</li>
+              <li><strong>하드웨어 암호화:</strong> Meta 토큰은 Supabase Vault(하드웨어 암호화)에 60일간 안전하게 보관되며 비밀번호가 변경되어도 토큰은 유지됩니다.</li>
+              <li><strong>2단계 인증(2FA) 방어:</strong> 고객 인스타그램 설정 > 계정 센터 > 비밀번호 및 보안 > 2단계 인증 > [추가 수단: 백업 코드(8자리)]를 1~2개 미리 받아두면 실시간 인증 없이 안정적인 대행 가능.</li>
+            </ul>
+          </div>
+
+          <!-- 가이드 4: 토큰 만료 주기 & 관리자 접속 코드 -->
+          <div class="crm-guide-card">
+            <h4><span>⚙️</span> 4. 토큰 만료 주기 & 플랫폼 관리자 접속 코드</h4>
+            <ul>
+              <li><strong>토큰 유효 기간:</strong> Meta Threads Long-lived Access Token은 통상 60일 유효합니다. 만료 7일 전 [재연결]로 연장해야 합니다.</li>
+              <li><strong>플랫폼 관리자 접속 코드 (외부 공유 엄금):</strong></li>
+            </ul>
+            <div style="margin-top:10px;padding:10px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;display:flex;align-items:center;justify-content:space-between;">
+              <code style="font-size:11px;color:#b91c1c;" id="admin-access-code">74d7d8e90dc2c75276a04793c7ae17476de20ae849a99bd39ce912ee26ca13be</code>
+              <button type="button" class="btn-copy-template" style="position:static;" id="btn-copy-admin-code">코드 복사</button>
+            </div>
+            <p style="margin:6px 0 0;font-size:11.5px;color:#dc2626;">※ 본 코드는 운영자 전용입니다. 고객 전달본·공개 저장소·일반 배포 파일에 포함하지 않습니다.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 
   <script>
@@ -1532,6 +1904,309 @@
 
       renderActions();
     })();
+
+    // ==============================================================================
+    // 4. CLIENT CRM & OPERATIONS MANAGEMENT (INTERNAL ONLY)
+    // ==============================================================================
+    (function () {
+      const CRM_STORAGE_KEY = 'dna_client_crm_data';
+      const CRM_AUTH_KEY = 'dna_dashboard_crm_auth';
+
+      // 초기 기본 등록 데이터 (디에르치과, 양식당, (주)알파비전 등)
+      const defaultClients = [
+        {
+          no: 1,
+          customerName: "디에르치과",
+          industry: "치과의원 (수면임플란트/라미네이트)",
+          representative: "이정성 대표원장",
+          phone: "042-487-7599",
+          address: "대전 서구 둔산로 20, 대일빌딩 6층 / dier.kr",
+          instaAccount: "@dental_dier",
+          instaUrl: "https://www.instagram.com/dental_dier/",
+          threadsAccount: "@dental_dier",
+          threadsUrl: "https://www.threads.net/@dental_dier",
+          oauthStatus: "연동 진행 중",
+          monthlyFee: "100,000원",
+          paymentCycle: "월간 정기구독",
+          paymentDay: "매월 28일",
+          alertDay: "매월 25일 (D-3 알림)",
+          paymentStatus: "입금완료 (10/28)",
+          updatedAt: "2026-11-18",
+          platformUrl: "https://growth.104-207-80-198.sslip.io/",
+          accessCode: "9ac52f12c348e20df5a402c06d505b6a03dfaebc799be194e2340c6b93fcee7e",
+          memo: "1회차 10만원 입금 확인 완료 (운영: 10/28~11/27) / 차기 결제: 11월 28일"
+        },
+        {
+          no: 2,
+          customerName: "양식당",
+          industry: "육류, 고기요리 (양갈비 화로구이)",
+          representative: "대표 / 총괄셰프",
+          phone: "042-486-8883",
+          address: "대전 서구 둔산중로64번길 26 2층 202호 (위너펠리스)",
+          instaAccount: "@yangsikdang_daejeon",
+          instaUrl: "https://www.instagram.com/yangsikdang_daejeon/",
+          threadsAccount: "@yangsikdang_daejeon",
+          threadsUrl: "https://www.threads.net/@yangsikdang_daejeon",
+          oauthStatus: "1호 샘플 실발행 완료",
+          monthlyFee: "100,000원",
+          paymentCycle: "월간 정기구독",
+          paymentDay: "매월 18일",
+          alertDay: "매월 15일 (D-3 알림)",
+          paymentStatus: "입금완료 (11/17)",
+          updatedAt: "2026-11-19",
+          platformUrl: "https://growth.104-207-80-198.sslip.io/yangsikdang/",
+          accessCode: "065cc3a8f96636c52c9eff7f18d80feb0e6d23fb399efedc091f55d0f407c39d",
+          memo: "1일 5회 골든타임(11:30, 15:30, 17:30, 20:30, 22:30) 자동 순차 발행"
+        },
+        {
+          no: 3,
+          customerName: "(주)알파비전",
+          industry: "IT / 소프트웨어 및 비전 솔루션",
+          representative: "이민우 대표",
+          phone: "010-9876-5432",
+          address: "대전광역시 서구 둔산로 123, 알파빌딩 4층",
+          instaAccount: "-",
+          instaUrl: "-",
+          threadsAccount: "@alphavision_ai",
+          threadsUrl: "https://www.threads.net/",
+          oauthStatus: "전자계약 체결 완료",
+          monthlyFee: "190,000원 (셋업비 10만 별도)",
+          paymentCycle: "월간 정기구독",
+          paymentDay: "매월 22일",
+          alertDay: "매월 19일 (D-3 알림)",
+          paymentStatus: "입금대기 (계약체결완료)",
+          updatedAt: "2026-11-22",
+          platformUrl: "https://dnaai.co.kr/dna-ai-dashboard/contract/",
+          accessCode: "DNA-HASH-3E6D9BEB70199A38787342A2",
+          memo: "2026-11-22 공식 온라인 전자계약 체결본 실시간 연동 (총 319,000원)"
+        }
+      ];
+
+      // 데이터 로드 & 신규 계약 자동 머지
+      function getClientsList() {
+        let savedList = [];
+        try {
+          savedList = JSON.parse(localStorage.getItem(CRM_STORAGE_KEY) || '[]');
+        } catch (e) { savedList = []; }
+
+        // 기본 목록과 로컬스토리지 목록 머지 (중복 제거)
+        const map = new Map();
+        defaultClients.forEach(c => map.set(c.customerName, c));
+        savedList.forEach(c => {
+          if (map.has(c.customerName)) {
+            map.set(c.customerName, { ...map.get(c.customerName), ...c });
+          } else {
+            map.set(c.customerName, c);
+          }
+        });
+
+        const list = Array.from(map.values());
+        list.forEach((item, idx) => { item.no = idx + 1; });
+        return list;
+      }
+
+      function saveClientsList(list) {
+        try {
+          localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(list));
+        } catch (e) {}
+      }
+
+      // 보안 게이트 제어
+      const gateLocked = document.getElementById('crm-gate-locked');
+      const contentUnlocked = document.getElementById('crm-content-unlocked');
+      const passInput = document.getElementById('crm-pass-input');
+      const unlockBtn = document.getElementById('btn-unlock-crm');
+      const lockBtn = document.getElementById('btn-lock-crm');
+
+      function checkAuth() {
+        const isAuth = sessionStorage.getItem(CRM_AUTH_KEY) === 'true';
+        if (gateLocked) gateLocked.style.display = isAuth ? 'none' : 'block';
+        if (contentUnlocked) contentUnlocked.style.display = isAuth ? 'block' : 'none';
+        if (lockBtn) lockBtn.style.display = isAuth ? 'inline-flex' : 'none';
+        if (isAuth) renderTable();
+      }
+
+      if (unlockBtn) {
+        unlockBtn.addEventListener('click', () => {
+          const val = (passInput.value || '').trim();
+          if (val === '1121') {
+            sessionStorage.setItem(CRM_AUTH_KEY, 'true');
+            checkAuth();
+          } else {
+            alert('비밀번호가 일치하지 않습니다. (사내 보안: 1121)');
+            passInput.value = '';
+            passInput.focus();
+          }
+        });
+      }
+
+      if (passInput) {
+        passInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') unlockBtn.click();
+        });
+      }
+
+      if (lockBtn) {
+        lockBtn.addEventListener('click', () => {
+          sessionStorage.removeItem(CRM_AUTH_KEY);
+          checkAuth();
+        });
+      }
+
+      // 테이블 렌더링 & 검색
+      const tableBody = document.getElementById('crmTableBody');
+      const searchInput = document.getElementById('crm-search-input');
+      const statTotalClients = document.getElementById('stat-total-clients');
+      const statActiveSubs = document.getElementById('stat-active-subs');
+      const statTotalRevenue = document.getElementById('stat-total-revenue');
+      const statLastUpdate = document.getElementById('stat-last-update');
+
+      function renderTable(filterKeyword = '') {
+        const clients = getClientsList();
+        const kw = filterKeyword.toLowerCase().trim();
+
+        const filtered = clients.filter(c => {
+          if (!kw) return true;
+          return (
+            (c.customerName || '').toLowerCase().includes(kw) ||
+            (c.representative || '').toLowerCase().includes(kw) ||
+            (c.industry || '').toLowerCase().includes(kw) ||
+            (c.phone || '').includes(kw)
+          );
+        });
+
+        // 통계 계산
+        if (statTotalClients) statTotalClients.textContent = `${clients.length}개사`;
+        const activeCount = clients.filter(c => (c.paymentStatus || '').includes('완료') || (c.paymentStatus || '').includes('대기')).length;
+        if (statActiveSubs) statActiveSubs.textContent = `${activeCount}개사`;
+        
+        let revSum = 0;
+        clients.forEach(c => {
+          const num = parseInt((c.monthlyFee || '').replace(/[^0-9]/g, ''), 10) || 0;
+          revSum += num;
+        });
+        if (statTotalRevenue) statTotalRevenue.textContent = revSum.toLocaleString() + '원';
+        if (statLastUpdate) statLastUpdate.textContent = new Date().toISOString().slice(0, 10);
+
+        if (!tableBody) return;
+        tableBody.innerHTML = '';
+
+        if (filtered.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="17" style="text-align:center;padding:30px;color:var(--ink-subtle);">검색 조건에 맞는 고객사가 없습니다.</td></tr>';
+          return;
+        }
+
+        filtered.forEach(c => {
+          const tr = document.createElement('tr');
+          let stClass = 'pending';
+          if ((c.paymentStatus || '').includes('완료')) stClass = 'ok';
+          else if ((c.paymentStatus || '').includes('대기')) stClass = 'wait';
+
+          tr.innerHTML = `
+            <td><strong>${c.no}</strong></td>
+            <td><strong>${escapeHtml(c.customerName)}</strong></td>
+            <td>${escapeHtml(c.industry || '-')}</td>
+            <td>${escapeHtml(c.representative || '-')}</td>
+            <td>${escapeHtml(c.phone || '-')}</td>
+            <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(c.address || '')}">${escapeHtml(c.address || '-')}</td>
+            <td>${c.instaAccount && c.instaAccount !== '-' ? `<a href="${c.instaUrl}" target="_blank">${escapeHtml(c.instaAccount)}</a>` : '-'}</td>
+            <td>${c.threadsAccount && c.threadsAccount !== '-' ? `<a href="${c.threadsUrl}" target="_blank">${escapeHtml(c.threadsAccount)}</a>` : '-'}</td>
+            <td><span class="status-tag ${stClass}">${escapeHtml(c.oauthStatus || '연동대기')}</span></td>
+            <td><strong>${escapeHtml(c.monthlyFee || '100,000원')}</strong></td>
+            <td>${escapeHtml(c.paymentDay || '매월 28일')}</td>
+            <td>${escapeHtml(c.alertDay || '매월 25일')}</td>
+            <td><span class="status-tag ${stClass}">${escapeHtml(c.paymentStatus || '청구대기')}</span></td>
+            <td>${escapeHtml(c.updatedAt || '-')}</td>
+            <td>${c.platformUrl ? `<a href="${c.platformUrl}" target="_blank" style="font-size:11px;">접속하기 ↗</a>` : '-'}</td>
+            <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(c.memo || '')}">${escapeHtml(c.memo || '-')}</td>
+            <td><a href="contract/" target="_blank" style="font-weight:600;color:var(--accent);">계약서 ↗</a></td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      }
+
+      function escapeHtml(str) {
+        return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          renderTable(e.target.value);
+        });
+      }
+
+      // 새로고침 버튼
+      const refreshBtn = document.getElementById('btn-refresh-crm');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+          renderTable(searchInput ? searchInput.value : '');
+          alert('고객사 관리 대장이 최신 상태로 새로고침되었습니다.');
+        });
+      }
+
+      // CSV 내보내기 (엑셀 다운로드)
+      const exportBtn = document.getElementById('btn-export-crm-csv');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          const clients = getClientsList();
+          const headers = ["No","고객사명","업종/진료과목","대표자","연락처","사업장주소","인스타그램","쓰레드","OAuth상태","월이용료","정기결제일","D-3알림일","수금상태","최근갱신일","플랫폼접속주소","특이사항"];
+          
+          let csv = "\uFEFF" + headers.join(",") + "\n";
+          clients.forEach(c => {
+            const row = [
+              c.no,
+              `"${(c.customerName || '').replace(/"/g, '""')}"`,
+              `"${(c.industry || '').replace(/"/g, '""')}"`,
+              `"${(c.representative || '').replace(/"/g, '""')}"`,
+              `"${(c.phone || '').replace(/"/g, '""')}"`,
+              `"${(c.address || '').replace(/"/g, '""')}"`,
+              `"${(c.instaAccount || '').replace(/"/g, '""')}"`,
+              `"${(c.threadsAccount || '').replace(/"/g, '""')}"`,
+              `"${(c.oauthStatus || '').replace(/"/g, '""')}"`,
+              `"${(c.monthlyFee || '').replace(/"/g, '""')}"`,
+              `"${(c.paymentDay || '').replace(/"/g, '""')}"`,
+              `"${(c.alertDay || '').replace(/"/g, '""')}"`,
+              `"${(c.paymentStatus || '').replace(/"/g, '""')}"`,
+              `"${(c.updatedAt || '').replace(/"/g, '""')}"`,
+              `"${(c.platformUrl || '').replace(/"/g, '""')}"`,
+              `"${(c.memo || '').replace(/"/g, '""')}"`
+            ];
+            csv += row.join(",") + "\n";
+          });
+
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `DNA_AI_고객사_통합관리대장_${new Date().toISOString().slice(0, 10)}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      // 문구 복사 버튼들
+      const copyD3Btn = document.getElementById('btn-copy-d3-msg');
+      if (copyD3Btn) {
+        copyD3Btn.addEventListener('click', () => {
+          const txt = document.getElementById('d3-template-text')?.innerText || '';
+          navigator.clipboard.writeText(txt).then(() => alert('D-3 입금 독려 알림 문구가 클립보드에 복사되었습니다!'));
+        });
+      }
+
+      const copyAdminBtn = document.getElementById('btn-copy-admin-code');
+      if (copyAdminBtn) {
+        copyAdminBtn.addEventListener('click', () => {
+          const code = document.getElementById('admin-access-code')?.innerText || '';
+          navigator.clipboard.writeText(code).then(() => alert('플랫폼 관리자 접속 코드가 복사되었습니다! (외부 공유 금지)'));
+        });
+      }
+
+      // 초기 인증 검사
+      checkAuth();
+    })();
+
   </script>
 </body>
 </html>
