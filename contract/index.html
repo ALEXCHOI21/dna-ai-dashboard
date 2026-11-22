@@ -135,19 +135,31 @@
               <div class="card-badge sub">월 정기구독 (최소 6개월)</div>
               <h2 class="card-title">SNS-Threads 콘텐츠 자동화</h2>
 
-              <!-- 유연한 현장 금액 수정 컨트롤 (직접 수정/네고) -->
+              <!-- 유연한 현장 금액 수정 컨트롤 (직접 수정/네고/인상) -->
               <div class="custom-price-control" onclick="event.stopPropagation();">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <span style="font-size:11.5px;font-weight:700;color:#1d4ed8;">✏️ 현장 영업 금액 자유 수정 (네고/인상)</span>
+                  <span style="font-size:10.5px;color:#64748b;">직접 타이핑 가능</span>
+                </div>
                 <div class="price-input-row">
                   <label for="inputThreadsPrice">월 정기 이용료:</label>
-                  <input type="number" id="inputThreadsPrice" name="customPriceThreads" value="190000" step="10000" class="input-inline-price">
+                  <div class="price-input-wrapper">
+                    <input type="number" id="inputThreadsPrice" name="customPriceThreads" value="190000" step="10000" class="input-inline-price">
+                    <span class="price-unit-tag">원</span>
+                  </div>
                 </div>
                 <div class="price-input-row">
                   <label for="inputThreadsSetup">초기 셋팅비:</label>
-                  <input type="number" id="inputThreadsSetup" name="customSetupThreads" value="100000" step="10000" class="input-inline-price">
+                  <div class="price-input-wrapper">
+                    <input type="number" id="inputThreadsSetup" name="customSetupThreads" value="100000" step="10000" class="input-inline-price">
+                    <span class="price-unit-tag">원</span>
+                  </div>
                 </div>
                 <div class="quick-preset-row">
                   <button type="button" class="btn-preset" id="btnPresetStandard">정규 19만 (셋팅 10만)</button>
-                  <button type="button" class="btn-preset" id="btnPresetEarlyBird">특별할인 10만 (셋팅 0)</button>
+                  <button type="button" class="btn-preset nego" id="btnPresetNego15">네고 15만 (셋팅 0)</button>
+                  <button type="button" class="btn-preset nego" id="btnPresetEarlyBird">특가 10만 (셋팅 0)</button>
+                  <button type="button" class="btn-preset raise" id="btnPresetRaise25">인상 25만 (셋팅 10만)</button>
                 </div>
               </div>
 
@@ -174,11 +186,24 @@
               <div class="card-badge one" style="background:#475569;">1회성 단건 (약정 없음)</div>
               <h2 class="card-title">AI 상권분석 및 마케팅 컨설팅</h2>
 
-              <!-- 유연한 단건 금액 수정 컨트롤 -->
+              <!-- 유연한 단건 금액 수정 컨트롤 (직접 수정/네고/인상) -->
               <div class="custom-price-control" onclick="event.stopPropagation();">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <span style="font-size:11.5px;font-weight:700;color:#1d4ed8;">✏️ 컨설팅 견적 자유 수정 (네고/인상)</span>
+                  <span style="font-size:10.5px;color:#64748b;">직접 타이핑 가능</span>
+                </div>
                 <div class="price-input-row">
                   <label for="inputConsultingPrice">컨설팅 공급가액:</label>
-                  <input type="number" id="inputConsultingPrice" name="customPriceConsulting" value="490000" step="10000" class="input-inline-price">
+                  <div class="price-input-wrapper">
+                    <input type="number" id="inputConsultingPrice" name="customPriceConsulting" value="490000" step="10000" class="input-inline-price">
+                    <span class="price-unit-tag">원</span>
+                  </div>
+                </div>
+                <div class="quick-preset-row">
+                  <button type="button" class="btn-preset" id="btnPresetConsultStd">정규 49만</button>
+                  <button type="button" class="btn-preset nego" id="btnPresetConsult39">네고 39만</button>
+                  <button type="button" class="btn-preset nego" id="btnPresetConsult29">특가 29만</button>
+                  <button type="button" class="btn-preset raise" id="btnPresetConsult59">인상 59만</button>
                 </div>
                 <div class="price-notice-text">※ 1회성 심층 진단 리포트 (약정 기간 없음 / 셋팅 요청 시 별도)</div>
               </div>

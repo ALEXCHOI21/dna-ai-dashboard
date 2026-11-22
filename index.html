@@ -930,6 +930,50 @@
     }
     .btn-copy-template:hover { background: #f1f5f9; border-color: #94a3b8; }
 
+    /* CRM Table Row Selection & Guide Dynamic Link Styles */
+    .crm-table tbody tr {
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    .crm-table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+    .crm-table tbody tr.selected-row {
+      background-color: #eff6ff !important;
+      outline: 2px solid #3b82f6;
+      outline-offset: -2px;
+    }
+    .crm-table tbody tr.selected-row td:first-child {
+      border-left: 4px solid #2563eb;
+    }
+    .crm-selected-client-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 12px 18px;
+      margin: 18px 0 14px;
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1.5px solid #bfdbfe;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+    .crm-selected-client-bar .title-col {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .crm-selected-client-bar .client-name-tag {
+      font-size: 15px;
+      font-weight: 800;
+      color: #1e3a8a;
+      background: #ffffff;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      border: 1px solid #93c5fd;
+    }
+
   
     /* -------------------------------------------------------------------------- */
     /* CRM & Finance Dashboard Styles (6-Month Commitment & Operating Profit)      */
@@ -1906,14 +1950,13 @@
             <div class="f-sub" id="stat-six-month-profit-sub">고정비 확정 후 자동 산출</div>
           </div>
 
-          <!-- 5:5 파트너 배분 (정성윤 대표 / 최두리 수석) -->
+          <!-- 50% 수익 항목 -->
           <div class="finance-card">
             <div class="f-label">
-              <span>정성윤 대표 순이익 (50%)</span>
-              <span style="font-size:10px;color:#059669;font-weight:700;">투어티플레이스</span>
+              <span>50% 수익</span>
             </div>
             <div class="f-val" id="stat-partner-profit" style="color:#059669;">산정 대기</div>
-            <div class="f-sub" id="stat-split-detail-sub">영업이익 확정 후 5:5 배분</div>
+            <div class="f-sub" id="stat-split-detail-sub">영업이익 확정 후 50% 산출</div>
           </div>
         </div>
 
@@ -2036,15 +2079,31 @@
           </div>
         </div>
 
+        <!-- 선택된 영업장 실시간 연동 안내 바 -->
+        <div class="crm-selected-client-bar" id="crm-selected-client-bar">
+          <div class="title-col">
+            <span style="font-size:16px;">🏢</span>
+            <span style="font-size:13.5px;color:#1e3a8a;font-weight:700;">선택된 사업장:</span>
+            <span class="client-name-tag" id="selected-client-name-badge">디에르치과</span>
+            <span style="font-size:12px;color:#64748b;">(위 대장에서 사업장 행을 클릭하면 아래 1~4번 항목이 자동 연동됩니다)</span>
+          </div>
+          <div id="selected-client-quick-info" style="font-size:12px;color:#1e40af;font-weight:600;">
+            <!-- JS 동적 갱신 -->
+          </div>
+        </div>
+
         <!-- 운영 & 보안 가이드 섹션 -->
-        <h3 style="margin:24px 0 12px;font-size:16px;color:var(--navy);display:flex;align-items:center;gap:8px;">
+        <h3 style="margin:22px 0 12px;font-size:16px;color:var(--navy);display:flex;align-items:center;gap:8px;">
           <span>📘</span> ChoiGPT Growth — SNS 자동화 고객 계정 통합 관리 및 비즈니스 가이드
         </h3>
 
         <div class="crm-guide-grid">
-          <!-- 가이드 1: 서비스 공식 가격 정책 및 유연 책정 수칙 -->
-          <div class="crm-guide-card">
-            <h4><span>💰</span> 1. 서비스 공식 가격 정책 및 현장 유연 책정 수칙</h4>
+          <!-- 가이드 1: 서비스 공식 가격 정책 및 현장 유연 책정 수칙 -->
+          <div class="crm-guide-card" id="guide-card-1">
+            <h4 id="guide-1-title"><span>💰</span> 1. 서비스 공식 가격 정책 및 현장 유연 책정 수칙</h4>
+            <div id="guide-1-client-box" style="margin-bottom:12px;padding:10px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;font-size:12.5px;line-height:1.5;">
+              <!-- 선택된 사업장 실시간 요금 요약 (JS 동적 갱신) -->
+            </div>
             <div style="margin-bottom:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:4px solid #2563eb;font-size:12.5px;line-height:1.5;">
               <strong style="color:var(--navy);">[공식 2대 서비스 라인업]</strong><br>
               • <strong>① 스탠다드 AI 자동화 솔루션:</strong> <strong>월 190,000원</strong> (초기 셋팅비 100,000원 별도 / VAT 별도) ➔ 6개월 약정: <strong>1,140,000원</strong><br>
@@ -2059,9 +2118,9 @@
           </div>
 
           <!-- 가이드 2: 입금 독려 알림 메시지 표준 템플릿 -->
-          <div class="crm-guide-card">
-            <h4><span>📱</span> 2. 고객 입금 독려 알림 템플릿 (D-3, 매월 25일용)</h4>
-            <p>담당자에게 발송할 표준 알림 문구입니다. 버튼을 누르면 클립보드에 복사됩니다.</p>
+          <div class="crm-guide-card" id="guide-card-2">
+            <h4 id="guide-2-title"><span>📱</span> 2. 고객 입금 독려 알림 템플릿 (D-3)</h4>
+            <p id="guide-2-desc">선택된 사업장 담당자에게 발송할 맞춤 알림 문구입니다. 버튼을 누르면 클립보드에 복사됩니다.</p>
             <div class="template-box">
               <button type="button" class="btn-copy-template" id="btn-copy-d3-msg">문구 복사</button>
               <div id="d3-template-text">[ChoiGPT Growth] 안녕하세요, 디에르치과 이정성 원장님/담당자님.
@@ -2074,8 +2133,11 @@
           </div>
 
           <!-- 가이드 3: Meta 공식 OAuth 연동 & 2FA 원칙 -->
-          <div class="crm-guide-card">
-            <h4><span>🔒</span> 3. Meta 공식 OAuth 2.0 연동 & 2FA 보안 원칙</h4>
+          <div class="crm-guide-card" id="guide-card-3">
+            <h4 id="guide-3-title"><span>🔒</span> 3. Meta 공식 OAuth 2.0 연동 & 2FA 보안 원칙</h4>
+            <div id="guide-3-client-box" style="margin-bottom:12px;padding:10px 12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;font-size:12.5px;line-height:1.5;">
+              <!-- 선택된 사업장 공식 SNS 및 연동 상태 (JS 동적 갱신) -->
+            </div>
             <ul>
               <li><strong>비밀번호 불보존 원칙:</strong> 우리 플랫폼은 고객의 비밀번호를 서버 DB나 텍스트 파일에 절대 저장하지 않습니다.</li>
               <li><strong>즉시 삭제:</strong> [Threads 연결] OAuth 공식 인증을 대행하는 즉시 메모리 및 대화창에서 안전하게 삭제합니다.</li>
@@ -2085,15 +2147,18 @@
           </div>
 
           <!-- 가이드 4: 토큰 만료 주기 & 관리자 접속 코드 -->
-          <div class="crm-guide-card">
-            <h4><span>⚙️</span> 4. 토큰 만료 주기 & 플랫폼 관리자 접속 코드</h4>
+          <div class="crm-guide-card" id="guide-card-4">
+            <h4 id="guide-4-title"><span>⚙️</span> 4. 플랫폼 관리자 접속 코드 & 토큰 만료 주기</h4>
+            <div id="guide-4-client-link" style="margin-bottom:10px;">
+              <!-- 선택된 사업장 전용 플랫폼 바로가기 (JS 동적 갱신) -->
+            </div>
             <ul>
               <li><strong>토큰 유효 기간:</strong> Meta Threads Long-lived Access Token은 통상 60일 유효합니다. 만료 7일 전 [재연결]로 연장해야 합니다.</li>
-              <li><strong>플랫폼 관리자 접속 코드 (외부 공유 엄금):</strong></li>
+              <li><strong id="guide-4-code-label">선택 사업장 전용 관리자 접속 코드 (외부 공유 엄금):</strong></li>
             </ul>
-            <div style="margin-top:10px;padding:10px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;display:flex;align-items:center;justify-content:space-between;">
-              <code style="font-size:11px;color:#b91c1c;" id="admin-access-code">74d7d8e90dc2c75276a04793c7ae17476de20ae849a99bd39ce912ee26ca13be</code>
-              <button type="button" class="btn-copy-template" style="position:static;" id="btn-copy-admin-code">코드 복사</button>
+            <div style="margin-top:10px;padding:10px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <code style="font-size:11px;color:#b91c1c;word-break:break-all;" id="admin-access-code">74d7d8e90dc2c75276a04793c7ae17476de20ae849a99bd39ce912ee26ca13be</code>
+              <button type="button" class="btn-copy-template" style="position:static;white-space:nowrap;" id="btn-copy-admin-code">코드 복사</button>
             </div>
             <p style="margin:6px 0 0;font-size:11.5px;color:#dc2626;">※ 본 코드는 운영자 전용입니다. 고객 전달본·공개 저장소·일반 배포 파일에 포함하지 않습니다.</p>
           </div>
@@ -2558,7 +2623,7 @@
           if (statProfitMargin) statProfitMargin.textContent = `영업이익률: ${marginPct}%`;
           if (statSixMonthProfitSub) statSixMonthProfitSub.textContent = `6개월 영업이익: ${sixMonthProfit.toLocaleString()}원`;
           if (statPartnerProfit) statPartnerProfit.textContent = partnerMonthly.toLocaleString() + '원';
-          if (statSplitDetailSub) statSplitDetailSub.textContent = `월 ${partnerMonthly.toLocaleString()}원 / 6개월 ${partnerSixMonth.toLocaleString()}원 (5:5 배분)`;
+          if (statSplitDetailSub) statSplitDetailSub.textContent = `월 ${partnerMonthly.toLocaleString()}원 / 6개월 ${partnerSixMonth.toLocaleString()}원 (50% 배분)`;
         } else {
           // 공란 (산정 예정) 상태
           if (statFixedCost) statFixedCost.textContent = '- 원';
@@ -2567,7 +2632,7 @@
           if (statProfitMargin) statProfitMargin.textContent = '이익률: - %';
           if (statSixMonthProfitSub) statSixMonthProfitSub.textContent = '고정비 확정 후 자동 산출';
           if (statPartnerProfit) statPartnerProfit.textContent = '산정 대기';
-          if (statSplitDetailSub) statSplitDetailSub.textContent = '영업이익 확정 후 5:5 배분';
+          if (statSplitDetailSub) statSplitDetailSub.textContent = '영업이익 확정 후 50% 산출';
         }
 
         if (statLastUpdate) statLastUpdate.textContent = new Date().toISOString().slice(0, 10);
@@ -2583,6 +2648,19 @@
 
         filtered.forEach(c => {
           const tr = document.createElement('tr');
+          tr.setAttribute('data-client-name', c.customerName);
+          if (c.customerName === selectedClientName) {
+            tr.classList.add('selected-row');
+          }
+
+          // 영업장 클릭 시 해당 사업장으로 하단 1~4 항목 연동
+          tr.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) {
+              return;
+            }
+            selectClient(c.customerName);
+          });
+
           let stClass = 'pending';
           if ((c.paymentStatus || '').includes('완료')) stClass = 'ok';
           else if ((c.paymentStatus || '').includes('대기') || (c.paymentStatus || '').includes('진행')) stClass = 'wait';
@@ -2637,6 +2715,153 @@
           `;
           tableBody.appendChild(tr);
         });
+
+        // 렌더링 완료 후 현재 선택된 고객사로 가이드 1~4 즉시 동기화
+        updateGuidesForClient(selectedClientName);
+      }
+
+      // 선택된 영업장 상태 관리 및 가이드 연동 함수들
+      let selectedClientName = "디에르치과";
+
+      function selectClient(customerName) {
+        if (!customerName) return;
+        selectedClientName = customerName;
+
+        // 테이블 행 하이라이트 토글
+        if (tableBody) {
+          const rows = tableBody.querySelectorAll('tr[data-client-name]');
+          rows.forEach(r => {
+            if (r.getAttribute('data-client-name') === customerName) {
+              r.classList.add('selected-row');
+            } else {
+              r.classList.remove('selected-row');
+            }
+          });
+        }
+
+        // 하단 가이드 1, 2, 3, 4 동적 연동
+        updateGuidesForClient(customerName);
+      }
+
+      function updateGuidesForClient(customerName) {
+        const clients = getClientsList();
+        let client = clients.find(c => c.customerName === customerName);
+        if (!client && clients.length > 0) {
+          client = clients[0];
+          selectedClientName = client.customerName;
+        }
+        if (!client) return;
+
+        let fee = client.feeNumber;
+        if (!fee) {
+          const m = (client.monthlyFee || '').match(/^([0-9,]+)/);
+          fee = m ? parseInt(m[1].replace(/,/g, ''), 10) : 100000;
+        }
+        const isCash = (client.paymentMethod || '').includes('현금');
+        const cycle = calculateSixMonthCycle(client.startDate || client.createdAt);
+
+        // 상단 안내 배너 갱신
+        const nameBadge = document.getElementById('selected-client-name-badge');
+        const quickInfo = document.getElementById('selected-client-quick-info');
+        if (nameBadge) nameBadge.textContent = client.customerName;
+        if (quickInfo) {
+          quickInfo.innerHTML = `
+            <span>업종: <strong>${escapeHtml(client.industry || '-')}</strong></span> &nbsp;|&nbsp; 
+            <span>대표자: <strong>${escapeHtml(client.representative || '-')}</strong></span> &nbsp;|&nbsp; 
+            <span>연락처: <strong>${escapeHtml(client.phone || '-')}</strong></span> &nbsp;|&nbsp; 
+            <span>수금: <strong style="color:${isCash ? '#d97706' : '#059669'};">${escapeHtml(client.paymentStatus || '청구대기')}</strong></span>
+          `;
+        }
+
+        // 가이드 1: 선택 고객사 요금 정책 박스
+        const g1Box = document.getElementById('guide-1-client-box');
+        if (g1Box) {
+          g1Box.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+              <strong style="color:var(--navy);font-size:13px;">📍 [${escapeHtml(client.customerName)}] 현재 적용 요금 및 약정 현황</strong>
+              <button type="button" class="btn-fee-edit" onclick="window.openPriceModal('${escapeHtml(client.customerName)}')">금액 수정 ✏️</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:6px;font-size:12px;">
+              <div>• 월 이용료: <strong style="color:#2563eb;">${fee.toLocaleString()}원</strong> (VAT별도)</div>
+              <div>• 6개월 약정총액: <strong>${(fee * 6).toLocaleString()}원</strong></div>
+              <div>• 약정 기간: <strong>${cycle.start} ~ ${cycle.end}</strong></div>
+              <div>• 잔여일: <strong>${cycle.badgeText}</strong></div>
+              <div>• 결제 주기: <strong>${escapeHtml(client.paymentDay || '매월 28일')}</strong></div>
+              <div>• 요금 특이사항: <span style="color:#dc2626;font-weight:700;">${escapeHtml(client.discountReason || '정규 요금 책정')}</span></div>
+            </div>
+          `;
+        }
+
+        // 가이드 2: 입금 독려 알림 템플릿 D-3
+        const g2Title = document.getElementById('guide-2-title');
+        const d3Text = document.getElementById('d3-template-text');
+        if (g2Title) {
+          g2Title.innerHTML = `<span>📱</span> 2. [${escapeHtml(client.customerName)}] 입금 독려 알림 템플릿 (D-3, ${escapeHtml(client.alertDay || '결제 3일 전')})`;
+        }
+        if (d3Text) {
+          const vatFee = Math.round(fee * 1.1);
+          const feeDesc = isCash 
+            ? `${fee.toLocaleString()}원 (현금 결제 확인 완료)`
+            : `${fee.toLocaleString()}원 (VAT 포함 ${vatFee.toLocaleString()}원 / ${escapeHtml(client.paymentMethod || '전자세금계산서 발행')})`;
+          
+          const repText = client.representative ? `${escapeHtml(client.representative)}님` : '담당자님';
+
+          d3Text.textContent = `[ChoiGPT Growth] 안녕하세요, ${client.customerName} ${repText}.
+${client.customerName}의 Threads SNS 자동 홍보 익월 서비스 유지를 위한 정기 결제일(${client.paymentDay || '매월 28일'}) 3일 전 안내드립니다.
+• 서비스: Threads 공식 자동 발행 및 키워드 마케팅 플랫폼
+• 월 구독료: ${feeDesc}
+• 입금 계좌: 카카오뱅크 3333-38-9917516 (예금주: 정성윤 투어티플레이스)
+입금 확인 후 익월 자동 발행 큐가 지속 유지됩니다. 성원해 주셔서 감사드립니다.`;
+        }
+
+        // 가이드 3: Meta 공식 OAuth 2.0 연동 & 2FA 보안 원칙
+        const g3Title = document.getElementById('guide-3-title');
+        const g3Box = document.getElementById('guide-3-client-box');
+        if (g3Title) {
+          g3Title.innerHTML = `<span>🔒</span> 3. [${escapeHtml(client.customerName)}] Meta 공식 OAuth 2.0 연동 & 2FA 보안 원칙`;
+        }
+        if (g3Box) {
+          const insta = client.instaAccount && client.instaAccount !== '-' ? `<a href="${client.instaUrl}" target="_blank" style="font-weight:700;color:#2563eb;">${escapeHtml(client.instaAccount)}</a>` : '-';
+          const threads = client.threadsAccount && client.threadsAccount !== '-' ? `<a href="${client.threadsUrl}" target="_blank" style="font-weight:700;color:#2563eb;">${escapeHtml(client.threadsAccount)}</a>` : '-';
+          g3Box.innerHTML = `
+            <div style="font-size:12.5px;color:var(--navy);font-weight:700;margin-bottom:4px;">
+              🔗 [${escapeHtml(client.customerName)}] 공식 SNS 채널 및 연동 상태
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:12px;">
+              <span>• 인스타그램: ${insta}</span>
+              <span>• 쓰레드: ${threads}</span>
+              <span>• OAuth 상태: <strong style="color:#059669;">${escapeHtml(client.oauthStatus || '연동대기')}</strong></span>
+            </div>
+          `;
+        }
+
+        // 가이드 4: 플랫폼 관리자 접속 코드 & 토큰 만료 주기
+        const g4Title = document.getElementById('guide-4-title');
+        const g4CodeLabel = document.getElementById('guide-4-code-label');
+        const adminAccessCode = document.getElementById('admin-access-code');
+        const g4ClientLink = document.getElementById('guide-4-client-link');
+
+        if (g4Title) {
+          g4Title.innerHTML = `<span>⚙️</span> 4. [${escapeHtml(client.customerName)}] 플랫폼 관리자 접속 코드 & 토큰 만료 주기`;
+        }
+        if (g4CodeLabel) {
+          g4CodeLabel.textContent = `[${client.customerName}] 전용 관리자 접속 코드 (외부 공유 엄금):`;
+        }
+        if (adminAccessCode) {
+          adminAccessCode.textContent = client.accessCode || '74d7d8e90dc2c75276a04793c7ae17476de20ae849a99bd39ce912ee26ca13be';
+        }
+        if (g4ClientLink) {
+          if (client.platformUrl) {
+            g4ClientLink.innerHTML = `
+              <div style="padding:8px 10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:12px;color:#1e40af;">🌐 [${escapeHtml(client.customerName)}] 전용 자동화 플랫폼</span>
+                <a href="${client.platformUrl}" target="_blank" style="font-size:12px;font-weight:700;color:#1d4ed8;text-decoration:none;">플랫폼 바로 접속 ↗</a>
+              </div>
+            `;
+          } else {
+            g4ClientLink.innerHTML = '';
+          }
+        }
       }
 
       function escapeHtml(str) {
@@ -2713,7 +2938,7 @@
       if (copyD3Btn) {
         copyD3Btn.addEventListener('click', () => {
           const txt = document.getElementById('d3-template-text')?.innerText || '';
-          navigator.clipboard.writeText(txt).then(() => alert('D-3 입금 독려 알림 문구가 클립보드에 복사되었습니다!'));
+          navigator.clipboard.writeText(txt).then(() => alert(`[${selectedClientName}] D-3 입금 독려 알림 문구가 클립보드에 복사되었습니다!`));
         });
       }
 
@@ -2721,7 +2946,7 @@
       if (copyAdminBtn) {
         copyAdminBtn.addEventListener('click', () => {
           const code = document.getElementById('admin-access-code')?.innerText || '';
-          navigator.clipboard.writeText(code).then(() => alert('플랫폼 관리자 접속 코드가 복사되었습니다! (외부 공유 금지)'));
+          navigator.clipboard.writeText(code).then(() => alert(`[${selectedClientName}] 전용 플랫폼 관리자 접속 코드가 복사되었습니다! (외부 공유 금지)`));
         });
       }
 
