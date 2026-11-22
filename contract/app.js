@@ -196,24 +196,53 @@ function calculatePricing() {
   let recurringSubtotal = 0;
   let oneTimeSubtotal = 0;
 
+  // 동적 입력 필드 값 참조 (현장 네고/직접 수정 금액)
+  const threadsPriceInput = document.querySelector('#inputThreadsPrice');
+  const threadsSetupInput = document.querySelector('#inputThreadsSetup');
+  const consultingPriceInput = document.querySelector('#inputConsultingPrice');
+
+  const threadsPrice = threadsPriceInput ? (parseInt(threadsPriceInput.value, 10) || 0) : 190000;
+  const threadsSetup = threadsSetupInput ? (parseInt(threadsSetupInput.value, 10) || 0) : 100000;
+  const consultingPrice = consultingPriceInput ? (parseInt(consultingPriceInput.value, 10) || 0) : 490000;
+
+  // 카드 내 텍스트 실시간 갱신
+  const threadsFirstMonthEl = document.querySelector('#threadsFirstMonthText');
+  const threadsMonthlyVatEl = document.querySelector('#threadsMonthlyVatText');
+  const threadsSixMonthTotalEl = document.querySelector('#threadsSixMonthTotalText');
+  const consultingTotalEl = document.querySelector('#consultingTotalText');
+
+  if (threadsFirstMonthEl) {
+    const firstTotal = Math.round((threadsPrice + threadsSetup) * 1.1);
+    threadsFirstMonthEl.textContent = money(firstTotal);
+  }
+  if (threadsMonthlyVatEl) {
+    const monthVat = Math.round(threadsPrice * 1.1);
+    threadsMonthlyVatEl.textContent = money(monthVat);
+  }
+  if (threadsSixMonthTotalEl) {
+    const sixTotal = Math.round((threadsPrice * 6 + threadsSetup) * 1.1);
+    threadsSixMonthTotalEl.textContent = money(sixTotal);
+  }
+  if (consultingTotalEl) {
+    const conTotal = Math.round(consultingPrice * 1.1);
+    consultingTotalEl.textContent = money(conTotal);
+  }
+
   checked.forEach(p => {
     if (p.value === 'threads') {
-      const rec = Number(p.dataset.price || 190000);
-      const setup = Number(p.dataset.setup || 100000);
-      recurringSubtotal += rec;
-      oneTimeSubtotal += setup;
-      subtotal += (rec + setup);
+      recurringSubtotal += threadsPrice;
+      oneTimeSubtotal += threadsSetup;
+      subtotal += (threadsPrice + threadsSetup);
     } else {
-      const price = Number(p.dataset.price || 490000);
-      oneTimeSubtotal += price;
-      subtotal += price;
+      oneTimeSubtotal += consultingPrice;
+      subtotal += consultingPrice;
     }
   });
 
   const vat = Math.round(subtotal * 0.1);
   const total = subtotal + vat;
 
-  return { subtotal, vat, total, recurringSubtotal, oneTimeSubtotal, checked };
+  return { subtotal, vat, total, recurringSubtotal, oneTimeSubtotal, checked, threadsPrice, threadsSetup, consultingPrice };
 }
 
 function updateLivePricing() {
@@ -230,6 +259,39 @@ function updateLivePricing() {
 form.querySelectorAll('input[name="products"]').forEach(input => {
   input.addEventListener('change', updateLivePricing);
 });
+
+// 동적 금액 입력창 input 이벤트 연결
+['#inputThreadsPrice', '#inputThreadsSetup', '#inputConsultingPrice'].forEach(sel => {
+  const el = document.querySelector(sel);
+  if (el) {
+    el.addEventListener('input', updateLivePricing);
+  }
+});
+
+// 프리셋 버튼
+const btnPresetStd = document.querySelector('#btnPresetStandard');
+const btnPresetEarly = document.querySelector('#btnPresetEarlyBird');
+if (btnPresetStd) {
+  btnPresetStd.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const p = document.querySelector('#inputThreadsPrice');
+    const s = document.querySelector('#inputThreadsSetup');
+    if (p) p.value = 190000;
+    if (s) s.value = 100000;
+    updateLivePricing();
+  });
+}
+if (btnPresetEarly) {
+  btnPresetEarly.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const p = document.querySelector('#inputThreadsPrice');
+    const s = document.querySelector('#inputThreadsSetup');
+    if (p) p.value = 100000;
+    if (s) s.value = 0;
+    updateLivePricing();
+  });
+}
+
 updateLivePricing();
 
 // 4. 오류 처리 및 단계 유효성 검사
@@ -440,6 +502,19 @@ async function buildSummary() {
   const rawPayload = `${customerName}|${representative}|${email}|${subtotal}|${total}|${signedAt}|${sigDataUrl.slice(-100)}`;
   const hash = await generateContractHash(rawPayload);
 
+  const pricing = calculatePricing();
+  const hasThreads = checked.some(p => p.value === 'threads');
+  const hasConsulting = checked.some(p => p.value === 'consulting');
+  
+  let commitmentDesc = '';
+  if (hasThreads && hasConsulting) {
+    commitmentDesc = `<strong>스탠다드 콘텐츠 자동화: 기본 6개월 약정</strong> (월 ${money(pricing.threadsPrice)} × 6개월 = ${money(pricing.threadsPrice * 6)}) / <strong>AI 상권분석: 1회성 단건 (약정 없음)</strong>`;
+  } else if (hasThreads) {
+    commitmentDesc = `<strong>기본 6개월 약정</strong> (최소 6개월 의무 운영 / 월 ${money(pricing.threadsPrice)} × 6개월 = 6개월 공급가액 ${money(pricing.threadsPrice * 6)})`;
+  } else {
+    commitmentDesc = `<strong>1회성 단건 컨설팅 (약정 없음)</strong>`;
+  }
+
   // STEP 5 계약서 요약 DL
   summary.innerHTML = `
     <dl>
@@ -451,8 +526,10 @@ async function buildSummary() {
       <dd>${escapeHtml(bizNumber)}</dd>
       <dt>선택 솔루션</dt>
       <dd>${productNames}</dd>
+      <dt>약정 기간 및 조건</dt>
+      <dd style="color:var(--navy);font-weight:700;">${commitmentDesc}</dd>
       <dt>동의 이력</dt>
-      <dd>핵심 약관 승인 ✓ · 개인정보 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</dd>
+      <dd>핵심 약관 승인 ✓ (제2조 6개월 약정 확인) · 개인정보 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</dd>
       <dt>체결 일시</dt>
       <dd>${signedAt} (KST, 공식 타임스탬프)</dd>
       <dt>계약자 전자서명</dt>

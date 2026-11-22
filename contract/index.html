@@ -127,21 +127,39 @@
           </div>
 
           <div class="product-grid">
-            <!-- 상품 1: Threads 자동화 -->
+            <!-- 상품 1: Threads 자동화 (기본 6개월 약정 구독) -->
             <label class="product-card" id="cardThreads">
-              <input type="checkbox" name="products" value="threads" data-label="SNS-Threads 콘텐츠 자동화" data-price="190000" data-setup="100000" checked>
+              <input type="checkbox" name="products" value="threads" data-label="SNS-Threads 콘텐츠 자동화" checked>
               <div class="card-check"><span class="check-icon">✓</span></div>
-              <div class="card-badge sub">월 구독형 솔루션</div>
+              <div class="badge-commitment">★ 기본 6개월 약정 솔루션</div>
+              <div class="card-badge sub">월 정기구독 (최소 6개월)</div>
               <h2 class="card-title">SNS-Threads 콘텐츠 자동화</h2>
-              <div class="card-price-wrap">
-                <div class="card-price">월 190,000원 <span class="vat-tag">VAT 별도</span></div>
-                <div class="card-setup">최초 설정비: 100,000원 (VAT 별도)</div>
+
+              <!-- 유연한 현장 금액 수정 컨트롤 (직접 수정/네고) -->
+              <div class="custom-price-control" onclick="event.stopPropagation();">
+                <div class="price-input-row">
+                  <label for="inputThreadsPrice">월 정기 이용료:</label>
+                  <input type="number" id="inputThreadsPrice" name="customPriceThreads" value="190000" step="10000" class="input-inline-price">
+                </div>
+                <div class="price-input-row">
+                  <label for="inputThreadsSetup">초기 셋팅비:</label>
+                  <input type="number" id="inputThreadsSetup" name="customSetupThreads" value="100000" step="10000" class="input-inline-price">
+                </div>
+                <div class="quick-preset-row">
+                  <button type="button" class="btn-preset" id="btnPresetStandard">정규 19만 (셋팅 10만)</button>
+                  <button type="button" class="btn-preset" id="btnPresetEarlyBird">특별할인 10만 (셋팅 0)</button>
+                </div>
               </div>
+
               <div class="card-calc-badge">
-                첫 달 납부: <strong>319,000원</strong> (VAT 10% 포함)
-                <small>※ 2회차부터 월 209,000원 (VAT 포함)</small>
+                첫 달 납부: <strong id="threadsFirstMonthText">319,000원</strong> (VAT 10% 포함)
+                <small>※ 2회차부터 매월 <span id="threadsMonthlyVatText">209,000원</span> (VAT 포함) 갱신</small>
+                <div style="margin-top:6px;font-size:11.5px;color:#1d4ed8;font-weight:700;border-top:1px dashed #bfdbfe;padding-top:4px;">
+                  📋 6개월 총 약정액: <span id="threadsSixMonthTotalText">1,364,000원</span> (셋팅비 포함, VAT 포함)
+                </div>
               </div>
               <ul class="card-features">
+                <li><strong>약정 조건:</strong> 알고리즘 최적화를 위한 <strong>기본 6개월 약정</strong></li>
                 <li>1일 5회 골든타임 알고리즘 피드 맞춤 발행</li>
                 <li>브랜드 페르소나 및 헤리티지 심층 학습 카피라이팅</li>
                 <li>발행 전 고객 사전 승인 및 예약 발행 시스템</li>
@@ -149,21 +167,28 @@
               </ul>
             </label>
 
-            <!-- 상품 2: 마케팅 분석 및 컨설팅 -->
+            <!-- 상품 2: 마케팅 분석 및 컨설팅 (1회성 단건 - 약정 없음) -->
             <label class="product-card" id="cardConsulting">
-              <input type="checkbox" name="products" value="consulting" data-label="AI 상권분석 및 마케팅 컨설팅" data-price="490000" data-setup="0">
+              <input type="checkbox" name="products" value="consulting" data-label="AI 상권분석 및 마케팅 컨설팅">
               <div class="card-check"><span class="check-icon">✓</span></div>
-              <div class="card-badge one">단건 정밀 진단</div>
+              <div class="card-badge one" style="background:#475569;">1회성 단건 (약정 없음)</div>
               <h2 class="card-title">AI 상권분석 및 마케팅 컨설팅</h2>
-              <div class="card-price-wrap">
-                <div class="card-price">490,000원 <span class="vat-tag">VAT 별도</span></div>
-                <div class="card-setup">1회성 심층 컨설팅 리포트 제공</div>
+
+              <!-- 유연한 단건 금액 수정 컨트롤 -->
+              <div class="custom-price-control" onclick="event.stopPropagation();">
+                <div class="price-input-row">
+                  <label for="inputConsultingPrice">컨설팅 공급가액:</label>
+                  <input type="number" id="inputConsultingPrice" name="customPriceConsulting" value="490000" step="10000" class="input-inline-price">
+                </div>
+                <div class="price-notice-text">※ 1회성 심층 진단 리포트 (약정 기간 없음 / 셋팅 요청 시 별도)</div>
               </div>
+
               <div class="card-calc-badge">
-                납부 총액: <strong>539,000원</strong> (VAT 10% 포함)
-                <small>※ 진단 보고서 납품 및 대면/온라인 브리핑 포함</small>
+                납부 총액: <strong id="consultingTotalText">539,000원</strong> (VAT 10% 포함)
+                <small>※ 진단 보고서 납품 및 대면/온라인 브리핑 포함 (1회 완결)</small>
               </div>
               <ul class="card-features">
+                <li><strong>약정 여부:</strong> <strong>약정 없음</strong> (단건 1회 완결 컨설팅)</li>
                 <li>네이버 스마트플레이스 SEO 및 카테고리 실측 진단</li>
                 <li>구글 비즈니스 프로필(GBP) 로컬 트래픽 최적화 가이드</li>
                 <li>차세대 생성형 AI(ChatGPT·Gemini) GEO 추천 팩트 분석</li>
@@ -263,13 +288,14 @@
 
             <details class="term-item" open>
               <summary>
-                <span class="term-title">제2조 (요금, 부가가치세 및 결제 조건)</span>
+                <span class="term-title">제2조 (요금, 기본 6개월 약정 조건 및 결제 규정)</span>
                 <span class="term-tag">필수 확인</span>
               </summary>
               <div class="term-body">
                 <p>1. 모든 서비스 비용은 부가가치세(VAT 10%)가 별도로 산정되며, 최종 입금 금액에 합산 청구됩니다.</p>
-                <p>2. Threads 자동화 월 구독은 계약 체결 시 '최초 설정비+1회차 구독료'를 선납하며, 익월부터 매월 약정 결제일에 정기 결제 또는 계좌 입금으로 갱신됩니다.</p>
-                <p>3. 입금 확인 즉시 국세청 홈택스 전자세금계산서가 발행됩니다.</p>
+                <p>2. <strong>[최소 약정 기간]</strong> Threads 콘텐츠 자동화 서비스는 지속적인 노출 알고리즘 최적화 및 유의미한 비즈니스 마케팅 성과 도출을 위하여 <strong>기본 최소 6개월 약정 조건</strong>으로 체결됩니다. (단, AI 상권분석 컨설팅은 1회성 단건 제공으로 약정 기간이 적용되지 않습니다.)</p>
+                <p>3. Threads 자동화 월 구독은 계약 체결 시 '초기 설정비 + 1회차 구독료'를 선납하며, 2회차부터 매월 약정 결제일에 정기 결제 또는 계좌 입금으로 갱신 청구됩니다.</p>
+                <p>4. 입금 확인 즉시 국세청 홈택스 전자세금계산서 또는 현금영수증이 자동 발행됩니다.</p>
               </div>
             </details>
 

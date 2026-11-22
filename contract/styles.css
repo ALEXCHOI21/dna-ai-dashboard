@@ -2696,3 +2696,80 @@ canvas {
     overflow: visible !important;
   }
 }
+
+
+/* ==========================================================================
+   Custom Price & 6-Month Commitment Styles
+   ========================================================================== */
+.custom-price-control {
+  margin: 12px 0 8px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: default;
+}
+.price-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+.price-input-row label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+}
+.input-inline-price {
+  width: 130px;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f2347;
+  text-align: right;
+  background: #ffffff;
+}
+.input-inline-price:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+}
+.quick-preset-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.btn-preset {
+  font-size: 10.5px;
+  padding: 3px 7px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.btn-preset:hover {
+  background: #dbeafe;
+}
+.price-notice-text {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.badge-commitment {
+  display: inline-block;
+  padding: 2px 7px;
+  background: #047857;
+  color: #ffffff;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
