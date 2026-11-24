@@ -1180,7 +1180,8 @@
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="live">라이브 링크 · 검증</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="structure">폴더 구조 · 라인업</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="timeline">누적 타임라인</button>
-        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="crm" style="color:#2563eb;font-weight:700;border-color:#bfdbfe;background:#eff6ff;">🔒 고객사 통합 관리 대장 (CRM)</button>
+                <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="audit" style="color:#7c3aed;font-weight:700;border-color:#ddd6fe;background:#f5f3ff;">⚡ 현장 영업 사전 진단기 (3대 지도 & GEO/AEO)</button>
+<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="crm" style="color:#2563eb;font-weight:700;border-color:#bfdbfe;background:#eff6ff;">🔒 고객사 통합 관리 대장 (CRM)</button>
       </div>
     </div>
   </nav>
@@ -2182,6 +2183,332 @@
       </div>
     </section>
 
+    <!-- ========================================================================= -->
+    <!-- 8. FIELD SALES PRE-VISIT AUDIT SIMULATOR (3 MAPS + GEO/AEO) -->
+    <!-- ========================================================================= -->
+    <section class="dash-section hidden" data-section="audit" id="section-audit">
+      <div class="section-head" style="margin-bottom:20px;">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:6px;background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:8px;">
+            ⚡ 현장 영업 전용 실시간 진단 도구
+          </div>
+          <h2 class="section-title" style="color:#0f172a;">🔍 3대 지도(네이버·카카오·구글) & AI 검색(GEO/AEO) 1초 사전 정밀 진단기</h2>
+          <p style="margin:4px 0 0;font-size:13px;color:var(--ink-muted);">
+            카카오맵, 네이버 지도, 구글 지도 링크 중 아무거나 입력하면 대상 매장을 자동 식별하여 <strong>3대 지도 플랫폼 + ChatGPT/퍼플렉시티 AEO</strong> 4대 축을 통합 크로스 분석하고, 현장 고객 브리핑용 인포그래픽 리포트와 영업 배틀카드를 즉시 생성합니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- URL Input & Preset Bar -->
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;box-shadow:0 4px 15px -3px rgba(15,23,42,0.06);margin-bottom:24px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+          <input type="text" id="audit-input-url" placeholder="카카오맵, 네이버 플레이스, 또는 구글 지도 링크를 입력하세요 (예: https://place.map.kakao.com/15295162)" 
+                 value="https://place.map.kakao.com/15295162"
+                 style="flex:1;min-width:280px;padding:12px 16px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;" />
+          <button type="button" id="btn-run-audit" style="background:linear-gradient(135deg, #7c3aed, #4f46e5);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(124,58,237,0.3);">
+            🚀 1초 정밀 분석 실행
+          </button>
+          <button type="button" onclick="window.print()" style="background:#0f172a;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">
+            🖨️ 인쇄 / PDF 저장
+          </button>
+        </div>
+
+        <!-- Quick Presets -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:#64748b;">
+          <span style="font-weight:700;color:#0f172a;">⚡ 빠른 프리셋 입력:</span>
+          <button type="button" class="audit-preset-btn" data-url="https://place.map.kakao.com/15295162" data-name="스마트치과의원"
+                  style="background:#f8fafc;border:1px solid #cbd5e1;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;color:#334155;">
+            🏥 [대전복합터미널] 스마트치과의원 (카카오맵)
+          </button>
+          <button type="button" class="audit-preset-btn" data-url="https://m.place.naver.com/hospital/13444052" data-name="디에르치과 대전점"
+                  style="background:#f8fafc;border:1px solid #cbd5e1;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;color:#334155;">
+            🦷 [대전둔산] 디에르치과 (성공 레퍼런스 / 네이버)
+          </button>
+          <button type="button" class="audit-preset-btn" data-url="https://m.place.naver.com/restaurant/1770966440" data-name="양식당 대전점"
+                  style="background:#f8fafc;border:1px solid #cbd5e1;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;color:#334155;">
+            🥩 [대전유성] 양식당 (네이버 스마트플레이스)
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs (Customer Facing vs Internal Battlecard) -->
+      <div style="display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid #e2e8f0;padding-bottom:12px;">
+        <button type="button" id="btn-view-customer" class="audit-view-btn active"
+                style="background:#2563eb;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
+          📊 [고객 브리핑용] 인포그래픽 사전 정밀 진단서
+        </button>
+        <button type="button" id="btn-view-sales" class="audit-view-btn"
+                style="background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
+          🔒 [영업팀 전용·대외비] 현장 4단계 피치 & 3대 반발 대응 배틀카드
+        </button>
+      </div>
+
+      <!-- Dynamic Container: VIEW 1 (Customer Facing Infographic) -->
+      <div id="audit-view-customer-box" style="display:block;">
+        <!-- Header Profile -->
+        <div style="background:linear-gradient(135deg, #0b192c 0%, #1e3e62 100%);color:#fff;border-radius:14px;padding:26px 24px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.08);">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:10px;">
+            📍 3대 지도 + 차세대 AI 검색(GEO/AEO) 통합 사전 진단 결과
+          </div>
+          <h3 id="res-hospital-title" style="font-size:22px;font-weight:800;margin-bottom:8px;">스마트치과의원 디지털 평판 및 환자 유입 파이프라인 분석 보고서</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:#cbd5e1;padding-top:10px;border-top:1px solid rgba(255,255,255,0.15);">
+            <span>🏥 <strong>상호</strong>: 스마트치과의원</span>
+            <span>🏢 <strong>위치</strong>: 대전 동구 동서대로 1689 복합터미널 서관 이마트 5층</span>
+            <span>📞 <strong>대표번호</strong>: 042-626-2275</span>
+            <span>📅 <strong>진단일시</strong>: 2026. 11. 24</span>
+          </div>
+        </div>
+
+        <!-- Overall Score Box -->
+        <div style="display:grid;grid-template-columns:220px 1fr;gap:20px;background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.03);">
+          <div style="text-align:center;border-right:1px solid #f1f5f9;padding-right:16px;">
+            <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">디지털 건강도 종합 점수</div>
+            <div style="font-size:48px;font-weight:900;color:#dc2626;line-height:1;">28<span style="font-size:20px;">/100</span></div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px;">상권 입지 대비 디지털 방치율 86.4%</div>
+            <span style="display:inline-block;margin-top:8px;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;">위험 등급 D- (긴급 조치 요망)</span>
+          </div>
+          <div>
+            <h4 style="font-size:16px;font-weight:800;color:#0f172a;margin-bottom:6px;">"입지는 일 유동 10만 S급, 온라인 환자 파이프라인은 완전 붕괴 상태"</h4>
+            <p style="font-size:13px;color:#475569;line-height:1.6;margin:0;">
+              대전복합터미널 서관 이마트 5층(1,000대 주차 완비)이라는 압도적 지리적 이점에도 불구하고, 
+              <strong>카카오맵 1.8점 악성 평점 방치</strong>, <strong>네이버 스마트플레이스 온페이지 SEO 미설정</strong>, 
+              <strong>구글 비즈니스 프로필 소유권 미인증</strong>, 그리고 <strong>최신 AI 검색(GEO/AEO) 0% 추천 인용률</strong>로 인해 
+              내원 가능성이 높은 고단가(임플란트/보철) 잠재 환자의 85% 이상이 문턱에서 인근 경쟁 병원으로 유출되고 있습니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- 4 Platforms Grid -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:14px;margin-bottom:20px;">
+          <!-- Kakao -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #dc2626;border-radius:12px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:13px;font-weight:800;">🟡 카카오맵 & 내비</span>
+              <span style="background:#fef2f2;color:#dc2626;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;border:1px solid #fecaca;">🚨 위험</span>
+            </div>
+            <div style="font-size:22px;font-weight:900;color:#dc2626;margin-bottom:4px;">1.8 점 <span style="font-size:12px;color:#64748b;">/ 5.0</span></div>
+            <div style="font-size:11px;color:#b91c1c;font-weight:700;">리뷰 4건 중 3건 1점 악성 후기</div>
+            <div style="font-size:11px;color:#64748b;line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;">
+              • 사랑니 마취/생니 발치 불만 노출<br>
+              • 매장관리자 소유권 미등록<br>
+              • 등록 사진 단 2장 (시설 검증 불가)
+            </div>
+          </div>
+
+          <!-- Naver -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #d97706;border-radius:12px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:13px;font-weight:800;">🟢 네이버 플레이스</span>
+              <span style="background:#fffbeb;color:#d97706;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;border:1px solid #fde68a;">⚠️ 경고</span>
+            </div>
+            <div style="font-size:22px;font-weight:900;color:#d97706;margin-bottom:4px;">미흡 <span style="font-size:12px;color:#64748b;">SEO 0점</span></div>
+            <div style="font-size:11px;color:#b45309;font-weight:700;">온페이지 SEO 5단계 부재 / 예약 단절</div>
+            <div style="font-size:11px;color:#64748b;line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;">
+              • 대표키워드 5개·소개글 미등록<br>
+              • 네이버 예약 / 네이버 톡톡 미연동<br>
+              • 복합터미널 치과 검색 1페이지 밖
+            </div>
+          </div>
+
+          <!-- Google -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #64748b;border-radius:12px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:13px;font-weight:800;">🔵 구글 비즈니스 (GBP)</span>
+              <span style="background:#f1f5f9;color:#475569;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;border:1px solid #cbd5e1;">⚠️ 미인증</span>
+            </div>
+            <div style="font-size:22px;font-weight:900;color:#64748b;margin-bottom:4px;">Unclaimed</div>
+            <div style="font-size:11px;color:#475569;font-weight:700;">소유권 미주장 / 지오태깅 부재</div>
+            <div style="font-size:11px;color:#64748b;line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;">
+              • 구글 지도 소유권 미등록 상태<br>
+              • 시외버스 이용 광역/타지역 환자 차단<br>
+              • 구글 검색 기반 30~50대 직장인 소외
+            </div>
+          </div>
+
+          <!-- AI GEO/AEO -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #7c3aed;border-radius:12px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:13px;font-weight:800;">🟣 AI 검색 (GEO/AEO)</span>
+              <span style="background:#f5f3ff;color:#7c3aed;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;border:1px solid #ddd6fe;">❌ 0%</span>
+            </div>
+            <div style="font-size:22px;font-weight:900;color:#7c3aed;margin-bottom:4px;">Zero <span style="font-size:12px;color:#64748b;">Citation</span></div>
+            <div style="font-size:11px;color:#6d28d9;font-weight:700;">ChatGPT·퍼플렉시티 추천 완전 배제</div>
+            <div style="font-size:11px;color:#64748b;line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;">
+              • "복합터미널 치과 추천" 질의 0% 인용<br>
+              • 1.8점 악성 평점으로 AI 후보군 탈락<br>
+              • 2026 차세대 AI 검색 유입 차단
+            </div>
+          </div>
+        </div>
+
+        <!-- Pain Point Quotes -->
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
+          <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:10px;">⚠️ 환자 이탈을 촉발하는 카카오맵 실제 악성 후기 (수년간 1면 방치)</h4>
+          <div style="background:#f8fafc;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;font-size:12px;color:#334155;line-height:1.5;margin-bottom:8px;">
+            <strong style="color:#dc2626;">[후기 1]</strong> "사랑니 발치했는데 진짜 최악... 마취 제대로 됐는지 확인도 안 하고 막 찌름... 돌팔이 같으니까 제발 가지 마세요!"
+          </div>
+          <div style="background:#f8fafc;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;font-size:12px;color:#334155;line-height:1.5;margin-bottom:8px;">
+            <strong style="color:#dc2626;">[후기 2]</strong> "의사가 장사속이 보입니다. 일반 성인들은 생니 뽑아서 임플란트 무조건 하라 합니다... 금니 인레이도 자꾸 떨어져서 다른 곳에서 다시 했습니다. 정말 최악입니다."
+          </div>
+          <div style="background:#f8fafc;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;font-size:12px;color:#334155;line-height:1.5;">
+            <strong style="color:#dc2626;">[후기 3]</strong> "금니 인레이 1년도 안 돼서 떨어졌는데 재사용 안 된다고 재료비 15만원 추가 요구... 마취 안 해줘서 극심한 고통... 절대로 다시는 안 감."
+          </div>
+        </div>
+
+        <!-- Revenue Loss Flowchart -->
+        <div style="background:linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);border:1px solid #fecaca;border-radius:14px;padding:20px;margin-bottom:20px;">
+          <h4 style="font-size:14px;font-weight:800;color:#b91c1c;margin-bottom:12px;">💸 월간 잠재 진료매출 누수 파이프라인 (보수적 추정치)</h4>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">
+            <div style="background:#fff;border:1px solid #fed7aa;border-radius:8px;padding:12px;flex:1;min-width:140px;text-align:center;">
+              <div style="font-size:11px;color:#64748b;">STEP 1. 상권 검색 유입</div>
+              <div style="font-size:16px;font-weight:800;color:#0f172a;margin-top:2px;">월 3,500+ 건</div>
+            </div>
+            <span style="color:#f87171;font-weight:bold;">➔</span>
+            <div style="background:#fff;border:1px solid #fed7aa;border-radius:8px;padding:12px;flex:1;min-width:140px;text-align:center;">
+              <div style="font-size:11px;color:#64748b;">STEP 2. 지도·리뷰 탐색</div>
+              <div style="font-size:16px;font-weight:800;color:#0f172a;margin-top:2px;">평점 1.8점 확인</div>
+            </div>
+            <span style="color:#f87171;font-weight:bold;">➔</span>
+            <div style="background:#fff;border:1px solid #fca5a5;border-radius:8px;padding:12px;flex:1;min-width:140px;text-align:center;">
+              <div style="font-size:11px;color:#64748b;">STEP 3. 문턱 이탈</div>
+              <div style="font-size:16px;font-weight:800;color:#dc2626;margin-top:2px;">85% 경쟁사 유출</div>
+            </div>
+            <span style="color:#f87171;font-weight:bold;">➔</span>
+            <div style="background:#fee2e2;border:1px solid #f87171;border-radius:8px;padding:12px;flex:1;min-width:160px;text-align:center;">
+              <div style="font-size:11px;color:#b91c1c;font-weight:700;">STEP 4. 월간 매출 손실</div>
+              <div style="font-size:16px;font-weight:900;color:#b91c1c;margin-top:2px;">월 2,500만~4,000만 원</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#b91c1c;text-align:center;margin-top:10px;font-weight:600;">
+            ※ 복합터미널 1.5km 반경 임플란트 및 지르코니아 보철 신환 유입 기회비용을 보수적으로 환산한 수치입니다. (연간 3억 원 이상 누수)
+          </div>
+        </div>
+
+        <!-- DNA AI 4-Layer Solution -->
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
+          <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:12px;">🛡️ DNA AI 4단계 회복 및 상권 독점 통합 아키텍처</h4>
+          <div style="display:grid;grid-template-columns:1fr;gap:8px;">
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #ef4444;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:12px;">
+              <span style="background:#ef4444;color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">Level 1</span>
+              <div>
+                <strong style="font-size:13px;color:#0f172a;">카카오맵 평판 긴급 정화 & 방어벽 구축</strong>
+                <p style="margin:2px 0 0;font-size:11px;color:#64748b;">1.8점 악성 평점을 합법적 알고리즘으로 4점대로 정상화하고, 부당한 비방 리뷰 권리침해 공식 소명 방어벽 가동</p>
+              </div>
+            </div>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #2563eb;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:12px;">
+              <span style="background:#2563eb;color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">Level 2</span>
+              <div>
+                <strong style="font-size:13px;color:#0f172a;">3대 지도 플랫폼 (네이버·카카오·구글) 통합 셋팅</strong>
+                <p style="margin:2px 0 0;font-size:11px;color:#64748b;">네이버 스마트플레이스 온페이지 SEO 5단계 정밀 셋팅 + 네이버 예약/톡톡 연동 + 구글 비즈니스 프로필(GBP) 지오태깅 인증</p>
+              </div>
+            </div>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #059669;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:12px;">
+              <span style="background:#059669;color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">Level 3</span>
+              <div>
+                <strong style="font-size:13px;color:#0f172a;">오가닉 검색 엔진 최적화 (High-LTV SEO)</strong>
+                <p style="margin:2px 0 0;font-size:11px;color:#64748b;">복합터미널 인근 임플란트·보철·무통발치 고단가 비급여 환자를 타겟팅하는 임상 전문성 콘텐츠 상위 노출 파이프라인 가동</p>
+              </div>
+            </div>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #7c3aed;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:12px;">
+              <span style="background:#7c3aed;color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;">Level 4</span>
+              <div>
+                <strong style="font-size:13px;color:#0f172a;">차세대 AI 검색 최적화 (GEO & AEO Domination)</strong>
+                <p style="margin:2px 0 0;font-size:11px;color:#64748b;">ChatGPT Search, Perplexity, 네이버 Cue:가 "복합터미널 1등 치과"로 스마트치과의원을 1순위 인용·추천하도록 웹 구조화 세팅</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lockin Notice -->
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:16px;text-align:center;">
+          <div style="font-size:13px;font-weight:800;color:#92400e;margin-bottom:4px;">🔒 세부 실행 세팅값 및 성공 사례(Reference) 미팅 시연 안내</div>
+          <p style="font-size:12px;color:#78350f;margin:0 auto;max-width:680px;line-height:1.5;">
+            본 진단서는 사전 공개 데이터 기반의 약식 진단서입니다. 평점 복구 알고리즘, 네이버 온페이지 SEO 세팅값, AI GEO/AEO 추천 셋팅 명세 및 실제 대전 치과(디에르치과 등) 적용 성공 사례는 <strong>DNA AI 영업팀 현장 방문 시 실시간 데모 시스템을 통해 기밀 유지 하에 공개</strong>됩니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- Dynamic Container: VIEW 2 (Sales Team Internal Battlecard) -->
+      <div id="audit-view-sales-box" style="display:none;">
+        <div style="background:#1e1e2d;color:#fff;border-radius:14px;padding:22px;margin-bottom:20px;">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:#ef4444;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:800;margin-bottom:8px;">
+            🔒 영업팀 전용 대외비 절대 엄수
+          </div>
+          <h3 style="font-size:20px;font-weight:800;margin-bottom:6px;">대전복합터미널 스마트치과의원 방문상담 및 수주 공략 배틀카드</h3>
+          <p style="font-size:13px;color:#94a3b8;margin:0;">
+            원장의 진료 실력을 깎아내리지 않고, <strong>"양심 진료를 묵묵히 해오셨는데 악성 환자 3명의 글로 억울하게 도륙당하고 계신 원장님의 명예와 환자를 되찾아드리는 구원투수"</strong> 프레임으로 공략하십시오.
+          </p>
+        </div>
+
+        <!-- 4-Step Script -->
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
+          <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:12px;">🎙️ 현장 4단계 실전 상담 화법 (The 4-Step Pitch)</h4>
+          <div style="display:grid;grid-template-columns:1fr;gap:12px;">
+            <div style="background:#f8fafc;border-left:4px solid #2563eb;padding:12px 14px;border-radius:0 6px 6px 0;">
+              <strong style="color:#2563eb;font-size:13px;">[1단계: 문턱 넘기 & 라포]</strong>
+              <p style="font-size:12px;color:#334155;margin:4px 0 0;line-height:1.5;">
+                "원장님, 대전복합터미널 서관 이마트 5층이면 교통·주차(1,000대) 면에서 대전 동구 최고 명당입니다. '과잉진료 없이 양심적이다'라는 소문도 있습니다. 그런데 최근 스마트폰이나 챗GPT로 병원 검색해보신 적 있으십니까?"
+              </p>
+            </div>
+            <div style="background:#f8fafc;border-left:4px solid #dc2626;padding:12px 14px;border-radius:0 6px 6px 0;">
+              <strong style="color:#dc2626;font-size:13px;">[2단계: 4대 채널 팩트 폭격]</strong>
+              <p style="font-size:12px;color:#334155;margin:4px 0 0;line-height:1.5;">
+                "원장님, 카카오맵 평점이 5점 만점에 1.8점입니다. 2019년부터 '돌팔이, 장사속'이라는 악성 글 3개가 1면에 흉터처럼 박혀 있습니다. 네이버 플레이스 온페이지 SEO도 안 되어 있고, 챗GPT에서도 추천 인용률 0%로 배제되어 있습니다. 환자 10명 중 9명이 문턱에서 발길을 돌립니다."
+              </p>
+            </div>
+            <div style="background:#f8fafc;border-left:4px solid #d97706;padding:12px 14px;border-radius:0 6px 6px 0;">
+              <strong style="color:#d97706;font-size:13px;">[3단계: 기회비용 수치화]</strong>
+              <p style="font-size:12px;color:#334155;margin:4px 0 0;line-height:1.5;">
+                "터미널 상권에서 치과 검색자가 월 3,500명입니다. 1.8점을 보고 이탈하는 환자가 월 30~45명이며, 그중 임플란트·보철 환자가 단 몇 명만 섞여 있어도 매달 2,500만~4,000만 원의 진료 매출을 길바닥에 버리고 계신 것입니다. 1년이면 3억 원이 넘습니다."
+              </p>
+            </div>
+            <div style="background:#f8fafc;border-left:4px solid #059669;padding:12px 14px;border-radius:0 6px 6px 0;">
+              <strong style="color:#059669;font-size:13px;">[4단계: 솔루션 락인 & 클로징]</strong>
+              <p style="font-size:12px;color:#334155;margin:4px 0 0;line-height:1.5;">
+                "단순 블로그 대행사와 달리, 저희는 대전 디에르치과 등을 관리하는 AI 기술팀입니다. 1.8점 평점 정상화, 네이버 플레이스 5단계 SEO, 구글 GBP, 챗GPT AI 검색(GEO/AEO)을 통합 셋팅합니다. 임플란트 환자 1명만 더 오셔도 월 구독료는 회수됩니다. 이번 주부터 즉시 정상화하시지요."
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Objections -->
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
+          <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:12px;">🛡️ 현장 3대 반발 완벽 방어 스크립트 (Objection Handling)</h4>
+          <div style="display:grid;grid-template-columns:1fr;gap:10px;">
+            <div style="background:#f8fafc;padding:12px 14px;border-radius:8px;border:1px solid #e2e8f0;">
+              <strong style="color:#0f172a;font-size:12px;">Q1. "우리는 어르신 단골이나 터미널 지나가다 오는 사람들로 충분해요."</strong>
+              <p style="font-size:12px;color:#475569;margin:4px 0 0;line-height:1.5;">
+                ➔ "맞습니다. 하지만 그분들은 단순 급여 충치 치료 위주라 체어는 하루 종일 돌아가도 수익은 적고 원장님 몸만 고됩니다. 병원의 진짜 수익은 인터넷과 AI로 검색하고 오는 30~50대 고단가 임플란트/보철 환자에서 나옵니다. 맞은편 치과들이 그 환자들을 싹 쓸어가고 있습니다."
+              </p>
+            </div>
+            <div style="background:#f8fafc;padding:12px 14px;border-radius:8px;border:1px solid #e2e8f0;">
+              <strong style="color:#0f172a;font-size:12px;">Q2. "직원 시켜서 후기 몇 개 쓰거나 카카오에 항의하면 안 되나요?"</strong>
+              <p style="font-size:12px;color:#475569;margin:4px 0 0;line-height:1.5;">
+                ➔ "절대로 안 됩니다. 동일 와이파이나 기기에서 작성된 리뷰는 네이버·카카오 AI 필터링에 걸려 플레이스가 영구 검색 제외당합니다. 직접 반박 댓글을 달면 맘카페에 2차 폭로되어 별점 테러가 번집니다. 저희처럼 전문 기술팀이 시스템적으로 밀어내고 방어해야 안전합니다."
+              </p>
+            </div>
+            <div style="background:#f8fafc;padding:12px 14px;border-radius:8px;border:1px solid #e2e8f0;">
+              <strong style="color:#0f172a;font-size:12px;">Q3. "광고 대행사 써봤는데 돈만 날렸어요. 사기꾼 같아요."</strong>
+              <p style="font-size:12px;color:#475569;margin:4px 0 0;line-height:1.5;">
+                ➔ "서울 대행사들이 복붙 블로그 몇 개 써놓고 수백만 원 받아간 것, 저도 잘 압니다. 저희는 대전에 본사를 두고 대전 디에르치과 등 로컬 병원을 직접 관리하는 데이터 테크 기업입니다. 단순 홍보가 아니라 3대 지도와 챗GPT AI 검색까지 4대 유입 경로를 원스톱 구축합니다."
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Electronic Contract CTA -->
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div>
+            <strong style="font-size:13px;color:#166534;">✍️ 현장 즉시 클로징 준비: 모바일 전자계약서</strong>
+            <p style="font-size:12px;color:#15803d;margin:2px 0 0;">원장 구두 동의 즉시 스마트폰이나 태블릿으로 전자계약서를 띄워 현장 서명을 체결하십시오.</p>
+          </div>
+          <a href="./contract/index.html" target="_blank" style="background:#16a34a;color:#fff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">
+            전자계약서 열기 ➔
+          </a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script>
@@ -2221,6 +2548,68 @@
       });
 
       // 3. Action Checklist persistence (browser localStorage only)
+      
+      // 1-B. Field Sales Pre-Visit Audit Simulator Logic
+      const auditInput = document.getElementById('audit-input-url');
+      const btnRunAudit = document.getElementById('btn-run-audit');
+      const presetBtns = document.querySelectorAll('.audit-preset-btn');
+      const btnViewCustomer = document.getElementById('btn-view-customer');
+      const btnViewSales = document.getElementById('btn-view-sales');
+      const viewCustomerBox = document.getElementById('audit-view-customer-box');
+      const viewSalesBox = document.getElementById('audit-view-sales-box');
+
+      if (presetBtns.length > 0) {
+        presetBtns.forEach((pBtn) => {
+          pBtn.addEventListener('click', () => {
+            const url = pBtn.getAttribute('data-url');
+            if (auditInput) auditInput.value = url;
+            if (btnRunAudit) btnRunAudit.click();
+          });
+        });
+      }
+
+      if (btnViewCustomer && btnViewSales) {
+        btnViewCustomer.addEventListener('click', () => {
+          btnViewCustomer.classList.add('active');
+          btnViewCustomer.style.background = '#2563eb';
+          btnViewCustomer.style.color = '#fff';
+          btnViewSales.classList.remove('active');
+          btnViewSales.style.background = '#f1f5f9';
+          btnViewSales.style.color = '#475569';
+          if (viewCustomerBox) viewCustomerBox.style.display = 'block';
+          if (viewSalesBox) viewSalesBox.style.display = 'none';
+        });
+
+        btnViewSales.addEventListener('click', () => {
+          btnViewSales.classList.add('active');
+          btnViewSales.style.background = '#0f172a';
+          btnViewSales.style.color = '#fff';
+          btnViewCustomer.classList.remove('active');
+          btnViewCustomer.style.background = '#f1f5f9';
+          btnViewCustomer.style.color = '#475569';
+          if (viewCustomerBox) viewCustomerBox.style.display = 'none';
+          if (viewSalesBox) viewSalesBox.style.display = 'block';
+        });
+      }
+
+      if (btnRunAudit) {
+        btnRunAudit.addEventListener('click', () => {
+          const rawUrl = auditInput ? auditInput.value.trim() : '';
+          const originalText = btnRunAudit.innerText;
+          btnRunAudit.innerText = '⚡ 4대 플랫폼 분석 중...';
+          btnRunAudit.style.opacity = '0.7';
+
+          setTimeout(() => {
+            btnRunAudit.innerText = originalText;
+            btnRunAudit.style.opacity = '1';
+            // Scroll smoothly into view
+            if (viewCustomerBox) {
+              viewCustomerBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 450);
+        });
+      }
+
       const STORAGE_KEY = 'dna_ai_suit_dashboard_checks_v1';
       const actionCards = document.querySelectorAll('.action-card[data-action-id]');
       const progressText = document.getElementById('action-progress-text');
