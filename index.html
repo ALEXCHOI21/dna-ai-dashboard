@@ -139,11 +139,9 @@
     .tab-bar {
       display: flex;
       gap: 8px;
-      overflow-x: auto;
+      flex-wrap: wrap;
       padding: 10px 0;
-      scrollbar-width: none;
     }
-    .tab-bar::-webkit-scrollbar { display: none; }
     .tab-btn {
       appearance: none;
       border: 1px solid var(--border);
@@ -1175,13 +1173,13 @@
     <div class="container">
       <div class="tab-bar" role="tablist">
         <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="all">전체 한눈에 보기</button>
+        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="crm" style="color:#1d4ed8;font-weight:800;border-color:#93c5fd;background:#eff6ff;box-shadow:0 1px 3px rgba(37,99,235,0.12);">🔒 고객사 통합 관리 대장 (CRM &amp; 영업이익)</button>
+        <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="audit" style="color:#6d28d9;font-weight:800;border-color:#c4b5fd;background:#f5f3ff;box-shadow:0 1px 3px rgba(124,58,237,0.12);">⚡ 현장 영업 사전 진단기 (3대 지도 &amp; GEO/AEO)</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="actions">할 일 · 의사결정 (5)</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="tracks">사업 트랙별 현황 (6)</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="live">라이브 링크 · 검증</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="structure">폴더 구조 · 라인업</button>
         <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="timeline">누적 타임라인</button>
-                <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="audit" style="color:#7c3aed;font-weight:700;border-color:#ddd6fe;background:#f5f3ff;">⚡ 현장 영업 사전 진단기 (3대 지도 & GEO/AEO)</button>
-<button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="crm" style="color:#2563eb;font-weight:700;border-color:#bfdbfe;background:#eff6ff;">🔒 고객사 통합 관리 대장 (CRM)</button>
       </div>
     </div>
   </nav>
@@ -1277,6 +1275,10 @@
         <a class="service-link security-highlight" href="contract/" target="_blank" rel="noopener noreferrer">
           <span><strong>📑 서비스 전자계약 & 거래명세표 (🔒 보안)</strong><br><small>DANI 비서 인터랙티브 계약 · 홈택스 엑셀 · 인가된 관리자 전용</small></span>
           <span class="launch">보안 게이트웨이 구역 · 입장 ↗</span>
+        </a>
+        <a class="service-link security-highlight" href="#crm" id="btn-quick-crm" style="border-color:#93c5fd;background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);">
+          <span><strong style="color:#1d4ed8;">🏢 고객사 CRM · 실질 영업이익 대장 (🔒 암호: 1121)</strong><br><small style="color:#1e40af;">월 약정 매출 · 실질 영업이익 · 50% 수익 정산 · 실시간 SNS 연동 현황</small></span>
+          <span class="launch" style="color:#2563eb;font-weight:800;">보안 구역 · 대장 바로 열기 ↗</span>
         </a>
       </div>
     </section>
@@ -2603,6 +2605,35 @@
           });
         });
       });
+
+      // Quick Launchcard to CRM click handler
+      const btnQuickCrm = document.getElementById('btn-quick-crm');
+      if (btnQuickCrm) {
+        btnQuickCrm.addEventListener('click', (e) => {
+          e.preventDefault();
+          const crmNavTab = document.querySelector('[data-tab="crm"]');
+          if (crmNavTab) {
+            crmNavTab.click();
+            const sec = document.getElementById('section-crm');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+
+      // Hash navigation (#crm, #audit, etc.)
+      function handleHashNav() {
+        const hash = (window.location.hash || '').replace('#', '');
+        if (hash) {
+          const tabBtn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+          if (tabBtn) {
+            tabBtn.click();
+            const sec = document.getElementById(`section-${hash}`);
+            if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 100);
+          }
+        }
+      }
+      window.addEventListener('DOMContentLoaded', handleHashNav);
+      window.addEventListener('hashchange', handleHashNav);
 
       // 2. Track status filter
       const filterPills = document.querySelectorAll('.filter-pill');
