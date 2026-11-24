@@ -734,9 +734,9 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
       const dayNum = now.getDate();
       const existingIdx = crmList.findIndex(c => c.customerName === customerName);
       
-      // 알파비전 가상 테스트 건은 제외
-      if (customerName.includes('알파비전')) {
-        console.log('Virtual test company excluded from CRM:', customerName);
+      // 테스트 가상 회사 건(알파비전, 씨엘키즈, 용인대 등)은 CRM 누적 제외
+      if (customerName.includes('알파비전') || customerName.includes('씨엘키즈') || customerName.includes('용인') || customerName.includes('테스트')) {
+        console.log('Test/Trial company excluded from CRM:', customerName);
         return;
       }
 

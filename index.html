@@ -2808,19 +2808,32 @@
         };
       }
 
-      // 데이터 로드 & 전자계약 자동 머지 (알파비전 및 씨엘키즈 필터링)
+      // 데이터 로드 & 전자계약 자동 머지 (알파비전, 씨엘키즈, 용인대 등 테스트 고객사 영구 필터링 및 자동 정리)
       function getClientsList() {
         let savedList = [];
         try {
           savedList = JSON.parse(localStorage.getItem(CRM_STORAGE_KEY) || '[]');
         } catch (e) { savedList = []; }
 
+        // 용인대 / 알파비전 / 씨엘키즈 등 테스트 계약 데이터 로컬스토리지 영구 삭제 동기화
+        const cleanedSaved = savedList.filter(c => {
+          if (!c || !c.customerName) return false;
+          const name = c.customerName;
+          return !name.includes('알파비전') && !name.includes('씨엘키즈') && !name.includes('용인');
+        });
+        if (cleanedSaved.length !== savedList.length) {
+          try {
+            localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(cleanedSaved));
+          } catch(e) {}
+          savedList = cleanedSaved;
+        }
+
         const map = new Map();
         officialClients.forEach(c => map.set(c.customerName, c));
 
         savedList.forEach(c => {
           if (!c.customerName) return;
-          if (c.customerName.includes('알파비전') || c.customerName.includes('씨엘키즈')) return;
+          if (c.customerName.includes('알파비전') || c.customerName.includes('씨엘키즈') || c.customerName.includes('용인')) return;
 
           if (map.has(c.customerName)) {
             map.set(c.customerName, { ...map.get(c.customerName), ...c });
@@ -2840,7 +2853,11 @@
           }
         });
 
-        const list = Array.from(map.values()).filter(c => !(c.customerName || '').includes('알파비전') && !(c.customerName || '').includes('씨엘키즈'));
+        const list = Array.from(map.values()).filter(c => 
+          !(c.customerName || '').includes('알파비전') && 
+          !(c.customerName || '').includes('씨엘키즈') &&
+          !(c.customerName || '').includes('용인')
+        );
         list.forEach((item, idx) => { item.no = idx + 1; });
         return list;
       }
@@ -3109,7 +3126,10 @@
                 ${c.isDiscounted ? '<span style="font-size:9.5px;padding:1px 4px;background:#fef2f2;color:#b91c1c;border-radius:3px;font-weight:700;">특별할인</span>' : ''}
               </div>
               <div style="font-size:11px;color:#2563eb;font-weight:700;margin-top:2px;">6개월 ${(fee * 6).toLocaleString()}원</div>
-              <button type="button" class="btn-fee-edit" onclick="window.openPriceModal('${escapeHtml(c.customerName)}')">금액 수정 ✏️</button>
+              <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
+                <button type="button" class="btn-fee-edit" onclick="window.openPriceModal('${escapeHtml(c.customerName)}')">금액 수정 ✏️</button>
+                ${c.no > 2 ? `<button type="button" class="btn-fee-edit" onclick="window.deleteClient('${escapeHtml(c.customerName)}', event)" style="color:#dc2626;background:#fef2f2;border-color:#fecaca;">삭제 🗑️</button>` : ''}
+              </div>
             </td>
             <td>
               <div style="font-size:11.5px;font-weight:600;color:var(--navy);">${cycle.start} ~ ${cycle.end}</div>
@@ -3546,6 +3566,27 @@ ${client.customerName}의 Threads SNS 자동 홍보 익월 서비스 유지를 �
           alert(`[${cName}]의 이용료가 월 ${fee.toLocaleString()}원(6개월 ${(fee*6).toLocaleString()}원)으로 수정되어 대장에 즉시 반영되었습니다.`);
         });
       }
+
+      // 고객사 대장 삭제 기능 (테스트 계약 건 및 불필요 고객사 즉시 영구 삭제)
+      window.deleteClient = function(customerName, event) {
+        if (event) event.stopPropagation();
+        if (!confirm(`[${customerName}] 고객사를 대장에서 삭제하시겠습니까?\n(테스트 계약 데이터인 경우 즉시 영구 삭제됩니다)`)) return;
+
+        let savedList = [];
+        try {
+          savedList = JSON.parse(localStorage.getItem(CRM_STORAGE_KEY) || '[]');
+        } catch(e) { savedList = []; }
+
+        const filtered = savedList.filter(c => c && c.customerName !== customerName && !c.customerName.includes(customerName));
+        localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(filtered));
+
+        if (selectedClientName === customerName) {
+          selectedClientName = "디에르치과";
+        }
+
+        renderTable(searchInput ? searchInput.value : '');
+        alert(`[${customerName}] 고객사가 대장에서 성공적으로 삭제되었습니다.`);
+      };
 
       renderGateState();
     })();
