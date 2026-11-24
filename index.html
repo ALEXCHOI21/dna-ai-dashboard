@@ -4030,7 +4030,50 @@
               </div>
             </div>
           </div>
-        `;
+        
+          <!-- 최하단 인포그래픽: 진단 결과 해석 & 현장 처방 가이드 -->
+          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:16px;padding:22px;margin-top:20px;color:#f8fafc;box-shadow:0 10px 25px -5px rgba(15,23,42,0.2);">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:12px;">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:#38bdf8;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;">DNA AI SUITE · DANI 전속 비서 처방 가이드</div>
+                <h3 style="margin:0;font-size:16px;font-weight:800;color:#ffffff;">🧭 한눈에 보는 진단 결과 해석 &amp; 현장 처방 요약</h3>
+              </div>
+              <span style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.35);color:#7dd3fc;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;">고객 브리핑 · 영업 처방용</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:800;color:#fde047;margin-bottom:6px;">1. 🔍 입력창 + 빠른 프리셋</div>
+                <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px;">데이터: 지역명 + 상호명(또는 지도 URL)</div>
+                <div style="font-size:12px;color:#f1f5f9;line-height:1.5;">동명이인 지점 오매칭 방지를 위해 반드시 <strong>'시/구 + 상호명'</strong>(예: 대전 동구 용인대현대태권도)으로 조회합니다.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:800;color:#4ade80;margin-bottom:6px;">2. 🗺️ 3대 지도 실측 카드</div>
+                <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px;">데이터: 3사 API 실시간 교차 검증</div>
+                <div style="font-size:12px;color:#f1f5f9;line-height:1.5;"><strong>일치 확인</strong> = 기본 신뢰 확보 / <strong>미확인</strong> = AI(GEO/AEO) 추천 누락 원인이므로 등록·정비 명분으로 활용합니다.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:800;color:#60a5fa;margin-bottom:6px;">3. 📊 정합성 비교표 (NAP)</div>
+                <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px;">데이터: 상호·주소·번호·링크 원본 대조</div>
+                <div style="font-size:12px;color:#f1f5f9;line-height:1.5;">3사 정보가 조금이라도 다르면 검색엔진·AI 신뢰도가 하락합니다. <strong>3사 정보 통일 작업</strong>을 제안하세요.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:800;color:#cbd5e1;margin-bottom:6px;">4. ℹ️ 네이버 '필드 미제공'</div>
+                <div style="font-size:11px;color:#94a3b8;margin-bottom:6px;">데이터: 네이버 Open API 정책상 미반환</div>
+                <div style="font-size:12px;color:#f1f5f9;line-height:1.5;">매장 누락이 아니므로 고객에게 <strong>"API 정책상 정상 표시"</strong>로 안심시키고 다음 액션으로 유도합니다.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:800;color:#fca5a5;margin-bottom:6px;">5. 🛠️ 우선 개선 작업 (Action Items)</div>
+                <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px;">데이터: 우선순위별 실행 체크리스트</div>
+                <div style="font-size:12px;color:#f1f5f9;line-height:1.5;">고객에게는 <strong>"우리가 해드릴 1단계 작업"</strong>으로 제시하여 계약 전환용 핵심 근거로 활용합니다.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;">
+                <div style="font-size:12px;font-weight:800;color:#c4b5fd;margin-bottom:6px;">6. 🖨️ 인쇄/PDF &amp; 배틀카드</div>
+                <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px;">데이터: 고객 브리핑용 vs 영업팀 대외비</div>
+                <div style="font-size:12px;color:#f1f5f9;line-height:1.5;">고객 앞에서는 <strong>[고객 브리핑용 인포그래픽]</strong>만 띄우고, <strong>[배틀카드]</strong>는 미팅 전 반발 대응용으로만 참고합니다.</div>
+              </div>
+            </div>
+          </div>
+`;
         viewCustomerBox.style.display = 'block';
         if (viewSalesBox) viewSalesBox.style.display = 'none';
         viewCustomerBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
