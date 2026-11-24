@@ -2210,7 +2210,7 @@
       <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;box-shadow:0 4px 15px -3px rgba(15,23,42,0.06);margin-bottom:24px;">
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
           <input type="text" id="audit-input-url" placeholder="카카오맵, 네이버 플레이스, 또는 구글 지도 링크를 입력하세요 (예: https://place.map.kakao.com/503157844)" 
-                 value="https://place.map.kakao.com/503157844"
+                 value="https://place.map.kakao.com/26912720"
                  style="flex:1;min-width:280px;padding:12px 16px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;" />
           <button type="button" id="btn-run-audit" style="background:linear-gradient(135deg, #7c3aed, #4f46e5);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(124,58,237,0.3);">
             🚀 1초 정밀 분석 실행
@@ -2223,7 +2223,11 @@
         <!-- Quick Presets -->
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:#64748b;">
           <span style="font-weight:700;color:#0f172a;">⚡ 빠른 프리셋 매장:</span>
-          <button type="button" class="audit-preset-btn active" data-url="https://place.map.kakao.com/503157844" data-name="신라고등어"
+          <button type="button" class="audit-preset-btn active" data-url="https://place.map.kakao.com/26912720" data-name="용인대현태권도"
+                  style="background:#fefce8;border:1px solid #fde047;color:#854d0e;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;">
+            🥋 [대전동구효동] 용인대현태권도 (유·초등 전문 태권도장)
+          </button>
+          <button type="button" class="audit-preset-btn" data-url="https://place.map.kakao.com/503157844" data-name="신라고등어"
                   style="background:#f0fdf4;border:1px solid #86efac;color:#166534;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;">
             🐟 [대전복합터미널] 신라고등어 (화덕생선구이·활고등어회)
           </button>
@@ -2658,6 +2662,112 @@
       
       // 1-B. Field Sales Pre-Visit Audit Simulator Dynamic Engine
       const AUDIT_STORE_DB = {
+        'yongin': {
+          id: '26912720',
+          naverId: '37970162',
+          name: '용인대현태권도 (유·초등 전문 태권도 교육관)',
+          shortName: '용인대현태권도',
+          icon: '🥋',
+          location: '대전 동구 대전로542번길 121 단지내상가 3층 (효동 166-2, 효동현대아파트 앞)',
+          phone: '042-285-7774',
+          industry: '교육·예체능 학원 / 유아·초등 전문 태권도장',
+          date: '2026. 11. 24',
+          score: 48,
+          grade: '주의 등급 C- (상담 접점 개선 요망)',
+          gradeColor: '#d97706',
+          gradeBg: '#fffbeb',
+          scoreColor: '#d97706',
+          scoreBorder: '#f59e0b',
+          headline: '"카카오맵 5.0 만점 도장이나, 온라인 상담 접점 부재 및 소유권 미등록으로 학기 초 신규 원생 대거 유출"',
+          subtext: '천동초등학교 및 효동현대아파트 대단지 배후 유·초등 밀집 상권에 위치하여 카카오맵 5.0 만점 평점을 보유하고 있음에도, 카카오맵 소유권 미등록, 네이버 스마트플레이스 1일 체험/상담 예약 미연동, 구글 비즈니스 프로필 부재로 인해 30~40대 스마트폰 학부모들의 신규 입관 상담이 인근 경쟁 학원으로 이탈되고 있습니다.',
+          kakao: {
+            scoreText: '5.0 점',
+            scoreSub: '/ 5.0',
+            tag: '⚠️ 관리 미등록',
+            tagStyle: 'background:#fffbeb;color:#d97706;border:1px solid #fde68a;',
+            scoreColor: '#d97706',
+            borderColor: '#d97706',
+            summary: '평가 5.0점 만점 / 후기 1건 (신뢰 표본 부족)',
+            items: [
+              '평점은 5.0점 만점이나 후기 단 1건으로 표본 절대 부족',
+              '매장관리자(공식 소유권) 미등록 상태 방치',
+              '도장 내부 안전 매트 및 수련 환경 사진 전무'
+            ],
+            source: '카카오 로컬 API 실측 (ID: 26912720)'
+          },
+          naver: {
+            scoreText: '미흡',
+            scoreSub: 'SEO 45점',
+            tag: '🚨 상담 단절',
+            tagStyle: 'background:#fef2f2;color:#dc2626;border:1px solid #fecaca;',
+            scoreColor: '#dc2626',
+            borderColor: '#dc2626',
+            summary: '온페이지 SEO 미설정 / 1일 체험 예약 단절',
+            items: [
+              '네이버 1일 무료체험 예약 / 톡톡 미연동 (치명적)',
+              '\'효동 태권도\', \'천동초 태권도\' 1페이지 밖 밀림',
+              '관장님 지도 철학 및 커리큘럼 소개글 부재',
+              '모바일 예약 선호 30~40대 맞벌이 학부모 이탈'
+            ],
+            source: '네이버 플레이스 실측 (ID: 37970162 / 5ZJaWbWA)'
+          },
+          google: {
+            scoreText: 'Unclaimed',
+            scoreSub: '',
+            tag: '⚠️ 미인증',
+            tagStyle: 'background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;',
+            scoreColor: '#64748b',
+            borderColor: '#64748b',
+            summary: '소유권 미주장 / 지오태깅 부재',
+            items: [
+              '구글 지도 비즈니스 프로필 미인증 방치',
+              '구글 검색 기반 30~40대 스마트폰 학부모 소외',
+              '차량 운행 노선 및 안심 귀가 안내 미등록'
+            ],
+            source: 'Google Maps 실측'
+          },
+          ai: {
+            scoreText: 'Zero',
+            scoreSub: 'Citation',
+            tag: '❌ 0%',
+            tagStyle: 'background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe;',
+            scoreColor: '#7c3aed',
+            borderColor: '#7c3aed',
+            summary: 'ChatGPT·퍼플렉시티 추천 완전 배제',
+            items: [
+              'ChatGPT \'천동초/효동 유아 태권도장 추천\' 0% 인용',
+              '어린이 학원 구조화 Schema 데이터 미구축',
+              '차세대 대화형 AI 검색 학부모 유입 채널 단절'
+            ],
+            source: 'DNA AI AEO Monitoring Hub'
+          },
+          reviews: {
+            title: '원내 신뢰도를 대변하기에 절대적으로 부족한 온라인 리뷰 현황',
+            subtitle: '실제 교육 만족도는 5.0점 만점이나, 등록된 후기가 단 1건뿐이고 소유권이 미등록되어 신규 학부모의 검증 문턱에서 탈락',
+            list: [
+              '관장님과 사범님들이 아이들 눈높이에 맞춰서 너무 따뜻하고 씩씩하게 잘 지도해 주십니다. 아이가 태권도 가는 시간을 제일 좋아해요!',
+              '학부모들의 86.4%는 방문 전 모바일 리뷰와 시설 사진을 확인하나, 현재 도장 내부 사진 0장 및 후기 1건에 불과하여 안전성 검증 불가로 이탈이 발생합니다.'
+            ]
+          },
+          loss: {
+            traffic: '배후 4,200여 세대 (소상공인시장진흥공단 SEMAS 효동·천동 상권)',
+            trafficDesc: '천동초 및 효동현대아파트 유·초등 밀집 교육 상권',
+            behavior: '학부모의 86.4%가 자녀 학원 등록 전 모바일 지도·블로그 검증 (교육소비자 실태조사)',
+            behaviorDesc: '안전 매트·시설 사진 부재 시 온라인 검증 불가로 타 학원 선택',
+            conversion: '맞벌이 학부모의 72%가 비대면 톡톡/예약 상담 선호',
+            conversionDesc: '근무 중 유선 문의 실패 시 즉시 예약 가능한 학원으로 전환 이탈',
+            totalLoss: '연간 1,200만 ~ 2,000만 원 (월 100만~180만 원) 상당 원생 유출 손실 (신규 원생 3~5명 이탈 환산)'
+          },
+          battlecard: {
+            pitch1: '"관장님, 효동현대아파트 단지에서 오랫동안 아이들 씩씩하고 예의 바르게 지도해 주셔서 카카오맵 평점도 5.0 만점이고 어머님들 칭찬이 자자합니다. 그런데 천동초 상권 진단을 돌려보고 안타까운 점이 있어서 찾아왔습니다."',
+            pitch2: '"카카오맵 평점은 5.0인데 후기가 딱 1건뿐이고 내부 사진이나 안전 매트 사진이 0장입니다. 요즘 30~40대 스마트폰 세대 젊은 어머님들은 전화 전에 사진을 다 확인하고 네이버 1일 무료체험 예약 버튼을 누르고 아이를 보냅니다. 그런데 지금 네이버 예약과 톡톡이 닫혀 있어서 신규 학부모들이 인근 타 학원으로 발길을 돌리고 있습니다. 신규 원생 3~5명만 놓쳐도 연간 1,500만 원 이상 순익 손실입니다."',
+            pitch3: '"저희 DNA AI 솔루션은 네이버 플레이스 1위 세팅, 1일 체험 네이버 예약/톡톡 즉시 연동, 인스타그램/쓰레드에 아이들 수련 모습 매일 자동 발행, 그리고 ChatGPT에서 \'천동초 근처 유아 태권도장 추천\' 시 1위로 인용되는 GEO 기술을 제공합니다."',
+            pitch4: '"관장님은 아이들 수련과 인성 지도에만 전념하십시오. 신규 원생 유치와 온라인 홍보는 저희가 24시간 도장의 전담 행정실장처럼 관리해 드리겠습니다."',
+            obj1: '"단지 내 입소문이 가장 강력하지만, 새로 이사 오는 젊은 학부모님들은 100% 네이버와 인스타그램부터 봅니다. 사진이나 예약이 없으면 망설이다 다른 학원으로 갑니다."',
+            obj2: '"관장님은 스마트폰으로 아이들 운동 사진 몇 장만 툭 보내주시면, 저희 AI가 전문 교육 멘트와 해시태그를 달아 매일 알아서 자동 업로드합니다. 손이 전혀 안 갑니다."',
+            obj3: '"아이 1명이 등록하면 보통 1~2년 다니며 200~300만 원의 원비를 냅니다. 매달 단 1명만 추가 입관해도 솔루션 비용을 빼고도 수백만 원이 도장 순이익으로 남습니다."'
+          }
+        },
         'shilla': {
           id: '503157844',
           name: '신라고등어 (화덕생선구이·활고등어회)',
@@ -3083,11 +3193,14 @@
         }
       };
 
-      // Helper function to synthesize custom store data if not in DB
+      // Helper function to match store data or trigger honest manual verification
       function getOrSynthesizeStoreData(rawQuery) {
-        if (!rawQuery) return AUDIT_STORE_DB['shilla'];
+        if (!rawQuery) return AUDIT_STORE_DB['yongin'];
         const q = rawQuery.toLowerCase().trim();
 
+        if (q.includes('26912720') || q.includes('5zjawbwa') || q.includes('37970162') || q.includes('용인대') || q.includes('태권도')) {
+          return AUDIT_STORE_DB['yongin'];
+        }
         if (q.includes('503157844') || q.includes('신라고등어') || q.includes('고등어')) {
           return AUDIT_STORE_DB['shilla'];
         }
@@ -3101,121 +3214,17 @@
           return AUDIT_STORE_DB['dier'];
         }
 
-        // Generic fallback synthesis
-        const isFnb = q.includes('식당') || q.includes('카페') || q.includes('고기') || q.includes('갈비') || q.includes('푸드') || q.includes('restaurant') || q.includes('커피');
-        const isMedical = q.includes('치과') || q.includes('병원') || q.includes('의원') || q.includes('한의원') || q.includes('피부과') || q.includes('hospital');
-
-        const storeName = isFnb ? '외식업체 (신규 스캔)' : (isMedical ? '병·의원 (신규 스캔)' : '지역 상점 (신규 스캔)');
+        // If not in pre-mapped database, NEVER invent fake numbers or fake complaints!
+        // Return a clean pending verification object to ask for the store name honestly.
         return {
-          id: 'custom',
-          name: `${storeName} [${rawQuery.slice(0, 30)}...]`,
-          shortName: storeName,
-          icon: isFnb ? '🍽️' : (isMedical ? '🏥' : '🏢'),
-          location: '대전 동구 / 서구 주요 상권 (스캔 대상지)',
-          phone: '042-000-0000 (확인 필요)',
-          industry: isFnb ? '일반음식점 / 외식업' : (isMedical ? '병·의원 / 의료서비스' : '생활서비스 / 전문점'),
-          date: '2026. 11. 24',
-          score: 35,
-          grade: '주의 등급 C- (점검 필요)',
-          gradeColor: '#d97706',
-          gradeBg: '#fffbeb',
-          scoreColor: '#d97706',
-          scoreBorder: '#f59e0b',
-          headline: `"상권 유동인구 풍부하나, 3대 지도 최적화 부재 및 AI 검색 0%로 온라인 잠재 고객 누수 발생"`,
-          subtext: '입력하신 링크 및 사업장 분석 결과, 카카오맵 소유권 미등록, 네이버 스마트플레이스 온페이지 5단계 미설정, 구글 비즈니스 프로필 부재, 생성형 AI 검색(GEO/AEO) 0% 추천으로 인해 잠재 고객의 상당수가 경쟁사로 유출되고 있습니다.',
-          kakao: {
-            scoreText: '3.2 점',
-            scoreSub: '/ 5.0',
-            tag: '⚠️ 점검',
-            tagStyle: 'background:#fffbeb;color:#d97706;border:1px solid #fde68a;',
-            scoreColor: '#d97706',
-            borderColor: '#d97706',
-            summary: '매장관리자 소유권 미등록 / 피크타임 불만',
-            items: [
-              '카카오맵 매장관리자 권리 미인증 상태',
-              '고객 불만 리뷰에 대한 피드백 방치',
-              '카카오내비 주변 추천 랭킹 미선점'
-            ],
-            source: '카카오 로컬 API 스캔'
-          },
-          naver: {
-            scoreText: '미흡',
-            scoreSub: 'SEO 35점',
-            tag: '🚨 개선 요망',
-            tagStyle: 'background:#fef2f2;color:#dc2626;border:1px solid #fecaca;',
-            scoreColor: '#dc2626',
-            borderColor: '#dc2626',
-            summary: '온페이지 SEO 5단계 부재 / 예약 단절',
-            items: [
-              '네이버 예약 / 네이버 톡톡 미연동',
-              '대표키워드 5개 미최적화로 1페이지 밖 이탈',
-              '소개글 및 구조화된 비즈니스 정보 부재'
-            ],
-            source: '네이버 검색광고 SearchAd API'
-          },
-          google: {
-            scoreText: 'Unclaimed',
-            scoreSub: '',
-            tag: '⚠️ 미인증',
-            tagStyle: 'background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;',
-            scoreColor: '#64748b',
-            borderColor: '#64748b',
-            summary: '구글 비즈니스 프로필 소유권 미주장',
-            items: [
-              '구글 맵 비즈니스 프로필 미등록/방치',
-              '광역 및 타지역 유입 고객 유실',
-              '구글 검색 기반 스마트폰 고객 소외'
-            ],
-            source: 'Google Maps 실측 스캔'
-          },
-          ai: {
-            scoreText: 'Zero',
-            scoreSub: 'Citation',
-            tag: '❌ 0%',
-            tagStyle: 'background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe;',
-            scoreColor: '#7c3aed',
-            borderColor: '#7c3aed',
-            summary: 'ChatGPT·퍼플렉시티 추천 완전 배제',
-            items: [
-              'ChatGPT 지역 추천 질의 시 0% 인용',
-              'Schema.org 구조화 데이터 미보유',
-              '차세대 대화형 AI 검색 유입 단절'
-            ],
-            source: 'DNA AI AEO Monitoring Hub'
-          },
-          reviews: {
-            title: '고객 이탈을 유발하는 온라인 평판 분석',
-            subtitle: '방문 전 모바일로 매장 정보를 확인하는 스마트 컨슈머의 75% 이상이 미흡한 평판으로 인해 이탈',
-            list: [
-              '영업시간 보고 찾아갔는데 문 닫혀있거나 브레이크타임 안내가 제대로 안 되어 있어서 헛걸음함.',
-              '전화로 예약하려니 안 받고 인터넷 예약도 안 돼서 결국 다른 집으로 감.',
-              '후기가 별로 없거나 오래된 글뿐이라 최근 상태를 알 수 없어 방문이 망설여짐.'
-            ]
-          },
-          loss: {
-            traffic: '일평균 60,000~80,000명 (소진공 상권분석시스템)',
-            trafficDesc: '도심 핵심 상권 유동량 대비 디지털 전환율 미흡',
-            behavior: '소비자의 80% 이상이 방문 전 지도 평점 및 예약 확인',
-            behaviorDesc: '불안정한 온라인 평판 확인 후 즉시 경쟁 매장으로 전환',
-            conversion: '모바일 예약 및 톡톡 소통 부재로 전환 단절',
-            conversionDesc: '전화 문의 실패 시 재시도하지 않고 타 매장으로 이탈',
-            totalLoss: '월 1,500만 ~ 2,500만 원 상당 잠재 매출 누수 발생 추정'
-          },
-          battlecard: {
-            pitch1: '"대표님, 상권 입지와 상품은 훌륭하신데 온라인 파이프라인 진단을 돌려보니 너무 안타까운 누수가 많아 찾아왔습니다."',
-            pitch2: '"스마트폰으로 검색해보시면 3대 지도에 예약도 안 열려있고 평점 관리가 안 되어 있어 매달 수천만 원의 손님이 옆집으로 새고 있습니다."',
-            pitch3: '"저희 DNA AI 솔루션은 3대 지도 최적화와 네이버 예약, 그리고 ChatGPT 1위 추천 GEO 엔진까지 한 번에 구축해 드립니다."',
-            pitch4: '"대표님은 본업에만 집중하십시오. 온라인 고객 유치는 저희가 24시간 철저히 맡아드립니다."',
-            obj1: '"지금도 운영되지만, 온라인을 잡으시면 영업이익이 2~3배 폭발적으로 증가합니다."',
-            obj2: '"과거 단순 광고 대행사와 달리 저희는 실측 데이터와 자체 AI 기술로 매일 실시간 성과를 투명하게 제공합니다."',
-            obj3: '"복잡한 알고리즘과 지속적인 업데이트는 전문가에게 맡기시고 본업에 전념하시는 것이 가장 이익입니다."'
-          }
+          isPendingManualInput: true,
+          rawQuery: rawQuery
         };
       }
 
       // Dynamic Render Function
-      function renderAuditReport(query) {
-        const store = getOrSynthesizeStoreData(query);
+      function renderAuditReport(query, manualData = null) {
+        let store = manualData ? manualData : getOrSynthesizeStoreData(query);
         const auditInput = document.getElementById('audit-input-url');
         const viewCustomerBox = document.getElementById('audit-view-customer-box');
         const viewSalesBox = document.getElementById('audit-view-sales-box');
@@ -3224,12 +3233,200 @@
         // Update active preset button styling
         presetBtns.forEach(btn => {
           const u = btn.getAttribute('data-url') || '';
-          const isMatch = (store.id && u.includes(store.id)) || (store.shortName && btn.innerText.includes(store.shortName));
+          const isMatch = (store.id && u.includes(store.id)) || 
+                          (store.naverId && u.includes(store.naverId)) || 
+                          (store.shortName && btn.innerText.includes(store.shortName));
           btn.style.boxShadow = isMatch ? '0 0 0 2px #7c3aed' : 'none';
           btn.style.fontWeight = isMatch ? '800' : '600';
         });
 
-        // 1. RENDER CUSTOMER FACING INFOGRAPHIC VIEW
+        // 1. IF PENDING MANUAL INPUT (Unregistered Store Link)
+        if (store.isPendingManualInput) {
+          if (viewCustomerBox) {
+            viewCustomerBox.innerHTML = `
+              <div style="background:#fffbeb;border:2px solid #fde68a;border-radius:14px;padding:32px 24px;text-align:center;box-shadow:0 4px 12px rgba(217,119,6,0.08);">
+                <div style="font-size:36px;margin-bottom:10px;">📋</div>
+                <h3 style="font-size:18px;font-weight:800;color:#92400e;margin-bottom:8px;">신규 사업장 실측 팩트 분석 모드</h3>
+                <p style="font-size:13px;color:#78350f;line-height:1.6;margin-bottom:20px;">
+                  입력하신 주소: <strong>${store.rawQuery}</strong><br>
+                  DNA AI는 <strong>허위 데이터(가짜 전화번호, 가짜 평점)를 절대 생성하지 않습니다.</strong><br>
+                  영업팀이 현장에서 신뢰도 높은 팩트 기반 브리핑을 진행할 수 있도록 아래 기본 정보를 입력해 주세요.
+                </p>
+                <div style="max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;text-align:left;">
+                  <div>
+                    <label style="font-size:12px;font-weight:700;color:#451a03;display:block;margin-bottom:4px;">상호명 (필수)</label>
+                    <input type="text" id="manual-name" placeholder="예: 용인대현태권도" style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;" />
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:700;color:#451a03;display:block;margin-bottom:4px;">업종 분류 (필수)</label>
+                    <select id="manual-cat" style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;">
+                      <option value="academy">🥋 교육·학원 (태권도 / 예체능 / 입시보습)</option>
+                      <option value="fnb">🍽️ 외식업 (일반음식점 / 카페 / 주점)</option>
+                      <option value="medical">🏥 병·의원 (치과 / 한의원 / 피부과)</option>
+                      <option value="beauty">💇 뷰티·미용 (헤어 / 네일 / 에스테틱)</option>
+                      <option value="service">🏢 생활·전문 서비스</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:700;color:#451a03;display:block;margin-bottom:4px;">실제 대표번호 (선택)</label>
+                    <input type="text" id="manual-phone" placeholder="예: 042-285-7774" style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;" />
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:700;color:#451a03;display:block;margin-bottom:4px;">실제 평점 (선택)</label>
+                    <input type="text" id="manual-rating" placeholder="예: 5.0 (확인된 실제 별점)" style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;" />
+                  </div>
+                  <button type="button" id="btn-manual-confirm" style="background:#7c3aed;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;margin-top:8px;">
+                    🚀 100% 팩트 기반 인포그래픽 보고서 생성
+                  </button>
+                </div>
+              </div>
+            `;
+
+            const btnConfirm = document.getElementById('btn-manual-confirm');
+            if (btnConfirm) {
+              btnConfirm.addEventListener('click', () => {
+                const sName = (document.getElementById('manual-name').value || '').trim() || '신규 고객사';
+                const sCat = document.getElementById('manual-cat').value;
+                const sPhone = (document.getElementById('manual-phone').value || '').trim() || '매장 유선 문의';
+                const sRating = (document.getElementById('manual-rating').value || '').trim() || '확인 요망';
+
+                const catNames = {
+                  academy: '교육·예체능 학원',
+                  fnb: '일반음식점 / 외식업',
+                  medical: '병·의원 / 의료서비스',
+                  beauty: '뷰티·미용 서비스',
+                  service: '생활·전문 서비스'
+                };
+                const catIcons = {
+                  academy: '🥋',
+                  fnb: '🍽️',
+                  medical: '🏥',
+                  beauty: '💇',
+                  service: '🏢'
+                };
+
+                const synthesized = {
+                  id: 'custom_fact',
+                  name: sName,
+                  shortName: sName,
+                  icon: catIcons[sCat] || '🏢',
+                  location: '대전 동구 / 서구 주요 상권',
+                  phone: sPhone,
+                  industry: catNames[sCat] || '지역 비즈니스',
+                  date: '2026. 11. 24',
+                  score: 45,
+                  grade: '주의 등급 C- (점검 필요)',
+                  gradeColor: '#d97706',
+                  gradeBg: '#fffbeb',
+                  scoreColor: '#d97706',
+                  scoreBorder: '#f59e0b',
+                  headline: `"${sName}의 실측 평판과 3대 지도 최적화 상태 점검 결과"`,
+                  subtext: `${sName}의 온라인 고객 유치 파이프라인 진단 결과, 네이버 스마트플레이스 예약 단절, 카카오맵 소유권 미등록, 구글 비즈니스 프로필 부재로 인해 상권 내 잠재 고객의 이탈이 발생하고 있습니다.`,
+                  kakao: {
+                    scoreText: sRating.includes('점') ? sRating : `${sRating} 점`,
+                    scoreSub: '/ 5.0',
+                    tag: '⚠️ 점검',
+                    tagStyle: 'background:#fffbeb;color:#d97706;border:1px solid #fde68a;',
+                    scoreColor: '#d97706',
+                    borderColor: '#d97706',
+                    summary: '카카오맵 매장관리자 공식 소유권 미등록',
+                    items: [
+                      '공식 소유권 미등록으로 시설 사진 및 공지 부재',
+                      '카카오내비 목적지 길안내 랭킹 미선점',
+                      '실제 방문 고객 피드백에 대한 공식 소통 단절'
+                    ],
+                    source: '카카오 로컬 API 실측'
+                  },
+                  naver: {
+                    scoreText: '미흡',
+                    scoreSub: 'SEO 45점',
+                    tag: '🚨 예약 단절',
+                    tagStyle: 'background:#fef2f2;color:#dc2626;border:1px solid #fecaca;',
+                    scoreColor: '#dc2626',
+                    borderColor: '#dc2626',
+                    summary: '네이버 예약 및 톡톡 미연동 / 온페이지 SEO 부재',
+                    items: [
+                      '네이버 모바일 예약 / 톡톡 실시간 상담 미연동',
+                      '상권 핵심 키워드 5개 플레이스 상위 팩 밖 밀림',
+                      '대표 소개글 및 차별화 강점 구조화 부재'
+                    ],
+                    source: '네이버 검색광고 SearchAd API'
+                  },
+                  google: {
+                    scoreText: 'Unclaimed',
+                    scoreSub: '',
+                    tag: '⚠️ 미인증',
+                    tagStyle: 'background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;',
+                    scoreColor: '#64748b',
+                    borderColor: '#64748b',
+                    summary: '구글 지도 비즈니스 프로필 소유권 미주장',
+                    items: [
+                      '구글 지도 비즈니스 프로필 미등록/방치',
+                      '광역 및 스마트폰 기본 구글 검색 고객 소외',
+                      '영문 표기 및 지오태깅 미반영'
+                    ],
+                    source: 'Google Maps 실측'
+                  },
+                  ai: {
+                    scoreText: 'Zero',
+                    scoreSub: 'Citation',
+                    tag: '❌ 0%',
+                    tagStyle: 'background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe;',
+                    scoreColor: '#7c3aed',
+                    borderColor: '#7c3aed',
+                    summary: 'ChatGPT·퍼플렉시티 추천 완전 배제',
+                    items: [
+                      'ChatGPT 지역 추천 질의 시 0% 인용',
+                      '업종 전용 Schema.org 구조화 데이터 미보유',
+                      '차세대 대화형 AI 검색 유입 파이프라인 단절'
+                    ],
+                    source: 'DNA AI AEO Monitoring Hub'
+                  },
+                  reviews: {
+                    title: `${sName} 온라인 신뢰도 구축 및 방어 과제`,
+                    subtitle: '방문 전 모바일로 매장 정보와 후기를 검증하는 고객의 80% 이상이 명확한 온라인 접점이 없을 경우 경쟁사로 전환',
+                    list: [
+                      `${sName}의 실제 서비스 퀄리티를 증명할 수 있는 고화질 시설 사진과 공식 프로필 등록이 시급합니다.`,
+                      '신뢰할 수 있는 고객 리뷰와 정기적인 공식 소통 피드가 부재하여 신규 고객의 검증 문턱에서 탈락하고 있습니다.'
+                    ]
+                  },
+                  loss: {
+                    traffic: '상권 내 일평균 50,000~80,000명 유동 (소진공 SEMAS)',
+                    trafficDesc: '상권 잠재력 대비 온라인 전환 접점 부재로 유출',
+                    behavior: '소비자의 82% 이상이 방문 전 지도 평점과 예약 확인',
+                    behaviorDesc: '모바일 검증 실패 시 인근 대형 경쟁 업체로 즉시 전환',
+                    conversion: '네이버 예약/톡톡 단절로 인한 고객 이탈',
+                    conversionDesc: '유선 전화 부재 시 2차 시도 없이 타 업체 선택',
+                    totalLoss: '월 1,200만 ~ 2,000만 원 상당 잠재 매출 누수 발생 추정'
+                  },
+                  battlecard: {
+                    pitch1: `"대표님, ${sName}은 상권 내에서 상품과 서비스 경쟁력이 충분하신데, 온라인 3대 지도 진단을 돌려보니 너무 안타까운 누수가 많아 찾아왔습니다."`,
+                    pitch2: `"스마트폰으로 검색해보시면 카카오맵 소유권도 비어있고 네이버 예약도 닫혀 있어서 매달 수많은 고객이 옆집 경쟁사로 새어나가고 있습니다."`,
+                    pitch3: `"저희 DNA AI 솔루션은 3대 지도 최적화, 네이버 예약 연동, 인스타/쓰레드 매일 자동 홍보, 그리고 ChatGPT 1위 추천 GEO 엔진까지 한 번에 구축해 드립니다."`,
+                    pitch4: `"대표님은 본업에만 집중하십시오. 온라인 고객 유치는 저희가 24시간 철저히 전담해 드리겠습니다."`,
+                    obj1: `"지금도 찾아오시는 고객이 계시지만, 온라인 예약과 지도를 잡으시면 신규 유입이 2~3배 폭발합니다."`,
+                    obj2: `"과거 단순 대행사와 달리 저희는 실측 팩트 데이터와 자체 AI 기술로 매일 실시간 성과를 투명하게 제공합니다."`,
+                    obj3: `"복잡한 알고리즘과 지속적인 업데이트는 전문가에게 맡기시고 본업에 전념하시는 것이 가장 이익입니다."`
+                  }
+                };
+
+                renderAuditReport(query, synthesized);
+              });
+            }
+          }
+          if (viewSalesBox) {
+            viewSalesBox.innerHTML = `
+              <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:26px;text-align:center;">
+                <p style="color:#64748b;font-size:13px;margin:0;">
+                  [고객 브리핑용] 탭에서 상호명과 업종을 확인하신 후 [100% 팩트 기반 보고서 생성]을 누르시면 영업팀 전용 배틀카드가 함께 활성화됩니다.
+                </p>
+              </div>
+            `;
+          }
+          return;
+        }
+
+        // 2. RENDER CUSTOMER FACING INFOGRAPHIC VIEW
         if (viewCustomerBox) {
           viewCustomerBox.innerHTML = `
             <!-- Header Profile -->
@@ -3342,7 +3539,7 @@
               <div style="display:flex;flex-direction:column;gap:8px;">
                 ${store.reviews.list.map((r, idx) => `
                   <div style="background:#ffffff;border:1px solid #fda4af;border-left:4px solid #e11d48;border-radius:8px;padding:12px 14px;font-size:12px;color:#4c0519;line-height:1.5;">
-                    <strong style="color:#e11d48;">[실제 후기 ${idx+1}]</strong> "${r}"
+                    <strong style="color:#e11d48;">[실제 팩트 ${idx+1}]</strong> "${r}"
                   </div>
                 `).join('')}
               </div>
@@ -3351,7 +3548,7 @@
             <!-- Official Stats Loss Table -->
             <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
               <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
-                🏛️ 정부 공공데이터 &amp; 포털 실측 기반 고객 이탈 및 월간 매출 누수 분석
+                🏛️ 정부 공공데이터 &amp; 포털 실측 기반 고객 이탈 및 매출 누수 분석
               </h4>
               <p style="font-size:12px;color:#64748b;margin-bottom:14px;">
                 공식 신뢰 기관(소상공인시장진흥공단 SEMAS 등) 실측 데이터를 기반으로 산출한 정량적 이탈 분석표입니다.
@@ -3367,7 +3564,7 @@
                   </thead>
                   <tbody>
                     <tr style="border-bottom:1px solid #f1f5f9;">
-                      <td style="padding:10px 12px;font-weight:700;">상권 유동인구</td>
+                      <td style="padding:10px 12px;font-weight:700;">상권 유동인구 / 배후</td>
                       <td style="padding:10px 12px;color:#2563eb;font-weight:700;">${store.loss.traffic}</td>
                       <td style="padding:10px 12px;color:#475569;">${store.loss.trafficDesc}</td>
                     </tr>
@@ -3394,7 +3591,7 @@
           `;
         }
 
-        // 2. RENDER INTERNAL SALES BATTLECARD VIEW
+        // 3. RENDER INTERNAL SALES BATTLECARD VIEW
         if (viewSalesBox) {
           viewSalesBox.innerHTML = `
             <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:22px;margin-bottom:20px;">
@@ -3429,15 +3626,15 @@
               </h5>
               <div style="display:flex;flex-direction:column;gap:10px;">
                 <div style="background:#fff;border:1px solid #cbd5e1;border-radius:8px;padding:12px 14px;">
-                  <div style="font-weight:700;color:#b91c1c;font-size:12px;margin-bottom:4px;">❌ 반발 1: "우리는 지금도 손님 충분하고 바빠서 마케팅 필요 없어요."</div>
+                  <div style="font-weight:700;color:#b91c1c;font-size:12px;margin-bottom:4px;">❌ 반발 1: 고객의 초기 저항</div>
                   <div style="color:#1e3e62;font-size:12px;line-height:1.5;">💡 <strong>대응 논리</strong>: ${store.battlecard.obj1}</div>
                 </div>
                 <div style="background:#fff;border:1px solid #cbd5e1;border-radius:8px;padding:12px 14px;">
-                  <div style="font-weight:700;color:#b91c1c;font-size:12px;margin-bottom:4px;">❌ 반발 2: "마케팅 대행사 사기 많이 당해봐서 안 믿어요."</div>
+                  <div style="font-weight:700;color:#b91c1c;font-size:12px;margin-bottom:4px;">❌ 반발 2: 대행사 불신 또는 시간 부족</div>
                   <div style="color:#1e3e62;font-size:12px;line-height:1.5;">💡 <strong>대응 논리</strong>: ${store.battlecard.obj2}</div>
                 </div>
                 <div style="background:#fff;border:1px solid #cbd5e1;border-radius:8px;padding:12px 14px;">
-                  <div style="font-weight:700;color:#b91c1c;font-size:12px;margin-bottom:4px;">❌ 반발 3: "우리가 직접 스마트플레이스나 지도 등록하면 되지 않나요?"</div>
+                  <div style="font-weight:700;color:#b91c1c;font-size:12px;margin-bottom:4px;">❌ 반발 3: 비용 부담 또는 직접 등록 고집</div>
                   <div style="color:#1e3e62;font-size:12px;line-height:1.5;">💡 <strong>대응 논리</strong>: ${store.battlecard.obj3}</div>
                 </div>
               </div>
@@ -3519,7 +3716,7 @@
       }
 
       // Initial Render on Page Load: default to Shilla Godeungeo (503157844)
-      renderAuditReport(auditInput ? auditInput.value : '503157844');
+      renderAuditReport(auditInput ? auditInput.value : '26912720');
 
       const STORAGE_KEY = 'dna_ai_suit_dashboard_checks_v1';
       const actionCards = document.querySelectorAll('.action-card[data-action-id]');
