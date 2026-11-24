@@ -3950,7 +3950,7 @@
             </div>
           </div>
 
-          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;">
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
             <h3 style="margin:0 0 12px;font-size:15px;color:#0f172a;">🛠️ 우선 개선 작업 (Action Items — 방문·문의 직결 우선)</h3>
             <div style="overflow-x:auto;">
               <table style="width:100%;border-collapse:collapse;font-size:12px;">
@@ -3966,11 +3966,113 @@
               </table>
             </div>
           </div>
+
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+              <div>
+                <h3 style="margin:0;font-size:15px;color:#0f172a;">🔎 Phase 2-A: 키워드 4유형 발견 가능성 (공식 API 반환 순서)</h3>
+                <p style="margin:3px 0 0;font-size:11px;color:#64748b;">※ 실제 지도 앱 개인화 순위가 아닌, 공식 API가 반환한 순서(네이버 최대 5건 · 카카오 10건 · 구글 10건)를 정직하게 표기합니다.</p>
+              </div>
+              <button type="button" class="no-print" onclick="runPhase2Keywords()" style="background:#4f46e5;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">🚀 키워드 4유형 실시간 조회</button>
+            </div>
+            <div class="no-print" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:12px;">
+              <input id="kw-brand" type="text" value="${esc(storeName)}" placeholder="1. 브랜드명" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
+              <input id="kw-cat" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' ' + (nm?.category || km?.category?.split('>').pop() || '')).trim())}" placeholder="2. 지역+업종" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
+              <input id="kw-svc" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' 유아 ' + (nm?.category || km?.category?.split('>').pop() || '')).trim())}" placeholder="3. 지역+서비스" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
+              <input id="kw-cond" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' 추천 ' + (nm?.category || km?.category?.split('>').pop() || '')).trim())}" placeholder="4. 지역+방문 조건" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
+            </div>
+            <div id="phase2-keywords-result" style="font-size:12px;color:#64748b;">버튼을 누르면 4개 키워드를 3대 지도 API에 병렬 조회합니다.</div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+              <div>
+                <h3 style="margin:0;font-size:15px;color:#0f172a;">🏆 Phase 2-B: 반경 1km 상권 경쟁사 실측 비교</h3>
+                <p style="margin:3px 0 0;font-size:11px;color:#64748b;">카카오 로컬 좌표·거리순 정렬 + 구글 Places 평점·리뷰·웹사이트 실측 비교</p>
+              </div>
+              <button type="button" class="no-print" onclick="runPhase2Competitors()" style="background:#0f766e;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">📍 반경 1km 경쟁사 실측 비교</button>
+            </div>
+            <div id="phase2-competitors-result" style="font-size:12px;color:#64748b;">버튼을 누르면 동일 상권 반경 1km 내 동종 경쟁사를 실시간 조회합니다.</div>
+          </div>
         `;
         viewCustomerBox.style.display = 'block';
         if (viewSalesBox) viewSalesBox.style.display = 'none';
         viewCustomerBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+
+      window.runPhase2Keywords = async function() {
+        const box = document.getElementById('phase2-keywords-result');
+        const d = window._lastLiveAuditData;
+        if (!box || !d) return;
+        const km = d.platforms?.kakao?.match?.matched;
+        const nm = d.platforms?.naver?.match?.matched;
+        const storeName = km?.name || nm?.name || d.input?.search_query || '';
+        const phone = km?.phone || nm?.phone || '';
+        const keywords = [
+          { type: '브랜드명', query: (document.getElementById('kw-brand')?.value || '').trim() },
+          { type: '지역+업종', query: (document.getElementById('kw-cat')?.value || '').trim() },
+          { type: '지역+서비스', query: (document.getElementById('kw-svc')?.value || '').trim() },
+          { type: '지역+방문 조건', query: (document.getElementById('kw-cond')?.value || '').trim() }
+        ].filter(k => k.query);
+        box.innerHTML = '⚡ 4유형 키워드 3대 지도 병렬 조회 중...';
+        try {
+          const resp = await fetch(MAP_CROSS_AUDIT_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'keywords', store_name: storeName, phone, keywords })
+          });
+          const res = await resp.json();
+          if (!res.ok) throw new Error(res.error || '조회 실패');
+          const fmtOrder = (p) => p.api_order ? `<strong style="color:#059669;">API ${p.api_order}번째</strong> <span style="color:#94a3b8;">(/${p.total_returned})</span>` : statusBadgeHtml('NOT_FOUND_IN_SCOPE');
+          const rows = res.results.map(r => `
+            <tr style="border-bottom:1px solid #e2e8f0;">
+              <td style="padding:8px;font-weight:700;">${r.type}</td>
+              <td style="padding:8px;">${r.query}</td>
+              <td style="padding:8px;">${fmtOrder(r.kakao)}</td>
+              <td style="padding:8px;">${fmtOrder(r.naver)}</td>
+              <td style="padding:8px;">${fmtOrder(r.google)}</td>
+            </tr>`).join('');
+          box.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;text-align:left;"><th style="padding:8px;">유형</th><th style="padding:8px;">질의어</th><th style="padding:8px;">🟡 카카오 (10건)</th><th style="padding:8px;">🟢 네이버 (최대5건)</th><th style="padding:8px;">🔵 구글 (10건)</th></tr></thead><tbody>${rows}</tbody></table></div><div style="margin-top:6px;font-size:11px;color:#94a3b8;">조회 시각: ${res.audited_at}</div>`;
+        } catch (e) {
+          box.innerHTML = `<span style="color:#dc2626;">조회 오류: ${e.message}</span>`;
+        }
+      };
+
+      window.runPhase2Competitors = async function() {
+        const box = document.getElementById('phase2-competitors-result');
+        const d = window._lastLiveAuditData;
+        if (!box || !d) return;
+        const km = d.platforms?.kakao?.match?.matched;
+        const nm = d.platforms?.naver?.match?.matched;
+        const cat = (nm?.category || km?.category?.split('>').pop() || '업체').trim();
+        const regionPrefix = (km?.road_address || nm?.road_address || '').split(' ').slice(0, 2).join(' ');
+        const categoryQuery = `${regionPrefix} ${cat}`.trim();
+        box.innerHTML = '⚡ 반경 1km 동종 경쟁사 실측 조회 중...';
+        try {
+          const resp = await fetch(MAP_CROSS_AUDIT_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'competitors', category_query: categoryQuery, x: km?.x || '', y: km?.y || '', radius: 1000 })
+          });
+          const res = await resp.json();
+          if (!res.ok) throw new Error(res.error || '조회 실패');
+          const kList = res.kakao_nearby?.candidates || [];
+          const gList = res.google_nearby?.candidates || [];
+          const rows = kList.slice(0, 6).map(c => {
+            const gMatch = gList.find(g => (g.name || '').replace(/\s+/g,'').includes((c.name || '').replace(/\s+/g,'')));
+            return `<tr style="border-bottom:1px solid #e2e8f0;">
+              <td style="padding:8px;font-weight:700;">${c.name}</td>
+              <td style="padding:8px;">${c.distance !== null ? c.distance + 'm' : '-'}</td>
+              <td style="padding:8px;">${c.road_address || c.jibun_address || '-'}</td>
+              <td style="padding:8px;">${c.phone || '-'}</td>
+              <td style="padding:8px;">${gMatch ? `⭐ ${gMatch.rating ?? '-'} (${gMatch.review_count ?? 0}건)` : statusBadgeHtml('NOT_FOUND_IN_SCOPE')}</td>
+            </tr>`;
+          }).join('');
+          box.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f0fdfa;border-bottom:2px solid #99f6e4;text-align:left;"><th style="padding:8px;">경쟁사명</th><th style="padding:8px;">거리</th><th style="padding:8px;">도로명주소</th><th style="padding:8px;">전화</th><th style="padding:8px;">🔵 구글 평점/리뷰</th></tr></thead><tbody>${rows || '<tr><td colspan="5" style="padding:10px;">반경 1km 내 결과 없음</td></tr>'}</tbody></table></div><div style="margin-top:6px;font-size:11px;color:#94a3b8;">질의: ${res.category_query} · 반경 ${res.radius}m · 조회 시각: ${res.audited_at}</div>`;
+        } catch (e) {
+          box.innerHTML = `<span style="color:#dc2626;">조회 오류: ${e.message}</span>`;
+        }
+      };
 
       if (btnRunAudit) {
         btnRunAudit.addEventListener('click', () => {
