@@ -7,8 +7,40 @@
   <meta name="googlebot" content="noindex, nofollow, noarchive">
   <meta name="Yeti" content="noindex, nofollow">
   <meta name="bingbot" content="noindex, nofollow">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>DNA AI 슈트 (DNA AI SUIT) — 사업 통합 진행 현황 대시보드</title>
   <style>
+    @media print {
+      @page { size: A4; margin: 10mm; }
+      body {
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      header, .hero, .kpi-grid, .notice, .tabs, .tab-bar, footer, .no-print,
+      .dash-section:not(#section-audit),
+      #audit-view-sales-box {
+        display: none !important;
+      }
+      .wrap, main, #section-audit {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+      }
+      #section-audit { display: block !important; }
+      #audit-view-customer-box { display: block !important; }
+      #audit-view-customer-box > div,
+      #audit-view-customer-box > div > div,
+      #audit-view-customer-box table,
+      #audit-view-customer-box tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
     :root {
       --bg: #f3f6fb;
       --surface: #ffffff;
@@ -2189,7 +2221,7 @@
     <!-- 8. FIELD SALES PRE-VISIT AUDIT SIMULATOR (3 MAPS + GEO/AEO) -->
     <!-- ========================================================================= -->
     <section class="dash-section hidden" data-section="audit" id="section-audit">
-      <div class="section-head" style="margin-bottom:20px;">
+      <div class="section-head no-print" style="margin-bottom:20px;">
         <div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
             <span style="display:inline-flex;align-items:center;gap:6px;background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;">
@@ -2207,7 +2239,7 @@
       </div>
 
       <!-- URL Input & Preset Bar -->
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;box-shadow:0 4px 15px -3px rgba(15,23,42,0.06);margin-bottom:24px;">
+      <div class="no-print" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;box-shadow:0 4px 15px -3px rgba(15,23,42,0.06);margin-bottom:24px;">
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
           <input type="text" id="audit-input-url" placeholder="카카오맵, 네이버 플레이스, 또는 구글 지도 링크를 입력하세요 (예: https://place.map.kakao.com/503157844)" 
                  value="https://place.map.kakao.com/26912720"
@@ -2215,8 +2247,8 @@
           <button type="button" id="btn-run-audit" style="background:linear-gradient(135deg, #7c3aed, #4f46e5);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(124,58,237,0.3);">
             🚀 1초 정밀 분석 실행
           </button>
-          <button type="button" onclick="window.print()" style="background:#0f172a;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">
-            🖨️ 인쇄 / PDF 저장
+          <button type="button" onclick="printCustomerAuditReport()" style="background:#0f172a;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">
+            🖨️ 고객용 인쇄 / PDF 저장
           </button>
         </div>
 
@@ -2247,7 +2279,7 @@
       </div>
 
       <!-- Mode Switcher Tabs (Customer Facing vs Internal Battlecard) -->
-      <div style="display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid #e2e8f0;padding-bottom:12px;">
+      <div class="no-print" style="display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid #e2e8f0;padding-bottom:12px;">
         <button type="button" id="btn-view-customer" class="audit-view-btn active"
                 style="background:#2563eb;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
           📊 [고객 브리핑용] 인포그래픽 사전 정밀 진단서
@@ -3221,6 +3253,27 @@
           rawQuery: rawQuery
         };
       }
+
+      // Dynamic Print Function (prints ONLY the clean customer report with dynamic PDF title)
+      window.printCustomerAuditReport = function() {
+        const prevTitle = document.title;
+        const h2 = document.querySelector('#audit-view-customer-box h2');
+        const storeTitle = h2 ? h2.innerText.replace(/디지털 평판.*/g, '').trim() : '사전정밀진단';
+        const customerBox = document.getElementById('audit-view-customer-box');
+        const salesBox = document.getElementById('audit-view-sales-box');
+        const prevCustDisplay = customerBox ? customerBox.style.display : '';
+        const prevSalesDisplay = salesBox ? salesBox.style.display : '';
+
+        if (customerBox) customerBox.style.display = 'block';
+        if (salesBox) salesBox.style.display = 'none';
+        document.title = `[DNA AI] ${storeTitle} 사전정밀진단 보고서`;
+        window.print();
+        setTimeout(() => {
+          document.title = prevTitle;
+          if (customerBox) customerBox.style.display = prevCustDisplay;
+          if (salesBox) salesBox.style.display = prevSalesDisplay;
+        }, 500);
+      };
 
       // Dynamic Render Function
       function renderAuditReport(query, manualData = null) {
@@ -4707,4 +4760,3 @@ ${client.customerName}의 Threads SNS 자동 홍보 익월 서비스 유지를 �
 
   </script>
 </body>
-</html>
