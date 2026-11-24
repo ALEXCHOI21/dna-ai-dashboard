@@ -3984,7 +3984,7 @@
             <div id="phase2-keywords-result" style="font-size:12px;color:#64748b;">버튼을 누르면 4개 키워드를 3대 지도 API에 병렬 조회합니다.</div>
           </div>
 
-          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;">
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
               <div>
                 <h3 style="margin:0;font-size:15px;color:#0f172a;">🏆 Phase 2-B: 반경 1km 상권 경쟁사 실측 비교</h3>
@@ -3993,6 +3993,36 @@
               <button type="button" class="no-print" onclick="runPhase2Competitors()" style="background:#0f766e;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">📍 반경 1km 경쟁사 실측 비교</button>
             </div>
             <div id="phase2-competitors-result" style="font-size:12px;color:#64748b;">버튼을 누르면 동일 상권 반경 1km 내 동종 경쟁사를 실시간 조회합니다.</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
+            <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #0284c7;border-radius:12px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <strong style="font-size:13px;">🏛️ Phase 3-A: 소진공 상권 분포 (500m/1km)</strong>
+                <button type="button" class="no-print" onclick="runPhase3Semas()" style="background:#0284c7;color:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">실측 조회</button>
+              </div>
+              <div id="phase3-semas-result" style="font-size:12px;color:#64748b;line-height:1.5;">공공데이터포털 상가(상권)정보 API 연동 대기 (클릭하여 상태 확인)</div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #7c3aed;border-radius:12px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <strong style="font-size:13px;">🤖 Phase 3-B: GEO AI 언급률 월별 추적</strong>
+                <button type="button" class="no-print" onclick="runPhase3Geo()" style="background:#7c3aed;color:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">측정 실행</button>
+              </div>
+              <input id="geo-question-input" class="no-print" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' ' + (nm?.category || km?.category?.split('>').pop() || '') + ' 추천해줘').trim())}" style="width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:11px;margin-bottom:6px;">
+              <div id="phase3-geo-result" style="font-size:12px;color:#64748b;line-height:1.5;">Supabase geo_audit_logs DB 연동 완료 (클릭하여 측정)</div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #059669;border-radius:12px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <strong style="font-size:13px;">📈 Phase 3-C: GBP 성과 · GA4 UTM 퍼널</strong>
+                <span style="background:#fffbeb;color:#d97706;border:1px solid #fde68a;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;">고객사 OAuth 대기</span>
+              </div>
+              <div style="font-size:12px;color:#475569;line-height:1.6;">
+                <div>• 프로필 노출 → 전화 클릭 → 문의 → 예약 확정</div>
+                <div style="color:#64748b;font-size:11px;margin-top:4px;">※ 계약 고객사 Google Business Profile 권한 수령 시 월간 성과 자동 연동</div>
+              </div>
+            </div>
           </div>
         `;
         viewCustomerBox.style.display = 'block';
@@ -4072,6 +4102,51 @@
         } catch (e) {
           box.innerHTML = `<span style="color:#dc2626;">조회 오류: ${e.message}</span>`;
         }
+      };
+
+      window.runPhase3Semas = async function() {
+        const box = document.getElementById('phase3-semas-result');
+        const d = window._lastLiveAuditData;
+        if (!box || !d) return;
+        const km = d.platforms?.kakao?.match?.matched;
+        box.innerHTML = '⚡ 소진공 상가정보 API 조회 중...';
+        try {
+          const resp = await fetch(MAP_CROSS_AUDIT_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'semas', x: km?.x || '', y: km?.y || '' })
+          });
+          const res = await resp.json();
+          if (res.status === 'KEY_REQUIRED') {
+            box.innerHTML = `<span style="color:#d97706;font-weight:600;">🔑 ${res.message}</span>`;
+          } else {
+            box.innerHTML = `<strong>500m 내 상가:</strong> ${res.r500?.totalCount ?? 0}곳 · <strong>1km 내 상가:</strong> ${res.r1000?.totalCount ?? 0}곳 <div style="font-size:10px;color:#94a3b8;margin-top:4px;">${res.audited_at}</div>`;
+          }
+        } catch (e) { box.innerHTML = `<span style="color:#dc2626;">오류: ${e.message}</span>`; }
+      };
+
+      window.runPhase3Geo = async function() {
+        const box = document.getElementById('phase3-geo-result');
+        const d = window._lastLiveAuditData;
+        if (!box || !d) return;
+        const km = d.platforms?.kakao?.match?.matched;
+        const nm = d.platforms?.naver?.match?.matched;
+        const storeName = km?.name || nm?.name || d.input?.search_query || '';
+        const question = (document.getElementById('geo-question-input')?.value || '').trim();
+        box.innerHTML = '⚡ GEO AI 언급률 측정 및 DB 기록 중...';
+        try {
+          const resp = await fetch(MAP_CROSS_AUDIT_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'geo', store_name: storeName, question })
+          });
+          const res = await resp.json();
+          if (res.status === 'KEY_REQUIRED') {
+            box.innerHTML = `<span style="color:#7c3aed;font-weight:600;">🔑 ${res.message}</span>`;
+          } else {
+            box.innerHTML = `<div><strong>언급 여부:</strong> ${res.mentioned ? '<span style="color:#059669;">✅ AI 답변 언급 확인</span>' : '<span style="color:#dc2626;">❌ 미언급 (0%)</span>'} (${res.model})</div><div style="font-size:11px;color:#475569;margin-top:4px;">${res.answer_snippet || ''}</div>`;
+          }
+        } catch (e) { box.innerHTML = `<span style="color:#dc2626;">오류: ${e.message}</span>`; }
       };
 
       if (btnRunAudit) {
