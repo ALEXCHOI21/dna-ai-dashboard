@@ -826,7 +826,7 @@ function generateGmailData() {
     }
   });
 
-  // [상세 전체 본문 (클립보드 자동 복사용 - 정밀 전문)]
+  // [상세 전체 본문 (Gmail 작성창에 100% 온전하게 입력되는 정밀 전문)]
   const fullBody = `안녕하세요, ${representative} 대표님!
 최고급 AI 마케팅 비서 DNA AI SUIT (투어티플레이스)입니다.
 
@@ -868,29 +868,16 @@ DNA AI SUIT / 투어티플레이스 드림
 • 공식 이메일: dani90dna@gmail.com
 `;
 
-  // [초경량 컴팩트 본문 (Google 서버 400 Bad Request 에러 완벽 방지: 안전 규격 유지)]
-  const slimBody = `안녕하세요, ${representative} 대표님!
-DNA AI SUIT(투어티플레이스) 전자계약서 및 거래명세표 안내입니다.
-
-• 계약자: ${customerName} (${representative} 대표님)
-• 입금액: ${money(total)} (VAT포함)
-• 계좌: 카카오뱅크 3333-38-9917516 정성윤(투어티플레이스)
-
-※ 첨부 PDF 또는 하단 드라이브(▲)에서 계약서를 확인해 주세요.
-(상세 전문 및 감사해시는 자동복사되어 [Ctrl+V]로 붙여넣으실 수 있습니다)
-
-투어티플레이스 Director: 010-8587-0235`;
-
-  const subject = `[DNA AI 전자계약] ${customerName} 대표님 공식 계약서 및 입금 안내`;
+  const subject = `[DNA AI 전자계약 체결본 및 거래명세서] ${customerName} 대표님 공식 계약서 및 입금 안내`;
   const encodedTo = encodeURIComponent(email);
   const encodedCc = encodeURIComponent('dani90dna@gmail.com');
   const encodedSubject = encodeURIComponent(subject);
-  const encodedSlimBody = encodeURIComponent(slimBody);
+  const encodedBody = encodeURIComponent(fullBody);
 
-  // 초경량 Gmail Compose URL (1,500자 이내로 400 Bad Request 원천 차단)
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&cc=${encodedCc}&su=${encodedSubject}&body=${encodedSlimBody}`;
+  // Gmail Compose 웹 URL (상세 전체 본문 100% 온전 전달)
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&cc=${encodedCc}&su=${encodedSubject}&body=${encodedBody}`;
   
-  return { gmailUrl, fullBody, slimBody, customerName, fileName: pdfFileName };
+  return { gmailUrl, fullBody, customerName, fileName: pdfFileName };
 }
 
 const btnSendGmail = document.querySelector('#btnSendGmail');
@@ -931,8 +918,8 @@ if (btnSendGmail) {
     }, 600);
 
     const msg = document.querySelector('#completeMessage');
-    msg.innerHTML = `Gmail 작성 창이 열렸습니다. (상세 전문 클립보드 복사 완료 ✨) 하단의 <strong>Google 드라이브 아이콘(▲)</strong>을 눌러 첨부해 주세요!`;
-    showToast('📋 메일 상세 전문이 클립보드에 자동 복사되었습니다!');
+    msg.innerHTML = `Gmail 작성 창이 열렸습니다. 하단의 <strong>Google 드라이브 아이콘(▲)</strong>을 눌러 첨부해 주세요!`;
+    showToast('Gmail 작성 창이 열렸습니다.');
   });
 }
 
