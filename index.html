@@ -2880,18 +2880,25 @@
         };
       }
 
-      // 데이터 로드 & 전자계약 자동 머지 (알파비전, 씨엘키즈, 용인대 등 테스트 고객사 영구 필터링 및 자동 정리)
+      // [대표님 지침 규칙] 테스트 계약 판별 헬퍼 (고객사명에 '테스트' 또는 'test'가 포함된 경우만 테스트로 인지)
+      function isTestClientName(name) {
+        if (!name) return false;
+        const lower = name.toLowerCase().trim();
+        return lower.includes('테스트') || lower.includes('test');
+      }
+
+      // 데이터 로드 & 전자계약 자동 머지 (테스트 계약 건 제외 및 대장 관리)
       function getClientsList() {
         let savedList = [];
         try {
           savedList = JSON.parse(localStorage.getItem(CRM_STORAGE_KEY) || '[]');
         } catch (e) { savedList = []; }
 
-        // 용인대 / 알파비전 / 씨엘키즈 등 테스트 계약 데이터 로컬스토리지 영구 삭제 동기화
+        // 로컬 저장소 내 '테스트'/'test' 및 기존 임시 테스트 건(용인대 단독 테스트 건) 1회성 정리
         const cleanedSaved = savedList.filter(c => {
           if (!c || !c.customerName) return false;
-          const name = c.customerName;
-          return !name.includes('알파비전') && !name.includes('씨엘키즈') && !name.includes('용인');
+          const name = c.customerName.trim();
+          return !isTestClientName(name) && name !== '용인대';
         });
         if (cleanedSaved.length !== savedList.length) {
           try {
@@ -2905,7 +2912,8 @@
 
         savedList.forEach(c => {
           if (!c.customerName) return;
-          if (c.customerName.includes('알파비전') || c.customerName.includes('씨엘키즈') || c.customerName.includes('용인')) return;
+          // 고객명이 '테스트'인 경우만 업데이트 제외 (특정 상호명은 향후 실제 고객이 될 수 있으므로 원천 차단하지 않음)
+          if (isTestClientName(c.customerName) || c.customerName.trim() === '용인대') return;
 
           if (map.has(c.customerName)) {
             map.set(c.customerName, { ...map.get(c.customerName), ...c });
@@ -2926,9 +2934,7 @@
         });
 
         const list = Array.from(map.values()).filter(c => 
-          !(c.customerName || '').includes('알파비전') && 
-          !(c.customerName || '').includes('씨엘키즈') &&
-          !(c.customerName || '').includes('용인')
+          !isTestClientName(c.customerName) && (c.customerName || '').trim() !== '용인대'
         );
         list.forEach((item, idx) => { item.no = idx + 1; });
         return list;
