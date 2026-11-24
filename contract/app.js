@@ -20,11 +20,13 @@ const emailGuideModal = document.querySelector('#emailGuideModal');
 const btnCloseModal = document.querySelector('#btnCloseModal');
 const btnConfirmModal = document.querySelector('#btnConfirmModal');
 const btnCopyFileName = document.querySelector('#btnCopyFileName');
+const btnCopyMailBody = document.querySelector('#btnCopyMailBody');
 const btnReopenGmail = document.querySelector('#btnReopenGmail');
 const modalFileName = document.querySelector('#modalFileName');
 
 let currentStep = 1;
 let lastGeneratedGmailUrl = '';
+let lastFullMailBody = '';
 
 // 1. DANI 비서 단계별 가이드 대화
 const daniMessages = {
@@ -811,6 +813,7 @@ function generateGmailData() {
   const email = fd.get('email') || '';
   const hash = document.querySelector('#cryptoHash').textContent || '';
   const korTotal = numberToKorean(total);
+  const pdfFileName = `${contractFileTitle()}.pdf`;
 
   // 거래명세 품목 텍스트 표
   let itemsText = '';
@@ -823,8 +826,8 @@ function generateGmailData() {
     }
   });
 
-  const subject = `[DNA AI 전자계약 체결본 및 거래명세서] ${customerName} 대표님 공식 계약서 및 입금 안내`;
-  const body = `안녕하세요, ${representative} 대표님!
+  // [상세 전체 본문 (클립보드 자동 복사용 - 정밀 전문)]
+  const fullBody = `안녕하세요, ${representative} 대표님!
 최고급 AI 마케팅 비서 DNA AI SUIT (투어티플레이스)입니다.
 
 금일 체결해주신 DNA AI 솔루션 이용계약서 및 공식 거래명세표 내역을 전달드립니다.
@@ -855,23 +858,39 @@ ${itemsText}
 • Google Drive 보관 위치: [공식] DNA_AI_계약관리_공유드라이브/01_체결완료_전자계약서/
 • 지메일 하단의 [Google 드라이브 아이콘 ▲]을 누르시면 해당 첨부파일을 1초 만에 확인하실 수 있습니다.
 
-※ 첨부된 [${contractFileTitle()}.pdf] 파일을 확인해 주시기 바라며, 회신 메일 또는 입금 확인 즉시 전담 마케팅 셋팅이 착수되고 국세청 홈택스 전자세금계산서가 발행됩니다.
+※ 첨부된 [${pdfFileName}] 파일을 확인해 주시기 바라며, 회신 메일 또는 입금 확인 즉시 전담 마케팅 셋팅이 착수되고 국세청 홈택스 전자세금계산서가 발행됩니다.
 
 감사합니다.
 
 DNA AI SUIT / 투어티플레이스 드림
 • 공식 웹사이트: https://dnaai.co.kr/
-• 고객센터: 010-8587-0235 | 최두리 CTO: 010-8806-8318
+• Director: 010-8587-0235 | 최두리 CTO: 010-8806-8318
 • 공식 이메일: dani90dna@gmail.com
 `;
 
+  // [초경량 컴팩트 본문 (Google 서버 400 Bad Request 에러 완벽 방지: 안전 규격 유지)]
+  const slimBody = `안녕하세요, ${representative} 대표님!
+DNA AI SUIT(투어티플레이스) 전자계약서 및 거래명세표 안내입니다.
+
+• 계약자: ${customerName} (${representative} 대표님)
+• 입금액: ${money(total)} (VAT포함)
+• 계좌: 카카오뱅크 3333-38-9917516 정성윤(투어티플레이스)
+
+※ 첨부 PDF 또는 하단 드라이브(▲)에서 계약서를 확인해 주세요.
+(상세 전문 및 감사해시는 자동복사되어 [Ctrl+V]로 붙여넣으실 수 있습니다)
+
+투어티플레이스 Director: 010-8587-0235`;
+
+  const subject = `[DNA AI 전자계약] ${customerName} 대표님 공식 계약서 및 입금 안내`;
   const encodedTo = encodeURIComponent(email);
   const encodedCc = encodeURIComponent('dani90dna@gmail.com');
   const encodedSubject = encodeURIComponent(subject);
-  const encodedBody = encodeURIComponent(body);
+  const encodedSlimBody = encodeURIComponent(slimBody);
 
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&cc=${encodedCc}&su=${encodedSubject}&body=${encodedBody}`;
-  return { gmailUrl, customerName, fileName: `${contractFileTitle()}.pdf` };
+  // 초경량 Gmail Compose URL (1,500자 이내로 400 Bad Request 원천 차단)
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&cc=${encodedCc}&su=${encodedSubject}&body=${encodedSlimBody}`;
+  
+  return { gmailUrl, fullBody, slimBody, customerName, fileName: pdfFileName };
 }
 
 const btnSendGmail = document.querySelector('#btnSendGmail');
@@ -884,8 +903,14 @@ if (btnSendGmail) {
       return;
     }
 
-    const { gmailUrl, fileName } = generateGmailData();
+    const { gmailUrl, fullBody, fileName } = generateGmailData();
     lastGeneratedGmailUrl = gmailUrl;
+    lastFullMailBody = fullBody;
+
+    // 0) 클립보드에 상세 전문 자동 복사 (안전 처리)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(fullBody).catch(() => {});
+    }
 
     // 1) Google Apps Script 웹앱으로 구글 드라이브에 안전하게 자동 업로드
     uploadContractToGoogleDrive('gmail_send');
@@ -896,17 +921,18 @@ if (btnSendGmail) {
       window.print();
     }, 300);
 
-    // 2) 모달 파일명 표시 및 모달 노출
+    // 3) 모달 파일명 표시 및 모달 노출
     if (modalFileName) modalFileName.textContent = fileName;
     if (emailGuideModal) emailGuideModal.classList.add('active');
 
-    // 3) Gmail 웹 작성창 오픈
+    // 4) Gmail 웹 작성창 오픈 (400 에러 없이 즉시 정상 오픈)
     setTimeout(() => {
       window.open(gmailUrl, '_blank');
     }, 600);
 
     const msg = document.querySelector('#completeMessage');
-    msg.innerHTML = `Gmail 작성 창이 열렸습니다. 하단의 <strong>Google 드라이브 아이콘(▲)</strong>을 눌러 첨부해 주세요!`;
+    msg.innerHTML = `Gmail 작성 창이 열렸습니다. (상세 전문 클립보드 복사 완료 ✨) 하단의 <strong>Google 드라이브 아이콘(▲)</strong>을 눌러 첨부해 주세요!`;
+    showToast('📋 메일 상세 전문이 클립보드에 자동 복사되었습니다!');
   });
 }
 
@@ -1047,6 +1073,18 @@ if (btnCopyFileName) {
     }).catch(() => {
       showToast('파일명: ' + text);
     });
+  });
+}
+
+if (btnCopyMailBody) {
+  btnCopyMailBody.addEventListener('click', () => {
+    if (lastFullMailBody) {
+      navigator.clipboard.writeText(lastFullMailBody).then(() => {
+        showToast('메일 상세 전문이 클립보드에 복사되었습니다! (Gmail에서 Ctrl+V)');
+      }).catch(() => {
+        showToast('메일 상세 전문이 복사되었습니다.');
+      });
+    }
   });
 }
 
