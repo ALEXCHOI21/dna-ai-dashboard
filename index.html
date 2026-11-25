@@ -19,28 +19,25 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      header, .hero, .kpi-grid, .notice, .tabs, .tab-bar, .tab-bar-wrap, footer, .no-print,
-      .dash-section:not(#section-audit),
-      #audit-view-sales-box {
+      body > *:not(#customer-print-report) {
         display: none !important;
       }
-      .wrap, main, #section-audit {
+      #customer-print-report {
+        display: block !important;
         max-width: 100% !important;
         width: 100% !important;
-        padding: 0 !important;
         margin: 0 !important;
-        box-shadow: none !important;
+        color: #0f172a !important;
       }
-      #section-audit { display: block !important; }
-      #audit-view-customer-box { display: block !important; }
-      #audit-view-customer-box > div,
-      #audit-view-customer-box > div > div,
-      #audit-view-customer-box table,
-      #audit-view-customer-box tr {
+      #customer-print-report .print-card,
+      #customer-print-report table,
+      #customer-print-report tr {
         break-inside: avoid;
         page-break-inside: avoid;
       }
+      #customer-print-report .print-section { break-before: auto; }
     }
+    @media screen { #customer-print-report { display: none; } }
     :root {
       --bg: #f3f6fb;
       --surface: #ffffff;
@@ -3256,8 +3253,108 @@
         };
       }
 
-      // Dynamic Print Function (prints ONLY the clean customer report with YYMMDD_고객사_문서종류_버전 naming)
+      function buildCustomerPrintReport() {
+        const data = window._lastLiveAuditData;
+        if (!data) return null;
+        const km = data.platforms?.kakao?.match?.matched;
+        const nm = data.platforms?.naver?.match?.matched;
+        const gm = data.platforms?.google?.match?.matched;
+        const storeName = km?.name || nm?.name || data.input?.search_query || '고객사';
+        const address = km?.road_address || nm?.road_address || gm?.address || '추가 확인 필요';
+        const phone = km?.phone || gm?.phone || '지도 앱 화면에서 확인 필요';
+        const state = window._customerAuditEvidence || {};
+        const keywordResults = state.keywords?.results || [];
+        const nonBrand = keywordResults.filter(r => r.type !== '브랜드명');
+        const nonBrandFound = nonBrand.filter(r => r.kakao?.api_order || r.naver?.api_order || r.google?.api_order).length;
+        const allCompetitors = state.competitors?.kakao_nearby?.candidates || [];
+        const normalize = s => String(s || '').replace(/\s+/g, '');
+        const competitors = allCompetitors.filter(c => normalize(c.name) !== normalize(storeName)).slice(0, 6);
+        const geoMeasured = Boolean(state.geo && state.geo.status !== 'KEY_REQUIRED');
+        const geoMentioned = geoMeasured ? Boolean(state.geo.mentioned) : null;
+        const semasMeasured = Boolean(state.semas && state.semas.status !== 'KEY_REQUIRED');
+
+        const conclusionParts = [];
+        if (keywordResults.length) {
+          conclusionParts.push(nonBrandFound === 0
+            ? '정확한 상호명 검색과 달리 일반 지역·업종 검색어에서는 이번 API 결과 범위에 확인되지 않았습니다.'
+            : `일반 검색어 ${nonBrand.length}개 중 ${nonBrandFound}개에서 하나 이상의 API 결과 범위에 확인됐습니다.`);
+        } else conclusionParts.push('일반 검색어 발견 가능성은 아직 측정하지 않았습니다.');
+        if (competitors.length) conclusionParts.push(`반경 1km 조회에서는 대상 사업장을 제외한 경쟁 후보 ${competitors.length}곳이 확인됐습니다.`);
+        if (geoMentioned === false) conclusionParts.push('이번 Gemini 추천 질의에서는 대상 사업장이 언급되지 않았습니다.');
+        if (geoMentioned === true) conclusionParts.push('이번 Gemini 추천 질의에서는 대상 사업장이 언급됐습니다.');
+
+        const platformRows = [
+          ['카카오', km?.name || '결과 범위 내 미확인', km?.road_address || '결과 범위 내 미확인', km?.phone || '필드 미제공', km ? '일치 후보 확인' : '추가 확인'],
+          ['네이버', nm?.name || '결과 범위 내 미확인', nm?.road_address || '결과 범위 내 미확인', '지역검색 API 미제공', nm ? '일치 후보 확인' : '추가 확인'],
+          ['구글', gm?.name || '결과 범위 내 미확인', gm?.address || '결과 범위 내 미확인', gm?.phone || '결과 범위 내 미확인', gm ? '일치 후보 확인' : '지도 화면 추가 확인']
+        ].map(r => `<tr>${r.map((v, i) => `<td style="padding:7px;border:1px solid #dbe2ea;${i===0?'font-weight:800;':''}">${esc(v)}</td>`).join('')}</tr>`).join('');
+
+        const keywordRows = keywordResults.length ? keywordResults.map(r => {
+          const fmt = p => p?.api_order ? `API 응답 ${p.api_order}번째 / ${p.total_returned}건` : '결과 범위 내 미확인';
+          return `<tr><td>${esc(r.type)}</td><td>${esc(r.query)}</td><td>${fmt(r.kakao)}</td><td>${fmt(r.naver)}</td><td>${fmt(r.google)}</td></tr>`;
+        }).join('') : '<tr><td colspan="5">아직 측정하지 않았습니다.</td></tr>';
+
+        const competitorRows = state.competitors ? (competitors.length ? competitors.map(c => `<tr><td>${esc(c.name)}</td><td>${c.distance !== null ? esc(c.distance + 'm') : '-'}</td><td>${esc(c.road_address || c.jibun_address || '-')}</td><td>${esc(c.phone || '미제공')}</td></tr>`).join('') : '<tr><td colspan="4">이번 API 결과 범위에서 대상 외 경쟁 후보가 확인되지 않았습니다.</td></tr>') : '<tr><td colspan="4">아직 측정하지 않았습니다.</td></tr>';
+
+        const geoText = geoMeasured
+          ? (geoMentioned ? '이번 1회 Gemini 추천 질의에서 언급 확인' : '이번 1회 Gemini 추천 질의에서 미언급')
+          : '아직 측정하지 않았습니다.';
+        const semasText = semasMeasured
+          ? `500m 내 전체 상가 ${Number(state.semas.r500?.totalCount || 0).toLocaleString()}곳 / 1km 내 전체 상가 ${Number(state.semas.r1000?.totalCount || 0).toLocaleString()}곳`
+          : '아직 측정하지 않았습니다.';
+
+        let report = document.getElementById('customer-print-report');
+        if (!report) {
+          report = document.createElement('section');
+          report.id = 'customer-print-report';
+          document.body.appendChild(report);
+        }
+        report.innerHTML = `
+          <div style="font-family:'Malgun Gothic','Noto Sans KR',sans-serif;font-size:10.5pt;line-height:1.55;">
+            <div class="print-card" style="background:#0f1f3d;color:#fff;padding:18px 20px;border-radius:12px;margin-bottom:14px;">
+              <div style="font-size:9pt;color:#bfdbfe;font-weight:700;">DNA AI · 고객용 디지털 노출 사전진단</div>
+              <h1 style="font-size:21pt;margin:4px 0 8px;">${esc(storeName)}</h1>
+              <div style="font-size:9.5pt;color:#dbeafe;">${esc(address)} · ${esc(phone)} · 조회 ${esc(data.audited_at || '')}</div>
+            </div>
+            <div class="print-card" style="border-left:5px solid #2563eb;background:#eff6ff;padding:12px 14px;margin-bottom:14px;">
+              <strong style="display:block;color:#1e3a8a;margin-bottom:4px;">핵심 진단</strong>${esc(conclusionParts.join(' '))}
+            </div>
+            <div class="print-section"><h2 style="font-size:14pt;color:#0f1f3d;border-bottom:2px solid #2563eb;padding-bottom:5px;">3대 지도 기본정보</h2>
+              <table style="width:100%;border-collapse:collapse;font-size:9pt;"><thead><tr style="background:#0f1f3d;color:#fff;"><th>채널</th><th>상호</th><th>주소</th><th>전화</th><th>판정</th></tr></thead><tbody>${platformRows}</tbody></table>
+              <p style="font-size:8.5pt;color:#475569;">네이버 전화·공식 링크 공백은 지역검색 API 정책상 미제공일 수 있으며, 실제 지도 앱 노출 여부와 동일하지 않습니다. 구글 ‘결과 범위 내 미확인’도 미등록을 뜻하지 않습니다.</p>
+            </div>
+            <div class="print-section"><h2 style="font-size:14pt;color:#0f1f3d;border-bottom:2px solid #2563eb;padding-bottom:5px;">신규 고객 검색어 발견 가능성</h2>
+              <table style="width:100%;border-collapse:collapse;font-size:8.7pt;"><thead><tr style="background:#0f1f3d;color:#fff;"><th>유형</th><th>질의어</th><th>카카오</th><th>네이버</th><th>구글</th></tr></thead><tbody>${keywordRows}</tbody></table>
+              <p style="font-size:8.5pt;color:#475569;">API 반환 순서는 실제 지도 앱의 개인화 순위가 아닙니다. ‘미확인’은 제한된 반환 건수 안에서 발견되지 않았다는 뜻입니다.</p>
+            </div>
+            <div class="print-section"><h2 style="font-size:14pt;color:#0f1f3d;border-bottom:2px solid #2563eb;padding-bottom:5px;">반경 1km 경쟁 후보</h2>
+              <table style="width:100%;border-collapse:collapse;font-size:9pt;"><thead><tr style="background:#0f1f3d;color:#fff;"><th>업체</th><th>표시 거리</th><th>주소</th><th>전화</th></tr></thead><tbody>${competitorRows}</tbody></table>
+              <p style="font-size:8.5pt;color:#475569;">표시 거리는 좌표 기반 참고값이며 보행·차량 이동거리와 다를 수 있습니다.</p>
+            </div>
+            <div class="print-section"><h2 style="font-size:14pt;color:#0f1f3d;border-bottom:2px solid #2563eb;padding-bottom:5px;">상권 및 AI 추천 측정</h2>
+              <table style="width:100%;border-collapse:collapse;font-size:9pt;"><tbody>
+                <tr><td style="font-weight:800;width:25%;">소진공 상권 분포</td><td>${esc(semasText)}</td><td>전체 업종 합계이며 잠재 고객 수가 아닙니다.</td></tr>
+                <tr><td style="font-weight:800;">GEO AI 추천</td><td>${esc(geoText)}</td><td>단일 모델·단일 질문·단일 시점의 1회 관측입니다.</td></tr>
+              </tbody></table>
+            </div>
+            <div class="print-section"><h2 style="font-size:14pt;color:#0f1f3d;border-bottom:2px solid #2563eb;padding-bottom:5px;">우선 권장 작업</h2>
+              <ol style="padding-left:20px;"><li>네이버·카카오·구글 실제 지도 화면에서 상호·주소·전화·운영시간·관리 권한을 확인합니다.</li><li>지역+업종·서비스 검색어에 실제 제공 강점을 연결한 소개·사진·게시물을 정비합니다.</li><li>동일 질문을 여러 문장과 시점으로 반복 측정해 AI 추천 노출 변화를 추적합니다.</li><li>전화·문의·예약·방문 데이터를 연결해 개선 효과를 전후 동일 조건으로 확인합니다.</li></ol>
+            </div>
+            <div class="print-card" style="background:#f8fafc;border:1px solid #cbd5e1;padding:10px 12px;margin-top:12px;font-size:8.5pt;color:#475569;">
+              <strong>측정 한계:</strong> 본 자료는 공식 API와 1회 AI 질의에 기반한 사전진단입니다. 검색 결과는 시점·위치·개인화·API 반환 한도에 따라 달라질 수 있으며, 순위 상승·AI 추천·매출 증가를 보장하지 않습니다.
+            </div>
+          </div>`;
+        report.querySelectorAll('th,td').forEach(el => { el.style.padding = '7px'; el.style.border = '1px solid #dbe2ea'; el.style.textAlign = 'left'; });
+        return report;
+      }
+
+      // Dynamic Print Function (prints ONLY the evidence-qualified customer report)
       window.printCustomerAuditReport = function() {
+        const report = buildCustomerPrintReport();
+        if (!report) {
+          alert('먼저 사업장 정밀 분석을 실행해 주세요.');
+          return;
+        }
         const prevTitle = document.title;
         const now = new Date();
         const yy = String(now.getFullYear()).slice(-2);
@@ -3266,19 +3363,10 @@
         const storeName = (window._currentAuditStore && window._currentAuditStore.shortName)
           ? window._currentAuditStore.shortName.replace(/\s+/g, '')
           : '고객사';
-        const customerBox = document.getElementById('audit-view-customer-box');
-        const salesBox = document.getElementById('audit-view-sales-box');
-        const prevCustDisplay = customerBox ? customerBox.style.display : '';
-        const prevSalesDisplay = salesBox ? salesBox.style.display : '';
-
-        if (customerBox) customerBox.style.display = 'block';
-        if (salesBox) salesBox.style.display = 'none';
         document.title = `${yy}${mm}${dd}_${storeName}_사전정밀진단보고서_v1.0`;
         window.print();
         setTimeout(() => {
           document.title = prevTitle;
-          if (customerBox) customerBox.style.display = prevCustDisplay;
-          if (salesBox) salesBox.style.display = prevSalesDisplay;
         }, 500);
       };
 
@@ -3791,6 +3879,7 @@
             renderLiveCrossAuditReport(window._lastLiveAuditData);
           } else {
             window._lastLiveAuditData = data;
+            window._customerAuditEvidence = {};
             renderLiveCrossAuditReport(data);
           }
         } catch (err) {
@@ -3827,13 +3916,13 @@
 
         const issues = [];
         if (g?.match?.match_status === 'NOT_FOUND_IN_SCOPE') {
-          issues.push({ title: '구글 지도 미등록 / 결과 범위 내 미확인', evidence: g.match.reason, action: '구글 비즈니스 프로필(GBP) 신규 등록 및 주소·전화번호 일치 세팅' });
+          issues.push({ title: '구글 동일 업체 정합성 추가 확인 필요', evidence: g.match.reason, action: '구글 지도 실제 화면에서 프로필 존재·소유권·주소·전화번호를 확인' });
         }
         if (nm && !nm.link) {
           issues.push({ title: '네이버 지역 API 공식 링크 미기재', evidence: 'NAVER API HUB 지역 검색 결과 link 필드 공백', action: '네이버 스마트플레이스 공식 홈페이지·SNS·예약 링크 연동 확인' });
         }
         if (nm && !nm.phone && km?.phone) {
-          issues.push({ title: '네이버 지역 API 전화번호 미제공/미연동', evidence: `카카오맵(${km.phone}) 대비 네이버 API telephone 공백`, action: '네이버 스마트플레이스 대표번호 노출 설정 점검' });
+          issues.push({ title: '네이버 실제 지도 화면 전화번호 확인 필요', evidence: '네이버 지역검색 API는 전화번호 필드를 제공하지 않거나 공백으로 반환할 수 있음', action: '네이버 지도/스마트플레이스 화면에서 대표번호 노출 여부를 직접 확인' });
         }
 
         const issueRows = issues.length > 0 ? issues.map((it, i) => `
@@ -3847,7 +3936,7 @@
         viewCustomerBox.innerHTML = `
           <div style="background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:20px;">
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-              <span style="background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.5);color:#6ee7b7;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;">🟢 3대 공식 API 실시간 실측 완료 (Zero Hallucination)</span>
+              <span style="background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.5);color:#6ee7b7;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;">🟢 공식 API 기반 실시간 조회</span>
               <span style="background:rgba(255,255,255,0.12);color:#e2e8f0;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;">🕒 조회 시각: ${esc(data.audited_at)}</span>
             </div>
             <h2 style="margin:0 0 10px;font-size:22px;font-weight:800;color:#fff;">${esc(storeName)} 3대 지도 통합 실측 정합성 진단 보고서</h2>
@@ -3882,7 +3971,7 @@
               <div style="font-size:12px;color:#334155;line-height:1.6;">
                 <div><strong>상호:</strong> ${cellVal(nm?.name, 'NOT_FOUND_IN_SCOPE')}</div>
                 <div><strong>주소:</strong> ${cellVal(nm?.road_address, 'NOT_FOUND_IN_SCOPE')}</div>
-                <div><strong>블로그 언급:</strong> ${n?.blog_total !== null && n?.blog_total !== undefined ? `<strong>${Number(n.blog_total).toLocaleString()}건</strong>` : statusBadgeHtml('FIELD_NOT_PROVIDED')}</div>
+                <div><strong>지역검색 응답:</strong> ${nm ? '일치 후보 확인' : statusBadgeHtml('NOT_FOUND_IN_SCOPE')}</div>
                 <div><strong>근거:</strong> ${esc(n?.match?.reason || '')}</div>
               </div>
               ${retryBtn('naver', n)}
@@ -3906,7 +3995,7 @@
           </div>
 
           <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:20px;">
-            <h3 style="margin:0 0 12px;font-size:15px;color:#0f172a;">📊 3대 플랫폼 업체 정보 정합성 비교표 (100% 실측 원본)</h3>
+            <h3 style="margin:0 0 12px;font-size:15px;color:#0f172a;">📊 3대 플랫폼 업체 정보 정합성 비교표 (API 조회 결과)</h3>
             <div style="overflow-x:auto;">
               <table style="width:100%;border-collapse:collapse;font-size:12px;">
                 <thead>
@@ -4012,7 +4101,7 @@
 
             <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #7c3aed;border-radius:12px;padding:16px;">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                <strong style="font-size:13px;">🤖 Phase 3-B: GEO AI 언급률 월별 추적</strong>
+                <strong style="font-size:13px;">🤖 Phase 3-B: GEO AI 추천 질의 관측</strong>
                 <button type="button" class="no-print" onclick="runPhase3Geo()" style="background:#7c3aed;color:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">측정 실행</button>
               </div>
               <input id="geo-question-input" class="no-print" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' ' + (nm?.category || km?.category?.split('>').pop() || '') + ' 추천해줘').trim())}" style="width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:11px;margin-bottom:6px;">
@@ -4102,6 +4191,8 @@
           });
           const res = await resp.json();
           if (!res.ok) throw new Error(res.error || '조회 실패');
+          window._customerAuditEvidence = window._customerAuditEvidence || {};
+          window._customerAuditEvidence.keywords = res;
           const fmtOrder = (p) => p.api_order ? `<strong style="color:#059669;">API ${p.api_order}번째</strong> <span style="color:#94a3b8;">(/${p.total_returned})</span>` : statusBadgeHtml('NOT_FOUND_IN_SCOPE');
           const rows = res.results.map(r => `
             <tr style="border-bottom:1px solid #e2e8f0;">
@@ -4135,6 +4226,8 @@
           });
           const res = await resp.json();
           if (!res.ok) throw new Error(res.error || '조회 실패');
+          window._customerAuditEvidence = window._customerAuditEvidence || {};
+          window._customerAuditEvidence.competitors = res;
           const kList = res.kakao_nearby?.candidates || [];
           const gList = res.google_nearby?.candidates || [];
           const rows = kList.slice(0, 6).map(c => {
@@ -4166,6 +4259,8 @@
             body: JSON.stringify({ action: 'semas', x: km?.x || '', y: km?.y || '' })
           });
           const res = await resp.json();
+          window._customerAuditEvidence = window._customerAuditEvidence || {};
+          window._customerAuditEvidence.semas = res;
           if (res.status === 'KEY_REQUIRED') {
             box.innerHTML = `<span style="color:#d97706;font-weight:600;">🔑 ${res.message}</span>`;
           } else {
@@ -4190,10 +4285,12 @@
             body: JSON.stringify({ action: 'geo', store_name: storeName, question })
           });
           const res = await resp.json();
+          window._customerAuditEvidence = window._customerAuditEvidence || {};
+          window._customerAuditEvidence.geo = res;
           if (res.status === 'KEY_REQUIRED') {
             box.innerHTML = `<span style="color:#7c3aed;font-weight:600;">🔑 ${res.message}</span>`;
           } else {
-            box.innerHTML = `<div><strong>언급 여부:</strong> ${res.mentioned ? '<span style="color:#059669;">✅ AI 답변 언급 확인</span>' : '<span style="color:#dc2626;">❌ 미언급 (0%)</span>'} (${res.model})</div><div style="font-size:11px;color:#475569;margin-top:4px;">${res.answer_snippet || ''}</div>`;
+            box.innerHTML = `<div><strong>이번 1회 질의:</strong> ${res.mentioned ? '<span style="color:#059669;">✅ AI 답변 언급 확인</span>' : '<span style="color:#dc2626;">❌ 대상 사업장 미언급</span>'} (${res.model})</div><div style="font-size:11px;color:#475569;margin-top:4px;">${res.answer_snippet || ''}</div><div style="font-size:10px;color:#94a3b8;margin-top:4px;">단일 모델·단일 질문·단일 시점의 관측이며 월간 언급률을 뜻하지 않습니다.</div>`;
           }
         } catch (e) { box.innerHTML = `<span style="color:#dc2626;">오류: ${e.message}</span>`; }
       };
