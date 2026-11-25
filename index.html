@@ -3983,9 +3983,9 @@
             </div>
             <div class="no-print" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:12px;">
               <input id="kw-brand" type="text" value="${esc(storeName)}" placeholder="1. 브랜드명" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
-              <input id="kw-cat" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' ' + (nm?.category || km?.category?.split('>').pop() || '')).trim())}" placeholder="2. 지역+업종" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
-              <input id="kw-svc" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' 유아 ' + (nm?.category || km?.category?.split('>').pop() || '')).trim())}" placeholder="3. 지역+서비스" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
-              <input id="kw-cond" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' 추천 ' + (nm?.category || km?.category?.split('>').pop() || '')).trim())}" placeholder="4. 지역+방문 조건" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
+              <input id="kw-cat" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' ' + (nm?.category || km?.category || '').split('>').pop().trim()).trim())}" placeholder="2. 지역+업종" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
+              <input id="kw-svc" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' ' + (nm?.category || km?.category || '').split('>').pop().trim() + ' 예약').trim())}" placeholder="3. 지역+서비스" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
+              <input id="kw-cond" type="text" value="${esc((mainAddr.split(' ').slice(0,2).join(' ') + ' ' + (nm?.category || km?.category || '').split('>').pop().trim() + ' 추천').trim())}" placeholder="4. 지역+방문 조건" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;">
             </div>
             <div id="phase2-keywords-result" style="font-size:12px;color:#64748b;">버튼을 누르면 4개 키워드를 3대 지도 API에 병렬 조회합니다.</div>
           </div>
