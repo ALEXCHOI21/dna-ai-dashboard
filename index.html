@@ -3256,6 +3256,12 @@
       function buildCustomerPrintReport() {
         const data = window._lastLiveAuditData;
         if (!data) return null;
+        const esc = value => String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
         const km = data.platforms?.kakao?.match?.matched;
         const nm = data.platforms?.naver?.match?.matched;
         const gm = data.platforms?.google?.match?.matched;
