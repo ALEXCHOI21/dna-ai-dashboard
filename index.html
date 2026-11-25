@@ -4220,9 +4220,9 @@
         if (!box || !d) return;
         const km = d.platforms?.kakao?.match?.matched;
         const nm = d.platforms?.naver?.match?.matched;
-        const cat = (nm?.category || km?.category?.split('>').pop() || '업체').trim();
+        const rawCat = (nm?.category || km?.category || '업체').split('>').pop().split(',').pop().trim();
         const regionPrefix = (km?.road_address || nm?.road_address || '').split(' ').slice(0, 2).join(' ');
-        const categoryQuery = `${regionPrefix} ${cat}`.trim();
+        const categoryQuery = (km?.x && km?.y) ? rawCat : `${regionPrefix} ${rawCat}`.trim();
         box.innerHTML = '⚡ 반경 1km 동종 경쟁사 실측 조회 중...';
         try {
           const resp = await fetch(MAP_CROSS_AUDIT_API, {
