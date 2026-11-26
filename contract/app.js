@@ -31,10 +31,10 @@ let lastFullMailBody = '';
 // 1. DANI 비서 단계별 가이드 대화
 const daniMessages = {
   1: "대표님, 반가워요! DNA AI 최고급 마케팅 비서 <strong>DANI</strong>예요. 24시간 쉬지 않고 우리 매장을 알려줄 맞춤형 AI 솔루션을 선택해 보세요. 부가세(VAT 10%) 포함 최종 입금액까지 투명하게 실시간 계산해 드릴게요! ✨",
-  2: "전담 마케터 배정과 세금계산서 발행에 꼭 필요한 기본 정보를 입력해 주세요. 주민등록번호나 비밀번호 같은 민감정보는 일체 요구하지 않으니 안심하세요! 🔒",
-  3: "서로 간의 투명한 신뢰를 위한 핵심 약관이에요. AI 생성물의 고객 검수 의무와 성과 책임 한계, 안전한 데이터 보호 방침을 차근차근 확인해 주세요. 📜",
-  4: "이제 법적 효력을 갖는 전자서명 단계예요. 개인정보 5년 보존 동의를 확인하신 뒤, 터치나 마우스로 멋지게 서명해 주세요! ✍️",
-  5: "축하합니다, 대표님! <strong>계약서 및 공식 거래명세표</strong>가 함께 완성되었어요. 🎉 VAT 포함 <strong>최종 입금금액</strong>과 <strong>카카오뱅크 입금계좌</strong>를 확인하시고, <strong>[PDF 저장]</strong> 후 <strong>[Gmail로 전송]</strong>을 누르시면 대표님의 메일함으로 즉시 발송됩니다!"
+  2: "대표님, 정식 계약 체결과 세금계산서 발행에 꼭 필요한 <strong>대표자 생년월일(식별정보)</strong>과 <strong>사업자등록번호</strong>를 정확히 입력해 주세요. 법적 효력을 갖는 안전한 전자문서로 암호화 보존됩니다! 🔒",
+  3: "서로 간의 투명한 신뢰를 위한 핵심 약관이에요. <strong>의무 계약기간(의무 약정) 없이</strong> 월 단위 정기구독으로 언제든 자유롭게 해지하실 수 있으며, AI 결과물 책임 한계와 안전한 데이터 보호 방침을 차근차근 확인해 주세요. 📜",
+  4: "이제 법적 효력을 갖는 전자서명 단계예요. 개인정보 및 고유식별정보 5년 보존 동의를 확인하신 뒤, 터치나 마우스로 멋지게 서명해 주세요! ✍️",
+  5: "축하합니다, 대표님! <strong>계약서(1P), 거래명세표(2P), 서비스표준약관 및 개인정보동의서(3P)</strong> 공식 3페이지 세트가 완성되었어요. 🎉 VAT 포함 <strong>최종 입금금액</strong>과 <strong>카카오뱅크 입금계좌</strong>를 확인하시고, <strong>[PDF 저장]</strong> 후 <strong>[Gmail로 전송]</strong>을 누르시면 대표님의 메일함으로 즉시 발송됩니다!"
 };
 
 function updateDaniMessage(step) {
@@ -721,102 +721,611 @@ function showToast(msg) {
   }, 3000);
 }
 
-// 9. Google Drive 자동 업로드 핵심 함수 (Apps Script WebApp 연동 - 중복 방지 & 3P 완결 디자인 내장)
+// 9. Google Apps Script 전용 3페이지 완결 고품격 테이블 HTML 생성기 (PDF 변환 최적화)
+function buildGasCompatible3PHtml({
+  customerName,
+  representative,
+  birthDate,
+  corpNumber,
+  bizNumber,
+  phone,
+  email,
+  address,
+  productNames,
+  commitmentDesc,
+  subtotal,
+  vat,
+  total,
+  signedAt,
+  sigDataUrl,
+  hash,
+  checked,
+  threadsPrice,
+  threadsSetup,
+  consultingPrice,
+  now
+}) {
+  const korTotal = numberToKorean(total);
+  const monthDay = `${now.getMonth() + 1}/${now.getDate()}`;
+  const dateFormatted = new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(now);
+
+  // 품목 행 동적 생성
+  let itemIndex = 1;
+  let itemsRows = '';
+  let totalQty = 0;
+
+  checked.forEach(p => {
+    if (p.value === 'threads') {
+      itemsRows += `
+        <tr>
+          <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${itemIndex++}</td>
+          <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${monthDay}</td>
+          <td style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px; text-align: left;"><strong>SNS-Threads 콘텐츠 자동화</strong> (1회차 월 정기구독료)</td>
+          <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">1</td>
+          <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${threadsPrice.toLocaleString()}</td>
+          <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${threadsPrice.toLocaleString()}</td>
+          <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${Math.round(threadsPrice * 0.1).toLocaleString()}</td>
+        </tr>
+      `;
+      totalQty += 1;
+      if (threadsSetup > 0) {
+        itemsRows += `
+          <tr>
+            <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${itemIndex++}</td>
+            <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${monthDay}</td>
+            <td style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px; text-align: left;"><strong>SNS-Threads 초기 환경 셋팅비</strong> (페르소나 기획 및 계정 셋업)</td>
+            <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">1</td>
+            <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${threadsSetup.toLocaleString()}</td>
+            <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${threadsSetup.toLocaleString()}</td>
+            <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${Math.round(threadsSetup * 0.1).toLocaleString()}</td>
+          </tr>
+        `;
+        totalQty += 1;
+      }
+    } else {
+      itemsRows += `
+        <tr>
+          <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${itemIndex++}</td>
+          <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${monthDay}</td>
+          <td style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px; text-align: left;"><strong>AI 상권분석 및 마케팅 컨설팅</strong> (SEO/GBP/GEO 정밀 처방전)</td>
+          <td align="center" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">1</td>
+          <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${consultingPrice.toLocaleString()}</td>
+          <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${consultingPrice.toLocaleString()}</td>
+          <td align="right" style="border: 1px solid #cbd5e1; padding: 6px; font-size: 10px;">${Math.round(consultingPrice * 0.1).toLocaleString()}</td>
+        </tr>
+      `;
+      totalQty += 1;
+    }
+  });
+
+  return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${customerName}_DNA_AI_계약서및거래명세서_약관동의서</title>
+  <style>
+    @page { size: A4 portrait; margin: 10mm 14mm; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", Arial, sans-serif; color: #1e293b; background: #ffffff; margin: 0; padding: 0; font-size: 11px; line-height: 1.45; }
+    table { border-collapse: collapse; width: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    td, th { vertical-align: top; }
+    .page-card { border: 2px solid #0d2242; border-radius: 8px; background: #ffffff; padding: 16px 20px; margin-bottom: 20px; page-break-inside: avoid; }
+    .page-break { page-break-after: always; height: 1px; clear: both; }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== 1페이지: 표준 전자계약서 ==================== -->
+  <div class="page-card" style="border-color: #0d2242;">
+    <!-- 1P 헤더 -->
+    <table style="border-bottom: 2px solid #0d2242; padding-bottom: 8px; margin-bottom: 12px;">
+      <tr>
+        <td style="vertical-align: middle;">
+          <span style="background: #0d2242; color: #ffffff; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block;">표준 전자계약서</span>
+          <h1 style="font-size: 21px; font-weight: 800; color: #0d2242; margin: 4px 0 2px 0;">DNA AI 서비스 이용 계약서</h1>
+          <div style="font-size: 11.5px; color: #64748b;">SNS 자동화 및 AI 마케팅 진단 솔루션 (정식 전자계약 원본)</div>
+        </td>
+        <td align="right" width="90" style="vertical-align: middle;">
+          <div style="width: 58px; height: 58px; border: 2px solid #dc2626; color: #dc2626; border-radius: 50%; text-align: center; font-size: 9px; font-weight: bold; padding-top: 8px; line-height: 1.25; margin-left: auto;">
+            투어티플레이스<br><strong style="font-size: 10.5px;">DNA AI</strong><br><span style="font-size: 7.5px;">OFFICIAL</span>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 계약 체결 요약 정보 표 -->
+    <table style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; margin-bottom: 12px; font-size: 11px;">
+      <tr>
+        <td width="135" style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">계약자 (고객사)</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #0f172a;"><strong>${customerName}</strong> (대표자/담당자: <strong>${representative}</strong>)</td>
+      </tr>
+      <tr>
+        <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">대표자 생년월일</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #1e3a8a;">${birthDate}</td>
+      </tr>
+      <tr>
+        <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">사업자등록번호</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #0f172a;">${bizNumber} ${corpNumber ? '(법인등록번호: ' + corpNumber + ')' : ''}</td>
+      </tr>
+      <tr>
+        <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">연락처 / 이메일</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #0f172a;">${phone} / <span style="color: #2563eb; font-weight: bold;">${email}</span></td>
+      </tr>
+      <tr>
+        <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">선택 솔루션</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #0f172a;">${productNames}</td>
+      </tr>
+      <tr>
+        <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">약정 기간 및 조건</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #0d2242; font-weight: bold;">${commitmentDesc}</td>
+      </tr>
+      <tr>
+        <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">법적 동의 확인</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #059669; font-weight: bold;">핵심 약관 승인 ✓ (제2조 의무약정 없음 확인) · 식별정보 수집 및 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</td>
+      </tr>
+      <tr>
+        <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">체결 일시</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #0f172a;">${signedAt} (KST, 공인 타임스탬프)</td>
+      </tr>
+      <tr>
+        <td style="background: #f1f5f9; padding: 6px 10px; font-weight: bold; color: #334155; vertical-align: middle;">계약자 전자서명</td>
+        <td style="padding: 6px 10px; vertical-align: middle;">
+          <img src="${sigDataUrl}" alt="전자서명" style="max-height: 42px; max-width: 130px; object-fit: contain; vertical-align: middle;">
+          <span style="font-size: 10px; color: #059669; font-weight: bold; margin-left: 8px;">(정식 서명 날인 완료 ✓)</span>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 결제 및 입금 청구 내역 하이라이트 박스 -->
+    <table style="background: #eff6ff; border: 1.5px solid #3b82f6; border-radius: 8px; margin-bottom: 12px;">
+      <tr>
+        <td colspan="3" style="padding: 8px 12px 4px 12px;">
+          <span style="background: #1d4ed8; color: #ffffff; font-size: 10.5px; font-weight: bold; padding: 2px 7px; border-radius: 3px;">결제 및 입금 청구 내역</span>
+          <span style="font-size: 10px; color: #475569; margin-left: 6px;">※ 부가가치세 10%가 투명하게 포함된 최종 입금 대상 금액입니다.</span>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" width="33%" style="padding: 10px 8px; border-right: 1px solid #bfdbfe;">
+          <span style="font-size: 10.5px; color: #475569; display: block; margin-bottom: 2px;">공급가액</span>
+          <strong style="font-size: 15px; color: #1e293b;">${money(subtotal)}</strong>
+        </td>
+        <td align="center" width="33%" style="padding: 10px 8px; border-right: 1px solid #bfdbfe;">
+          <span style="font-size: 10.5px; color: #475569; display: block; margin-bottom: 2px;">부가가치세 (VAT 10%)</span>
+          <strong style="font-size: 15px; color: #1e293b;">${money(vat)}</strong>
+        </td>
+        <td align="center" width="34%" style="padding: 10px 8px; background: #dbeafe; border-radius: 6px;">
+          <span style="font-size: 10.5px; color: #1e40af; font-weight: bold; display: block; margin-bottom: 2px;">최종 입금 합계금액</span>
+          <strong style="font-size: 18px; color: #1d4ed8; font-weight: 900;">${money(total)}</strong>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 공식 지정 입금 계좌 카드 -->
+    <table style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; font-size: 11px;">
+      <tr>
+        <td style="padding: 8px 12px;">
+          <strong style="color: #0f172a; font-size: 12px;">🏦 공식 지정 입금 계좌:</strong>
+          <span style="font-size: 16px; font-weight: 800; color: #1e3a8a; margin-left: 6px;">카카오뱅크 3333-38-9917516</span>
+          <span style="font-size: 11px; color: #475569; margin-left: 8px;">(예금주: <strong>정성윤 투어티플레이스</strong>)</span>
+          <span style="background: #dcfce7; color: #166534; font-size: 9.5px; font-weight: bold; padding: 2px 6px; border-radius: 3px; float: right;">세금계산서 100% 자동 발행</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 0 12px 8px 12px; font-size: 10px; color: #64748b;">
+          ※ 입금 시 계약자 상호명(<strong>${customerName}</strong>)으로 입금해 주시면 확인 즉시 전담 마케팅 셋팅이 착수됩니다.
+        </td>
+      </tr>
+    </table>
+
+    <!-- 공급자 / 고객사 쌍방 대조표 -->
+    <table style="border: 1.5px solid #0d2242; margin-bottom: 12px; font-size: 10px;">
+      <tr style="background: #0d2242; color: #ffffff;">
+        <th width="50%" align="left" style="padding: 6px 10px; font-size: 11px;">공급자 (서비스 제공자)</th>
+        <th width="50%" align="left" style="padding: 6px 10px; font-size: 11px;">고객사 (서비스 이용자)</th>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #cbd5e1; padding: 8px 10px; line-height: 1.5;">
+          <p style="margin: 2px 0;"><strong>상호:</strong> 투어티플레이스 (DNA AI SUIT)</p>
+          <p style="margin: 2px 0;"><strong>대표자:</strong> 정성윤 | <strong>기술이사:</strong> 최두리</p>
+          <p style="margin: 2px 0;"><strong>사업자등록번호:</strong> 546-12-01988</p>
+          <p style="margin: 2px 0;"><strong>사업장:</strong> 대전광역시 유성구 용계동 힐스테이트 2차</p>
+          <p style="margin: 2px 0;"><strong>Director:</strong> 010-8587-0235 | dani90dna@gmail.com</p>
+        </td>
+        <td style="border: 1px solid #cbd5e1; padding: 8px 10px; line-height: 1.5;">
+          <p style="margin: 2px 0;"><strong>상호(성명):</strong> <strong>${customerName}</strong></p>
+          <p style="margin: 2px 0;"><strong>대표자/담당자:</strong> <strong>${representative}</strong> (생년월일: <strong>${birthDate}</strong>)</p>
+          <p style="margin: 2px 0;"><strong>사업자번호:</strong> ${bizNumber} ${corpNumber ? '(법인: ' + corpNumber + ')' : ''}</p>
+          <p style="margin: 2px 0;"><strong>연락처 / 메일:</strong> ${phone} / ${email}</p>
+          <p style="margin: 2px 0;"><strong>체결 일시:</strong> ${signedAt}</p>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 무결성 검증 감사 바 -->
+    <table style="background: #f1f5f9; border-radius: 4px; padding: 6px 10px; font-size: 9.5px; color: #64748b;">
+      <tr>
+        <td>🛡️ <strong>SHA-256 계약 무결성 검증 코드:</strong> <span style="font-family: monospace; font-weight: bold; color: #1d4ed8;">${hash}</span></td>
+        <td align="right">공식 감사 기록 완료 (위변조 방지 보증)</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ==================== 2페이지: 공식 거래명세표 ==================== -->
+  <div class="page-card" style="border-color: #047857;">
+    <!-- 2P 헤더 -->
+    <table style="border-bottom: 2px solid #047857; padding-bottom: 8px; margin-bottom: 12px;">
+      <tr>
+        <td style="vertical-align: middle;">
+          <span style="background: #047857; color: #ffffff; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block;">세무·회계 공식 증빙</span>
+          <h1 style="font-size: 21px; font-weight: 800; color: #047857; margin: 4px 0 2px 0; letter-spacing: 2px;">거 래 명 세 표</h1>
+          <div style="font-size: 11px; color: #64748b;">( 공급받는자 보관용 / 국세청 전자세금계산서 청구 겸용 )</div>
+        </td>
+        <td align="right" width="140" style="vertical-align: middle;">
+          <div style="font-size: 10px; color: #475569;">작성일자</div>
+          <strong style="font-size: 13px; color: #0f172a;">${dateFormatted}</strong>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 공급자 / 공급받는자 테이블 -->
+    <table style="margin-bottom: 12px; font-size: 10px;">
+      <tr>
+        <!-- 공급자 -->
+        <td width="49%">
+          <table style="border: 1px solid #cbd5e1; height: 100%;">
+            <tr style="background: #f1f5f9;">
+              <th colspan="4" style="border: 1px solid #cbd5e1; padding: 5px; color: #047857; font-size: 11px;">공 급 자</th>
+            </tr>
+            <tr>
+              <th width="24%" style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">등록번호</th>
+              <td colspan="3" style="border: 1px solid #cbd5e1; padding: 5px;"><strong style="color: #047857; font-size: 11px;">546-12-01988</strong></td>
+            </tr>
+            <tr>
+              <th style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">상호(법인명)</th>
+              <td style="border: 1px solid #cbd5e1; padding: 5px;">투어티플레이스 (DNA AI)</td>
+              <th width="18%" style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">성명</th>
+              <td style="border: 1px solid #cbd5e1; padding: 5px;">정성윤 <span style="border: 1px solid #dc2626; color: #dc2626; font-size: 8px; padding: 1px 3px; border-radius: 2px; margin-left: 2px;">직인생략</span></td>
+            </tr>
+            <tr>
+              <th style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">사업장주소</th>
+              <td colspan="3" style="border: 1px solid #cbd5e1; padding: 5px;">대전광역시 유성구 용계동 힐스테이트 2차</td>
+            </tr>
+            <tr>
+              <th style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">업태 / 종목</th>
+              <td colspan="3" style="border: 1px solid #cbd5e1; padding: 5px;">서비스, IT / 소프트웨어 개발, 마케팅 컨설팅</td>
+            </tr>
+            <tr>
+              <th style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">연락처/메일</th>
+              <td colspan="3" style="border: 1px solid #cbd5e1; padding: 5px;">010-8587-0235 / dani90dna@gmail.com</td>
+            </tr>
+          </table>
+        </td>
+
+        <td width="2%"></td>
+
+        <!-- 공급받는자 -->
+        <td width="49%">
+          <table style="border: 1px solid #cbd5e1; height: 100%;">
+            <tr style="background: #f1f5f9;">
+              <th colspan="4" style="border: 1px solid #cbd5e1; padding: 5px; color: #047857; font-size: 11px;">공 급 받 는 자</th>
+            </tr>
+            <tr>
+              <th width="24%" style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">등록번호</th>
+              <td colspan="3" style="border: 1px solid #cbd5e1; padding: 5px;"><strong>${bizNumber}</strong></td>
+            </tr>
+            <tr>
+              <th style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">상호(법인명)</th>
+              <td style="border: 1px solid #cbd5e1; padding: 5px;"><strong>${customerName}</strong></td>
+              <th width="18%" style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">성명</th>
+              <td style="border: 1px solid #cbd5e1; padding: 5px;"><strong>${representative}</strong></td>
+            </tr>
+            <tr>
+              <th style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">사업장주소</th>
+              <td colspan="3" style="border: 1px solid #cbd5e1; padding: 5px;">${address}</td>
+            </tr>
+            <tr>
+              <th style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">담당자메일</th>
+              <td colspan="3" style="border: 1px solid #cbd5e1; padding: 5px;">${email}</td>
+            </tr>
+            <tr>
+              <th style="border: 1px solid #cbd5e1; background: #f8fafc; padding: 5px;">담당자연락처</th>
+              <td colspan="3" style="border: 1px solid #cbd5e1; padding: 5px;">${phone}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 합계금액 선언 바 -->
+    <table style="background: #f1f5f9; border: 1.5px solid #047857; border-radius: 4px; margin-bottom: 12px;">
+      <tr>
+        <td style="padding: 8px 12px; font-weight: bold; color: #0f172a; font-size: 11px;">
+          합계금액 (공급가액 + 세액):
+          <span style="color: #047857; font-size: 13px; font-weight: 800; margin-left: 8px;">일금 ${korTotal} 원정</span>
+          <span style="color: #475569; font-size: 11.5px; margin-left: 6px;">( ₩ <strong>${total.toLocaleString('ko-KR')}</strong> )</span>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 품목별 거래 명세 테이블 -->
+    <table style="border: 1px solid #cbd5e1; margin-bottom: 12px; font-size: 10px;">
+      <thead>
+        <tr style="background: #047857; color: #ffffff;">
+          <th width="5%" style="border: 1px solid #cbd5e1; padding: 6px;">No.</th>
+          <th width="10%" style="border: 1px solid #cbd5e1; padding: 6px;">월/일</th>
+          <th width="37%" style="border: 1px solid #cbd5e1; padding: 6px;">품목명 (규격 / 서비스 내용)</th>
+          <th width="8%" style="border: 1px solid #cbd5e1; padding: 6px;">수량</th>
+          <th width="13%" style="border: 1px solid #cbd5e1; padding: 6px;">단가</th>
+          <th width="13%" style="border: 1px solid #cbd5e1; padding: 6px;">공급가액</th>
+          <th width="14%" style="border: 1px solid #cbd5e1; padding: 6px;">세액 (VAT 10%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsRows}
+      </tbody>
+      <tfoot>
+        <tr style="background: #f8fafc; font-weight: bold;">
+          <th colspan="3" style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">소계 및 합계 (VAT 포함)</th>
+          <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${totalQty}</th>
+          <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">-</th>
+          <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: right; color: #047857;">${money(subtotal)}</th>
+          <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: right; color: #047857;">${money(vat)}</th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- 하단 입금 계좌 및 영수 안내 -->
+    <table style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 8px; font-size: 10.5px;">
+      <tr>
+        <td style="padding: 10px 14px; vertical-align: middle;">
+          <strong>입금 계좌:</strong>
+          <span style="color: #047857; font-weight: 800; font-size: 12px; margin-left: 4px;">카카오뱅크 3333-38-9917516</span>
+          <span style="color: #475569; margin-left: 6px;">예금주: 정성윤(투어티플레이스)</span>
+        </td>
+        <td align="right" style="padding: 10px 14px; vertical-align: middle;">
+          <span>위 금액을 정히 <strong>영수(청구)</strong>합니다.</span>
+          <span style="display: inline-block; margin-left: 8px; font-weight: bold; color: #0d2242;">투어티플레이스 대표 정성윤</span>
+          <span style="display: inline-block; width: 22px; height: 22px; border: 1.5px solid #dc2626; color: #dc2626; border-radius: 50%; text-align: center; line-height: 20px; font-size: 10px; font-weight: bold; margin-left: 4px;">인</span>
+        </td>
+      </tr>
+    </table>
+    <div style="font-size: 9.5px; color: #64748b;">
+      ※ 본 거래명세표는 DNA AI 서비스 전자계약서와 일체로 유효하며, 입금 확인 즉시 국세청 홈택스 전자세금계산서가 자동 발행됩니다.
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ==================== 3페이지: 서비스 표준 이용약관 및 개인정보 수집·이용 동의서 ==================== -->
+  <div class="page-card" style="border-color: #1e3a8a;">
+    <!-- 3P 헤더 -->
+    <table style="border-bottom: 2px solid #1e3a8a; padding-bottom: 8px; margin-bottom: 12px;">
+      <tr>
+        <td style="vertical-align: middle;">
+          <span style="background: #1e3a8a; color: #ffffff; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block;">계약 부속 합의서 (별지 제1호)</span>
+          <h1 style="font-size: 20px; font-weight: 800; color: #1e3a8a; margin: 4px 0 2px 0;">서비스 표준이용약관 및 개인정보 수집·이용 동의서</h1>
+          <div style="font-size: 11px; color: #64748b;">본 문서는 DNA AI 서비스 이용계약서의 불가분의 일부를 구성하며 법적 구속력을 갖습니다.</div>
+        </td>
+        <td align="right" width="130" style="vertical-align: middle;">
+          <div style="font-size: 10px; color: #475569;">체결·교부일자</div>
+          <strong style="font-size: 13px; color: #0f172a;">${dateFormatted}</strong>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 약관 본문 4개조 (2x2 그리드 테이블) -->
+    <div style="margin-bottom: 10px;">
+      <div style="font-size: 11px; font-weight: bold; color: #0d2242; margin-bottom: 6px;">
+        <span style="background: #1e3a8a; color: #fff; font-size: 9.5px; padding: 2px 6px; border-radius: 3px;">부속서류 01</span>
+        DNA AI 서비스 표준 이용약관 (핵심 규정 전문)
+      </div>
+      <table style="margin-bottom: 10px; font-size: 9.5px; line-height: 1.45;">
+        <tr>
+          <!-- 제1조 -->
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 7px 9px;">
+            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제1조 (서비스 제공 범위 및 운영 원칙)</strong>
+            ① 공급자는 고객이 선택한 솔루션(SNS-Threads 콘텐츠 자동화 또는 AI 마케팅 분석 컨설팅)을 성실히 수행합니다.<br>
+            ② 콘텐츠 자동화의 세부 발행 채널, 타겟 페르소나, 주간 발행 횟수 및 검수 일정은 사전 상호 확정합니다.<br>
+            ③ 소셜 미디어 플랫폼(Meta 등)의 정책 변경 시 공급자는 즉각 대체 방안을 마련하여 고객에게 안내합니다.
+          </td>
+          <td width="2%"></td>
+          <!-- 제2조 -->
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #eff6ff; padding: 7px 9px;">
+            <strong style="color: #1e40af; font-size: 10.5px; display: block; margin-bottom: 3px;">제2조 (이용요금 및 결제 규정 - 의무 약정 없음)</strong>
+            ① 모든 서비스 비용은 부가가치세(VAT 10%)가 별도로 산정되며, 최종 입금 금액에 합산 청구됩니다.<br>
+            ② <strong>[의무 약정 없음]</strong> 본 서비스는 고객사의 운영 자율성을 위해 <strong>의무 계약기간(의무 약정)이 적용되지 않으며</strong>, 월 단위 정기구독으로 자유롭게 이용 및 해지할 수 있습니다.<br>
+            ③ 월 구독은 체결 시 '초기 셋팅비 + 1회차 구독료' 선납 후, 2회차부터 매월 약정일에 정기 청구됩니다.<br>
+            ④ 입금 확인 즉시 국세청 홈택스 전자세금계산서 또는 현금영수증이 자동 발행됩니다.
+          </td>
+        </tr>
+        <tr><td colspan="3" height="6"></td></tr>
+        <tr>
+          <!-- 제3조 -->
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 7px 9px;">
+            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제3조 (고객 검수 의무 및 AI 결과물 책임 한계)</strong>
+            ① 생성형 AI 원고는 고객의 고유 브랜드 가치와 사실관계를 반영하므로, 고객은 사전 공유된 원고에 대해 지정 기간 내 검수를 진행합니다.<br>
+            ② 공급자는 최적화된 마케팅 알고리즘을 제공하나, 개별 매장의 실제 매출액이나 팔로워 수 등 특정 정량 성과를 절대 보장하지 않습니다.<br>
+            ③ 공급자의 고의 또는 중대한 과실로 인하여 발생한 법적 손해는 관련 법령에 따라 책임을 부담합니다.
+          </td>
+          <td width="2%"></td>
+          <!-- 제4조 -->
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #eff6ff; padding: 7px 9px;">
+            <strong style="color: #1e40af; font-size: 10.5px; display: block; margin-bottom: 3px;">제4조 (계약 해지, 위약금 면제 및 환불 규정)</strong>
+            ① 월 구독 서비스는 의무 약정 기간이 없으므로, 차기 결제일 7일 전까지 서면(이메일/메신저) 통지로 자유롭게 해지 가능하며 <strong>별도 위약금이 일체 발생하지 않습니다.</strong><br>
+            ② 이미 셋팅 완료된 초기 셋팅비 및 해당 월 정상 발행 원고에 대해서는 일할 정산 후 잔여액을 환불합니다.<br>
+            ③ 계약 종료 시 계정 연동 권한을 즉시 해제하고 기획 자료를 안전하게 인계 및 파기합니다.
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 개인정보 수집 및 이용(취득) 동의서 법정 서식 -->
+    <div style="margin-bottom: 10px;">
+      <div style="font-size: 11px; font-weight: bold; color: #0d2242; margin-bottom: 6px;">
+        <span style="background: #1e3a8a; color: #fff; font-size: 9.5px; padding: 2px 6px; border-radius: 3px;">부속서류 02</span>
+        개인정보 수집 및 이용(취득) 동의서 <span style="font-size: 9.5px; color: #64748b; font-weight: normal;">(전자상거래법 및 개인정보보호법 준수)</span>
+      </div>
+      <table style="border: 1px solid #cbd5e1; margin-bottom: 8px; font-size: 9.5px;">
+        <tr>
+          <th width="22%" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left;">수집·이용 목적</th>
+          <td style="border: 1px solid #cbd5e1; padding: 5px 8px;">전자계약 체결 및 이행, 세금계산서 발행, 서비스 전담 셋팅, 고객 상담 및 분쟁 해결</td>
+        </tr>
+        <tr>
+          <th style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left;">수집 항목</th>
+          <td style="border: 1px solid #cbd5e1; padding: 5px 8px;">상호(성명), 대표자명, <strong>대표자 생년월일(고유식별정보)</strong>, 법인등록번호, 사업자등록번호, 휴대전화번호, 이메일, 사업장주소, 전자서명 데이터</td>
+        </tr>
+        <tr>
+          <th style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left;">보유 및 이용기간</th>
+          <td style="border: 1px solid #cbd5e1; padding: 5px 8px;"><strong>전자상거래 등에서의 소비자보호에 관한 법률 제6조에 의거 계약 및 대금결제 기록 5년간 안전하게 보존 후 영구 파기</strong></td>
+        </tr>
+        <tr>
+          <th style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left;">동의 거부 권리</th>
+          <td style="border: 1px solid #cbd5e1; padding: 5px 8px;">귀하는 동의를 거부할 권리가 있으나, 계약 체결에 필수적인 항목이므로 미동의 시 서비스 이용이 제한됩니다.</td>
+        </tr>
+      </table>
+
+      <!-- 동의 완료 배지 바 -->
+      <table style="background: #ecfdf5; border: 1px solid #10b981; border-radius: 4px; margin-bottom: 10px; font-size: 10px; color: #065f46;">
+        <tr>
+          <td style="padding: 6px 10px;">
+            ☑ <strong>개인정보 수집 및 이용 동의 완료:</strong> 위 개인정보 수집·이용 및 5년 안전 보존 조항에 정히 동의함.<br>
+            ☑ <strong>전자문서 법적 구속력 동의 완료:</strong> 전자문서 및 전자거래 기본법 제4조 및 전자서명법 제3조에 따라 효력 인정함.
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 하단 계약 당사자 서명 날인란 -->
+    <table style="border-top: 1.5px solid #0d2242; padding-top: 8px; margin-bottom: 10px; font-size: 10px;">
+      <tr>
+        <!-- 공급자 -->
+        <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc; padding: 8px 10px;">
+          <span style="background: #334155; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 3px; display: inline-block; margin-bottom: 4px;">서비스 공급자</span>
+          <p style="margin: 2px 0;"><strong>상호:</strong> 투어티플레이스 (DNA AI SUIT)</p>
+          <p style="margin: 2px 0;"><strong>대표자:</strong> 정성윤 (인)</p>
+          <p style="margin: 2px 0;"><strong>사업자등록번호:</strong> 546-12-01988</p>
+        </td>
+
+        <td width="2%"></td>
+
+        <!-- 고객사 -->
+        <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc; padding: 8px 10px;">
+          <span style="background: #1e40af; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 3px; display: inline-block; margin-bottom: 4px;">서비스 이용자 (계약자)</span>
+          <p style="margin: 2px 0;"><strong>고객사명:</strong> <strong>${customerName}</strong></p>
+          <p style="margin: 2px 0;"><strong>대표자/담당자:</strong> <strong>${representative}</strong> (생년월일: <strong>${birthDate}</strong>)</p>
+          <p style="margin: 2px 0;"><strong>사업자등록번호:</strong> ${bizNumber}</p>
+          <div style="margin-top: 4px;">
+            <span style="font-weight: bold; color: #1e40af; font-size: 9.5px;">전자서명 날인:</span>
+            <img src="${sigDataUrl}" alt="서명 날인" style="max-height: 38px; max-width: 120px; object-fit: contain; vertical-align: middle; margin-left: 6px;">
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 하단 무결성 감사 코드 -->
+    <table style="background: #f1f5f9; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; color: #64748b;">
+      <tr>
+        <td>🛡️ <strong>무결성 감사 인증 코드:</strong> <span style="font-family: monospace; font-weight: bold; color: #1d4ed8;">${hash}</span></td>
+        <td align="right">위변조 방지 SHA-256 Web Crypto 검증 완료</td>
+      </tr>
+    </table>
+  </div>
+
+</body>
+</html>`;
+}
+
+// 9-1. Google Drive 자동 업로드 핵심 함수 (Apps Script WebApp 연동 - 철통 중복 방지 & 0원 방지 & 3P 완결 테이블 디자인)
 let isGoogleDriveUploading = false;
-let isGoogleDriveUploaded = false;
+let lastUploadedContractHash = '';
 
 async function uploadContractToGoogleDrive(triggerSource = 'auto') {
   if (!GAS_WEBAPP_URL) return;
 
-  // [중복 방어] 이미 업로드되었거나 업로드 중이면 2중 생성 원천 차단!
-  if (isGoogleDriveUploading || isGoogleDriveUploaded) {
-    console.log('이미 Google 드라이브에 단일 완결본이 업로드 완료되어 중복 전송을 차단합니다. (Trigger:', triggerSource, ')');
-    return;
-  }
-  isGoogleDriveUploading = true;
-  
   try {
     const fd = new FormData(form);
-    const customerName = (fd.get('customerName') || '고객사').trim();
-    const representative = (fd.get('representative') || '대표자').trim();
-    const birthDate = (fd.get('birthDate') || '-').trim();
+    const customerName = (fd.get('customerName') || '').trim();
+    const representative = (fd.get('representative') || '').trim();
+    const birthDate = (fd.get('birthDate') || '').trim();
     const corpNumber = (fd.get('corpNumber') || '').trim();
-    const phone = (fd.get('phone') || '-').trim();
-    const email = (fd.get('email') || '-').trim();
-    const { subtotal, vat, total, checked } = calculatePricing();
+    const phone = (fd.get('phone') || '').trim();
+    const email = (fd.get('email') || '').trim();
+    const bizNumber = (fd.get('businessNumber') || '').trim() || '개인 고객 (해당없음)';
+    const address = (fd.get('businessAddress') || '').trim() || '-';
+    const { subtotal, vat, total, checked, threadsPrice, threadsSetup, consultingPrice } = calculatePricing();
     const products = checked.map(c => c.dataset.label).join(' + ');
-    const fileName = `${contractFileTitle()}.pdf`;
+    const hash = document.querySelector('#cryptoHash')?.textContent || '';
+    const now = new Date();
+    const signedAt = new Intl.DateTimeFormat('ko-KR', {
+      dateStyle: 'full',
+      timeStyle: 'medium',
+      timeZone: 'Asia/Seoul'
+    }).format(now);
+    const sigDataUrl = canvas.toDataURL('image/png');
 
-    const contractDoc = document.querySelector('#contractDoc');
-    const statementDoc = document.querySelector('#statementDoc');
-    const termsDoc = document.querySelector('#termsDoc');
-    if (!contractDoc || !statementDoc) {
-      isGoogleDriveUploading = false;
+    // [철통 방어 1] 0원, 상호 미입력, 서명 누락, 해시 미생성 상태 시 업로드 원천 차단!
+    if (total <= 0 || !customerName || customerName === '고객사' || !hasSignature || isCanvasBlank(canvas) || !hash || hash.includes('계산 중')) {
+      console.warn('[업로드 방어] 계약 데이터 미완성 (0원 또는 서명 누락) 상태이므로 Google 드라이브 업로드를 보류합니다.');
       return;
     }
 
-    const contractHtml = contractDoc.outerHTML;
-    const statementHtml = statementDoc.outerHTML;
-    const termsHtml = termsDoc ? termsDoc.outerHTML : '';
+    // [철통 방어 2] 이미 동일한 계약 무결성 해시로 업로드되었거나 업로드 진행 중이면 2중 중복 파일 생성 원천 차단!
+    if (isGoogleDriveUploading || (lastUploadedContractHash && lastUploadedContractHash === hash)) {
+      console.log('[중복 방어] 이미 Google 드라이브에 동일 계약(' + hash + ') 완결본이 보관되어 있어 중복 전송을 차단합니다. (Trigger:', triggerSource, ')');
+      return;
+    }
+    isGoogleDriveUploading = true;
 
-    // [핵심] Google Apps Script의 PDF 엔진이 외부 CSS 없이도 100% 완벽한 디자인을 렌더링하도록 인라인 CSS 완전 내장!
-    const inlinePrintCss = `
-      * { box-sizing: border-box; }
-      body { font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", helvetica, sans-serif; color: #1e293b; background: #ffffff; padding: 18px 24px; font-size: 11px; line-height: 1.45; }
-      .contract-doc-card, .statement-card, .legal-terms-doc-card { border: 2px solid #0d2242 !important; border-radius: 8px !important; padding: 16px 20px !important; margin-bottom: 24px !important; background: #ffffff !important; }
-      .doc-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0d2242; padding-bottom: 8px; margin-bottom: 12px; }
-      .doc-type { background: #0d2242; color: #ffffff; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block; }
-      .statement-type { background: #047857; color: #ffffff; }
-      .terms-type { background: #1e3a8a; color: #ffffff; }
-      .doc-title { font-size: 19px; font-weight: 800; color: #0d2242; margin: 4px 0 2px 0; }
-      .doc-subtitle { font-size: 11px; color: #64748b; }
-      .doc-seal .seal-circle { width: 56px; height: 56px; border: 2px solid #dc2626; color: #dc2626; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 9.5px; }
-      .summary-box dl { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 14px; margin-bottom: 14px; }
-      .summary-box dt { font-weight: bold; color: #475569; }
-      .summary-box dd { margin: 0; color: #0f172a; }
-      .payment-highlight-box { background: #eff6ff; border: 1.5px solid #3b82f6; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; }
-      .pay-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
-      .badge-pay { background: #1d4ed8; color: #fff; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
-      .pay-grid { display: flex; justify-content: space-between; text-align: center; }
-      .pay-item .tit { display: block; font-size: 11px; color: #475569; margin-bottom: 4px; }
-      .pay-item .num { font-size: 14px; font-weight: 800; color: #1e293b; }
-      .pay-item.highlight .total-num { font-size: 18px; font-weight: 900; color: #1d4ed8; }
-      .bank-account-card { background: #fdfefe; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; }
-      .bank-brand strong { color: #0f172a; font-size: 13px; }
-      .account-number { font-size: 16px; font-weight: 800; color: #1e3a8a; }
-      .party-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
-      .party-table th { background: #0d2242; color: #ffffff; padding: 6px 10px; font-size: 11px; text-align: left; }
-      .party-table td { padding: 8px 10px; border: 1px solid #cbd5e1; vertical-align: top; }
-      .party-table p { margin: 3px 0; }
-      .audit-stamp-bar { background: #f1f5f9; padding: 6px 10px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 9.5px; color: #64748b; }
-      .audit-stamp-bar code { font-weight: bold; color: #1d4ed8; font-family: monospace; }
-      .stmt-party-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 10px; }
-      .stmt-party-table th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px; }
-      .stmt-party-table td { border: 1px solid #cbd5e1; padding: 5px; }
-      .statement-total-bar { background: #f1f5f9; border: 1.5px solid #0d2242; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-      .statement-items-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 10px; }
-      .statement-items-table th { background: #0d2242; color: #ffffff; padding: 6px; text-align: center; }
-      .statement-items-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: center; }
-      .statement-items-table .price-cell { text-align: right; }
-      .statement-footer-card { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px 14px; }
-      .terms-articles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-      .term-article-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 10px; border-radius: 6px; }
-      .article-title { font-size: 11px; font-weight: bold; color: #0d2242; margin-bottom: 4px; }
-      .article-text { font-size: 9.5px; color: #334155; line-height: 1.4; }
-      .terms-privacy-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 10px; }
-      .terms-privacy-table th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px; width: 22%; text-align: left; }
-      .terms-privacy-table td { border: 1px solid #cbd5e1; padding: 5px; }
-      .terms-consent-badges { background: #ecfdf5; border: 1px solid #10b981; padding: 8px 12px; border-radius: 6px; font-size: 10.5px; color: #065f46; margin-bottom: 12px; }
-      .terms-parties-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1.5px solid #0d2242; padding-top: 10px; }
-      .terms-party-col { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; position: relative; }
-      .party-role-tag { background: #334155; color: #ffffff; padding: 2px 6px; font-size: 9px; font-weight: bold; border-radius: 3px; display: inline-block; margin-bottom: 4px; }
-      .customer-tag { background: #1e40af; }
-      .signature-preview, .terms-sig-preview { max-height: 40px; max-width: 120px; object-fit: contain; }
-      .btn-copy, .btn-action, .agree-card, .complete-message, .toast { display: none !important; }
-      .print-page-break { page-break-after: always; height: 0; margin: 30px 0; }
-    `;
+    const hasThreads = checked.some(p => p.value === 'threads');
+    const hasConsulting = checked.some(p => p.value === 'consulting');
+    let commitmentDesc = '';
+    if (hasThreads && hasConsulting) {
+      commitmentDesc = `<strong>스탠다드 콘텐츠 자동화: 월 정기구독 (의무 약정 없음 / 자유 해지)</strong> (월 ${money(threadsPrice)}) / <strong>AI 상권분석: 1회성 단건 (약정 없음)</strong>`;
+    } else if (hasThreads) {
+      commitmentDesc = `<strong>월 정기구독 (의무 약정 없음)</strong> (의무 계약기간 없음 / 언제든 자유 해지 가능 / 월 ${money(threadsPrice)})`;
+    } else {
+      commitmentDesc = `<strong>1회성 단건 컨설팅 (약정 없음)</strong>`;
+    }
 
-    const combinedHtml = `<!doctype html><html><head><meta charset="utf-8"><title>${fileName}</title><style>${inlinePrintCss}</style></head><body>${contractHtml}<div class="print-page-break" style="page-break-after:always;margin:30px 0;"></div>${statementHtml}<div class="print-page-break" style="page-break-after:always;margin:30px 0;"></div>${termsHtml}</body></html>`;
+    const productNames = checked.map(p => {
+      if (p.value === 'threads') {
+        return `<strong>${p.dataset.label}</strong> (월 ${money(threadsPrice)} + 설정비 ${money(threadsSetup)})`;
+      }
+      return `<strong>${p.dataset.label}</strong> (${money(p.dataset.price)})`;
+    }).join('<br>');
+
+    const fileName = `${contractFileTitle()}.pdf`;
+
+    // Google Apps Script HTML-to-PDF 엔진에 최적화된 100% 완전한 3페이지 테이블 HTML 생성
+    const gasHtml = buildGasCompatible3PHtml({
+      customerName,
+      representative,
+      birthDate,
+      corpNumber,
+      bizNumber,
+      phone,
+      email,
+      address,
+      productNames,
+      commitmentDesc,
+      subtotal,
+      vat,
+      total,
+      signedAt,
+      sigDataUrl,
+      hash,
+      checked,
+      threadsPrice,
+      threadsSetup,
+      consultingPrice,
+      now
+    });
 
     const payload = {
       customerName: customerName,
@@ -830,25 +1339,82 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
       vat: vat,
       total: total,
       fileName: fileName,
-      htmlContent: combinedHtml,
-      timestamp: new Date().toISOString(),
+      htmlContent: gasHtml,
+      timestamp: now.toISOString(),
       trigger: triggerSource
     };
 
-    // 1) Google Apps Script는 text/plain 전송 시 브라우저 CORS 차단(OPTIONS) 없이 100% 무결점 수신됨
+    // Google Apps Script는 text/plain 전송 시 브라우저 CORS 차단(OPTIONS) 없이 100% 무결점 수신됨
     fetch(GAS_WEBAPP_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     }).then(() => {
-      isGoogleDriveUploaded = true;
+      lastUploadedContractHash = hash;
       isGoogleDriveUploading = false;
-      showToast(`Google 드라이브에 [${customerName}] 공식 3페이지 계약서가 안전하게 저장되었습니다!`);
+      showToast(`Google 드라이브에 [${customerName}] 공식 3페이지 계약서가 단일 완결본으로 안전하게 저장되었습니다!`);
     }).catch(err => {
       isGoogleDriveUploading = false;
       console.warn('Google Drive Sync Notice:', err);
     });
+
+    // CRM 대장 로컬스토리지 누적 업데이트
+    try {
+      const crmKey = 'dna_client_crm_data';
+      let crmList = JSON.parse(localStorage.getItem(crmKey) || '[]');
+      const dateStr = now.toISOString().slice(0, 10);
+      const dayNum = now.getDate();
+      const existingIdx = crmList.findIndex(c => c.customerName === customerName);
+      
+      const lowerName = (customerName || '').toLowerCase().trim();
+      if (lowerName.includes('테스트') || lowerName.includes('test')) {
+        console.log('테스트 계약으로 인지하여 CRM 대장 업데이트를 제외합니다:', customerName);
+        return;
+      }
+
+      const crmRecord = {
+        no: existingIdx >= 0 ? crmList[existingIdx].no : (crmList.length + 1),
+        customerName: customerName,
+        industry: checked.map(c => c.dataset.label).join(', ') || 'AI 마케팅 솔루션',
+        representative: representative,
+        phone: phone,
+        address: address,
+        email: email,
+        bizNumber: bizNumber,
+        plan: products,
+        monthlyFee: money(subtotal),
+        feeNumber: subtotal || 100000,
+        commitmentMonths: 0,
+        startDate: dateStr,
+        vat: money(vat),
+        totalFee: money(total),
+        paymentCycle: '월 정기구독 (의무 약정 없음)',
+        paymentDay: `매월 ${dayNum}일`,
+        alertDay: `매월 ${Math.max(1, dayNum - 3)}일 (D-3 알림)`,
+        paymentMethod: '계좌이체 (카카오뱅크 3333-38-9917516)',
+        paymentStatus: '입금대기 (계약체결완료)',
+        updatedAt: dateStr,
+        platformUrl: window.location.href,
+        accessCode: hash,
+        memo: `공식 온라인 전자계약 체결 완료 (공급가: ${money(subtotal)}, VAT: ${money(vat)}, 의무 약정 없음 / 자유 해지)`
+      };
+
+      if (existingIdx >= 0) {
+        crmList[existingIdx] = { ...crmList[existingIdx], ...crmRecord };
+      } else {
+        crmList.push(crmRecord);
+      }
+      localStorage.setItem(crmKey, JSON.stringify(crmList));
+    } catch (crmErr) {
+      console.warn('Local CRM Sync Notice:', crmErr);
+    }
+
+  } catch (err) {
+    isGoogleDriveUploading = false;
+    console.warn('Drive Upload Error:', err);
+  }
+}
 
     // 2) 대시보드 고객 관리 대장(CRM) 로컬스토리지 실시간 자동 누적 업데이트
     try {

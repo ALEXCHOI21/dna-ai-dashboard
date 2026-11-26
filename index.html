@@ -1955,16 +1955,16 @@
       <!-- 2. 인증 완료 시 노출되는 메인 콘텐츠 -->
       <div id="crm-content-unlocked" style="display:none;">
         
-        <!-- 1. 재무 성과 및 6개월 약정/영업이익 지표 리본 (실시간 자동 연동) -->
+        <!-- 1. 재무 성과 및 구독 매출/영업이익 지표 리본 (실시간 자동 연동) -->
         <div class="finance-summary-grid">
-          <!-- 6개월 총 약정 매출 (기본 결제 단위) -->
+          <!-- 연간 환산 예상 매출 (ARR) -->
           <div class="finance-card six-month">
             <div class="f-label">
-              <span>6개월 총 약정 매출 (Contract Value)</span>
-              <span class="status-tag ok" style="font-size:10px;background:rgba(255,255,255,0.2);color:#fff;">기본 6개월 약정</span>
+              <span>연간 환산 예상 매출 (ARR)</span>
+              <span class="status-tag ok" style="font-size:10px;background:rgba(255,255,255,0.2);color:#fff;">월 정기구독 (자유 해지)</span>
             </div>
             <div class="f-val" id="stat-six-month-revenue">0원</div>
-            <div class="f-sub" id="stat-six-month-sub">고객당 60만원 (월 10만 × 6개월, VAT별도)</div>
+            <div class="f-sub" id="stat-six-month-sub">월 단위 정기구독 (의무 약정 없음 / 자유 해지)</div>
           </div>
 
           <!-- 월 정기 매출 (MRR) -->
@@ -2011,7 +2011,7 @@
         <div class="crm-toolbar">
           <div class="crm-stat-badges">
             <span class="crm-badge">활성 고객사: <strong id="stat-total-clients">0개사</strong></span>
-            <span class="crm-badge highlight">6개월 정기구독: <strong id="stat-active-subs">0개사</strong></span>
+            <span class="crm-badge highlight">월 정기구독: <strong id="stat-active-subs">0개사</strong></span>
             <span class="crm-badge">최근 대장 갱신: <strong id="stat-last-update">-</strong></span>
           </div>
           <div class="crm-actions">
@@ -2064,7 +2064,7 @@
               <button type="button" id="btn-close-price-modal" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink-muted);">&times;</button>
             </div>
             <p style="font-size:12.5px;color:var(--ink-muted);margin:0 0 14px;line-height:1.4;">
-              영업 상담 시 협의된 네고 금액이나 정규 가격(스탠다드 19만 / 컨설팅 49만)을 유연하게 책정할 수 있습니다. 저장 즉시 6개월 총 약정 매출 및 월 MRR이 실시간 자동 재계산됩니다.
+              영업 상담 시 협의된 네고 금액이나 정규 가격(스탠다드 19만 / 컨설팅 49만)을 유연하게 책정할 수 있습니다. 저장 즉시 연간 환산 매출 및 월 MRR이 실시간 자동 재계산됩니다.
             </p>
             <form id="priceEditForm" onsubmit="return false;">
               <input type="hidden" id="edit-client-name">
@@ -2082,7 +2082,7 @@
                   <button type="button" class="crm-btn" style="padding:4px 8px;font-size:11px;background:#1e3a8a;color:#fff;" onclick="document.getElementById('input-edit-fee').value=490000;document.getElementById('input-edit-fee').dispatchEvent(new Event('input'));">고급컨설팅 49만</button>
                 </div>
                 <input type="number" id="input-edit-fee" style="width:100%;padding:8px 10px;border:1px solid var(--border-strong);border-radius:6px;font-size:15px;font-weight:700;color:var(--navy);" step="10000">
-                <span style="font-size:11.5px;color:#2563eb;margin-top:4px;display:block;font-weight:700;">* 6개월 약정 총액: <strong id="preview-six-fee">0원</strong></span>
+                <span style="font-size:11.5px;color:#2563eb;margin-top:4px;display:block;font-weight:700;">* 연간 환산 매출: <strong id="preview-six-fee">0원</strong></span>
               </div>
 
               <div style="margin-bottom:12px;">
@@ -2153,14 +2153,14 @@
             </div>
             <div style="margin-bottom:12px;padding:10px 12px;background:#f8fafc;border-radius:6px;border-left:4px solid #2563eb;font-size:12.5px;line-height:1.5;">
               <strong style="color:var(--navy);">[공식 2대 서비스 라인업]</strong><br>
-              • <strong>① 스탠다드 AI 자동화 솔루션:</strong> <strong>월 190,000원</strong> (초기 셋팅비 100,000원 별도 / VAT 별도) ➔ 6개월 약정: <strong>1,140,000원</strong><br>
+              • <strong>① 스탠다드 AI 자동화 솔루션:</strong> <strong>월 190,000원</strong> (초기 셋팅비 100,000원 별도 / VAT 별도) ➔ <strong>월 정기구독 (의무 약정 없음 / 자유 해지)</strong><br>
               • <strong>② 프리미엄 고급 컨설팅:</strong> <strong>1회성 490,000원</strong> (약정 없음 단건 / 셋팅 요청 시 셋팅비 별도 / VAT 별도) ➔ 리포트 납품 및 브리핑 완결
             </div>
             <ul>
-              <li><strong>초기 파일럿 특별할인 (2개사 한정):</strong> <strong>디에르치과, 양식당 2곳만</strong> 초기 파트너십 특별할인으로 <strong>월 100,000원 (6개월 600,000원)</strong> 적용 중입니다.</li>
+              <li><strong>초기 파일럿 특별할인 (2개사 한정):</strong> <strong>디에르치과, 양식당 2곳만</strong> 초기 파트너십 특별할인으로 <strong>월 100,000원 (자유 해지 정기구독)</strong> 적용 중입니다.</li>
               <li><strong>신규 계약 정규 단가:</strong> 이후 진행하는 모든 신규 업체는 <strong>정규 가격 월 190,000원(셋팅비 10만 별도)</strong> 또는 <strong>고급 컨설팅 월 490,000원</strong>으로 체결됩니다.</li>
               <li><strong>현장 상담 유연 가격제 (네고/인상 대응):</strong> 영업 현장에서 고객사 니즈, 선납 기간, 다계정 번들링 등에 따라 단가를 유연하게 네고할 수 있으며, <strong>CRM 대장의 [금액 수정 ✏️]</strong>을 통해 실시간으로 업체별 단가를 변경할 수 있습니다.</li>
-              <li><strong>청구 및 결제 주기:</strong> 기본 <strong>최소 6개월 약정</strong> 선불제 (D-3 사전 알림 발송 후 세금계산서/현금영수증 발행).</li>
+              <li><strong>청구 및 결제 주기:</strong> 기본 <strong>월 정기구독 (의무 약정 없음)</strong> 선불제 (D-3 사전 알림 발송 후 세금계산서/현금영수증 발행).</li>
             </ul>
           </div>
 
@@ -5374,9 +5374,4 @@ ${client.customerName}의 Threads SNS 자동 홍보 익월 서비스 유지를 �
         alert(`[${customerName}] 고객사가 대장에서 성공적으로 삭제되었습니다.`);
       };
 
-      renderGateState();
-    })();
-
-  </script>
-</body>
-
+      renderGate
