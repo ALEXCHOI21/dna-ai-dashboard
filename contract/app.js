@@ -412,13 +412,47 @@ function safeFilePart(value) {
 function contractFileTitle() {
   const customer = safeFilePart(new FormData(form).get('customerName'));
   const date = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-  return `${customer}_${date}_DNA_AI_계약서및거래명세서`;
+  return `${customer}_${date}_DNA_AI_계약서및거래명세서_약관동의서`;
 }
 
 function escapeHtml(v) {
   const d = document.createElement('div');
   d.textContent = v || '-';
   return d.innerHTML;
+}
+
+// 3페이지 서비스 이용약관 및 개인정보 동의서 동적 바인딩 함수
+function buildTermsDoc(fd, signedAt, sigDataUrl, hash, now) {
+  const customerName = fd.get('customerName') || '-';
+  const representative = fd.get('representative') || '-';
+  const bizNumber = fd.get('businessNumber') || '개인 고객 (해당없음)';
+
+  const dateFormatted = new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(now);
+
+  const termsDateEl = document.querySelector('#termsDocDate');
+  if (termsDateEl) termsDateEl.textContent = dateFormatted;
+
+  const termsCustomerEl = document.querySelector('#termsCustomerName');
+  if (termsCustomerEl) termsCustomerEl.textContent = customerName;
+
+  const termsRepEl = document.querySelector('#termsRepresentative');
+  if (termsRepEl) termsRepEl.textContent = representative;
+
+  const termsBizEl = document.querySelector('#termsBizNumber');
+  if (termsBizEl) termsBizEl.textContent = bizNumber;
+
+  const termsSignImg = document.querySelector('#termsCustomerSignImg');
+  if (termsSignImg) {
+    termsSignImg.src = sigDataUrl;
+    termsSignImg.style.display = 'block';
+  }
+
+  const termsHashEl = document.querySelector('#termsCryptoHash');
+  if (termsHashEl) termsHashEl.textContent = hash;
 }
 
 // 거래명세표 동적 렌더링 함수
@@ -549,9 +583,9 @@ async function buildSummary() {
   
   let commitmentDesc = '';
   if (hasThreads && hasConsulting) {
-    commitmentDesc = `<strong>스탠다드 콘텐츠 자동화: 기본 6개월 약정</strong> (월 ${money(pricing.threadsPrice)} × 6개월 = ${money(pricing.threadsPrice * 6)}) / <strong>AI 상권분석: 1회성 단건 (약정 없음)</strong>`;
+    commitmentDesc = `<strong>스탠다드 콘텐츠 자동화: 월 정기구독 (의무 약정 없음 / 자유 해지)</strong> (월 ${money(pricing.threadsPrice)}) / <strong>AI 상권분석: 1회성 단건 (약정 없음)</strong>`;
   } else if (hasThreads) {
-    commitmentDesc = `<strong>기본 6개월 약정</strong> (최소 6개월 의무 운영 / 월 ${money(pricing.threadsPrice)} × 6개월 = 6개월 공급가액 ${money(pricing.threadsPrice * 6)})`;
+    commitmentDesc = `<strong>월 정기구독 (의무 약정 없음)</strong> (의무 계약기간 없음 / 언제든 자유 해지 가능 / 월 ${money(pricing.threadsPrice)})`;
   } else {
     commitmentDesc = `<strong>1회성 단건 컨설팅 (약정 없음)</strong>`;
   }
@@ -570,7 +604,7 @@ async function buildSummary() {
       <dt>약정 기간 및 조건</dt>
       <dd style="color:var(--navy);font-weight:700;">${commitmentDesc}</dd>
       <dt>동의 이력</dt>
-      <dd>핵심 약관 승인 ✓ (제2조 6개월 약정 확인) · 개인정보 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</dd>
+      <dd>핵심 약관 승인 ✓ (제2조 의무약정 없음 확인) · 개인정보 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</dd>
       <dt>체결 일시</dt>
       <dd>${signedAt} (KST, 공식 타임스탬프)</dd>
       <dt>계약자 전자서명</dt>
@@ -595,6 +629,9 @@ async function buildSummary() {
 
   // 2페이지 거래명세표 동적 구축
   buildStatement(fd, subtotal, vat, total, checked, now);
+
+  // 3페이지 서비스 이용약관 및 개인정보 동의서 동적 구축
+  buildTermsDoc(fd, signedAt, sigDataUrl, hash, now);
 }
 
 // 7. 스텝 이동 제어
@@ -753,11 +790,11 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
         plan: products,
         monthlyFee: money(subtotal),
         feeNumber: subtotal || 100000,
-        commitmentMonths: 6,
+        commitmentMonths: 0,
         startDate: dateStr,
         vat: money(vat),
         totalFee: money(total),
-        paymentCycle: '6개월 약정 (월 10만)',
+        paymentCycle: '월 정기구독 (의무 약정 없음)',
         paymentDay: `매월 ${dayNum}일`,
         alertDay: `매월 ${Math.max(1, dayNum - 3)}일 (D-3 알림)`,
         paymentMethod: '계좌이체 (카카오뱅크 3333-38-9917516)',
@@ -765,7 +802,7 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
         updatedAt: dateStr,
         platformUrl: window.location.href,
         accessCode: document.querySelector('#cryptoHash')?.textContent || 'DNA-HASH-' + Math.random().toString(36).substring(2, 10).toUpperCase(),
-        memo: `공식 온라인 전자계약 체결 완료 (공급가: ${money(subtotal)}, VAT: ${money(vat)}, 6개월 약정총액: ${money((subtotal || 100000) * 6)})`
+        memo: `공식 온라인 전자계약 체결 완료 (공급가: ${money(subtotal)}, VAT: ${money(vat)}, 의무 약정 없음 / 자유 해지)`
       };
 
       if (existingIdx >= 0) {
@@ -783,21 +820,21 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
   }
 }
 
-// 10. 공식 계약서 및 거래명세서 2페이지 합본 PDF 저장 (인쇄)
+// 10. 공식 계약서·거래명세표·약관동의서 3페이지 합본 PDF 저장 (인쇄)
 const completeBtn = document.querySelector('#completeContract');
 if (completeBtn) {
   completeBtn.addEventListener('click', () => {
     clearErrors();
     const finalConfirm = document.querySelector('#finalConfirm');
     if (!finalConfirm.checked) {
-      fail(finalConfirm.parentElement, '계약 및 거래명세서 내역에 대한 최종 확인 체크가 필요합니다.');
+      fail(finalConfirm.parentElement, '계약서, 거래명세표 및 약관동의서 내역에 대한 최종 확인 체크가 필요합니다.');
       return;
     }
     // 구글 드라이브 동기화 트리거
     uploadContractToGoogleDrive('pdf_save');
 
     const msg = document.querySelector('#completeMessage');
-    msg.textContent = '계약서(1P) 및 거래명세표(2P) 공식 출력이 준비되었습니다. 인쇄창에서 "PDF로 저장"을 선택해 주세요.';
+    msg.textContent = '계약서(1P), 거래명세표(2P), 약관 및 개인정보동의서(3P) 공식 3페이지 세트 출력이 준비되었습니다. 인쇄창에서 "PDF로 저장"을 선택해 주세요.';
     document.title = contractFileTitle();
     setTimeout(() => {
       window.print();
