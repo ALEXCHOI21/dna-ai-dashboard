@@ -1584,24 +1584,16 @@ DNA AI SUIT / 투어티플레이스 드림
 • 공식 이메일: dani90dna@gmail.com
 `;
 
-  // Gmail Compose 웹 URL 전용 안전 본문 (Google 400 Bad Request 방지: URI 길이 1,000자 이내 안전선 엄수)
-  const safeUrlBody = `안녕하세요, ${representative} 대표님!
-DNA AI SUIT (투어티플레이스)입니다.
-금일 체결해주신 공식 전자계약서 및 거래명세표 내역을 전달드립니다.
-
-[계약 및 입금 안내 요약]
+  // Gmail Compose 웹 URL 전용 안전 본문 (Google 400 Bad Request 방지: URI 길이 1,500자 이내 엄수)
+  const safeUrlBody = `[DNA AI 공식 계약서 및 입금 안내]
 • 고객사: ${customerName} (${representative} 대표님)
-• 최종 청구금액: ${money(total)} (일금 ${korTotal} 원정, VAT 포함)
-• 공식 입금계좌: 카카오뱅크 3333-38-9917516 (예금주: 정성윤 투어티플레이스)
-• 입금 기한: 체결일시 기준 48시간 이내 (미입금 시 자동 실효)
+• 입금액: ${money(total)} (VAT포함)
+• 계좌: 카카오뱅크 3333-38-9917516 (정성윤)
+• 기한: 체결후 48시간 이내 (미입금시 자동실효)
 
-※ 계약서 원본 PDF는 당사 보안 드라이브에 안전 보관되며, 상세 거래명세 및 약관 전문이 클립보드에 자동 복사되었습니다. (필요 시 본문에 Ctrl+V를 누르시면 전체 전문이 입력됩니다.)
+※ 상세 거래명세 및 약관 전문이 클립보드에 자동 복사되었습니다. (본문에 Ctrl+V를 누르시면 전체 전문이 입력됩니다.)`;
 
-감사합니다.
-DNA AI SUIT / 투어티플레이스 (문의: 010-8587-0235)
-`;
-
-  const subject = `[DNA AI 전자계약 체결본 및 거래명세서] ${customerName} 대표님 공식 계약서 및 입금 안내`;
+  const subject = `[DNA AI 전자계약] ${customerName} 체결본 및 입금안내`;
   const encodedTo = encodeURIComponent(email);
   const encodedCc = encodeURIComponent('dani90dna@gmail.com');
   const encodedSubject = encodeURIComponent(subject);
