@@ -268,8 +268,8 @@
             </label>
             <label class="form-group">
               <span class="form-label">사업자등록번호 <b>*</b> <em>(세금계산서 필수)</em></span>
-              <input type="text" name="businessNumber" required inputmode="numeric" placeholder="예: 616-81-98765">
-              <small class="helper-text">※ 세금계산서 청구 및 국세청 전송용</small>
+              <input type="text" name="businessNumber" required inputmode="numeric" maxlength="12" placeholder="예: 616-81-98765 (숫자만 입력 시 자동 포맷)">
+              <small class="helper-text">※ 숫자만 입력해도 하이픈(-)이 자동으로 적용됩니다.</small>
             </label>
             <label class="form-group">
               <span class="form-label">세금계산서 수신 이메일 <b>*</b></span>
@@ -278,8 +278,8 @@
             </label>
             <label class="form-group">
               <span class="form-label">연락처 (휴대전화) <b>*</b></span>
-              <input type="tel" name="phone" autocomplete="tel" required placeholder="010-3849-5921">
-              <small class="helper-text">※ 계약 진행 및 긴급 알림 수신용</small>
+              <input type="tel" name="phone" autocomplete="tel" required maxlength="13" placeholder="예: 010-3849-5921 (숫자만 입력 시 자동 포맷)">
+              <small class="helper-text">※ 숫자만 입력해도 하이픈(-)이 자동으로 적용됩니다.</small>
             </label>
             <label class="form-group wide">
               <span class="form-label">사업장 주소 <em>(선택)</em></span>
@@ -287,7 +287,7 @@
             </label>
             <label class="form-group wide">
               <span class="form-label">법인등록번호 <em>(법인 고객사인 경우 입력)</em></span>
-              <input type="text" name="corpNumber" placeholder="예: 220111-0000000">
+              <input type="text" name="corpNumber" maxlength="14" placeholder="예: 220111-0000000 (숫자만 입력 시 자동 포맷)">
             </label>
           </div>
 
@@ -969,6 +969,6 @@
 
   </div> <!-- /#mainAppWrapper -->
 
-  <script src="app.js?v=20261126_jeju_final_v3"></script>
+  <script src="app.js?v=20261126_jeju_final_v4"></script>
 </body>
 </html> 

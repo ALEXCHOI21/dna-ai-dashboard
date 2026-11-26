@@ -335,6 +335,73 @@ setupPresetButton('#btnPresetConsult59', 'consulting', () => {
 
 updateLivePricing();
 
+// ==========================================================================
+// [자동 하이픈 (-) 포맷터] 사업자등록번호, 휴대전화/연락처, 법인번호 자동 포맷팅
+// ==========================================================================
+function formatBusinessNumber(val) {
+  if (!val) return '';
+  const num = val.replace(/[^0-9]/g, '').slice(0, 10);
+  if (num.length <= 3) return num;
+  if (num.length <= 5) return `${num.slice(0, 3)}-${num.slice(3)}`;
+  return `${num.slice(0, 3)}-${num.slice(3, 5)}-${num.slice(5, 10)}`;
+}
+
+function formatPhoneNumber(val) {
+  if (!val) return '';
+  const num = val.replace(/[^0-9]/g, '').slice(0, 11);
+  if (!num) return '';
+  // 서울 지역번호 (02 시작)
+  if (num.startsWith('02')) {
+    if (num.length <= 2) return num;
+    if (num.length <= 5) return `${num.slice(0, 2)}-${num.slice(2)}`;
+    if (num.length <= 9) return `${num.slice(0, 2)}-${num.slice(2, 5)}-${num.slice(5)}`;
+    return `${num.slice(0, 2)}-${num.slice(2, 6)}-${num.slice(6, 10)}`;
+  }
+  // 일반 휴대전화 및 지역번호 (010, 011, 031, 042, 051 등)
+  if (num.length <= 3) return num;
+  if (num.length <= 7) return `${num.slice(0, 3)}-${num.slice(3)}`;
+  if (num.length <= 10) return `${num.slice(0, 3)}-${num.slice(3, 6)}-${num.slice(6)}`;
+  return `${num.slice(0, 3)}-${num.slice(3, 7)}-${num.slice(7, 11)}`;
+}
+
+function formatCorpNumber(val) {
+  if (!val) return '';
+  const num = val.replace(/[^0-9]/g, '').slice(0, 13);
+  if (num.length <= 6) return num;
+  return `${num.slice(0, 6)}-${num.slice(6, 13)}`;
+}
+
+// 실시간 자동 하이픈 바인딩
+const inputBizNum = form.querySelector('input[name="businessNumber"]');
+if (inputBizNum) {
+  inputBizNum.addEventListener('input', (e) => {
+    e.target.value = formatBusinessNumber(e.target.value);
+  });
+  inputBizNum.addEventListener('blur', (e) => {
+    e.target.value = formatBusinessNumber(e.target.value);
+  });
+}
+
+const inputPhone = form.querySelector('input[name="phone"]');
+if (inputPhone) {
+  inputPhone.addEventListener('input', (e) => {
+    e.target.value = formatPhoneNumber(e.target.value);
+  });
+  inputPhone.addEventListener('blur', (e) => {
+    e.target.value = formatPhoneNumber(e.target.value);
+  });
+}
+
+const inputCorpNum = form.querySelector('input[name="corpNumber"]');
+if (inputCorpNum) {
+  inputCorpNum.addEventListener('input', (e) => {
+    e.target.value = formatCorpNumber(e.target.value);
+  });
+  inputCorpNum.addEventListener('blur', (e) => {
+    e.target.value = formatCorpNumber(e.target.value);
+  });
+}
+
 // 4. 오류 처리 및 단계 유효성 검사
 function clearErrors() {
   document.querySelectorAll('.error').forEach(x => x.classList.remove('error'));
@@ -1517,13 +1584,30 @@ DNA AI SUIT / 투어티플레이스 드림
 • 공식 이메일: dani90dna@gmail.com
 `;
 
+  // Gmail Compose 웹 URL 전용 안전 본문 (Google 400 Bad Request 방지: URI 길이 1,000자 이내 안전선 엄수)
+  const safeUrlBody = `안녕하세요, ${representative} 대표님!
+DNA AI SUIT (투어티플레이스)입니다.
+금일 체결해주신 공식 전자계약서 및 거래명세표 내역을 전달드립니다.
+
+[계약 및 입금 안내 요약]
+• 고객사: ${customerName} (${representative} 대표님)
+• 최종 청구금액: ${money(total)} (일금 ${korTotal} 원정, VAT 포함)
+• 공식 입금계좌: 카카오뱅크 3333-38-9917516 (예금주: 정성윤 투어티플레이스)
+• 입금 기한: 체결일시 기준 48시간 이내 (미입금 시 자동 실효)
+
+※ 계약서 원본 PDF는 당사 보안 드라이브에 안전 보관되며, 상세 거래명세 및 약관 전문이 클립보드에 자동 복사되었습니다. (필요 시 본문에 Ctrl+V를 누르시면 전체 전문이 입력됩니다.)
+
+감사합니다.
+DNA AI SUIT / 투어티플레이스 (문의: 010-8587-0235)
+`;
+
   const subject = `[DNA AI 전자계약 체결본 및 거래명세서] ${customerName} 대표님 공식 계약서 및 입금 안내`;
   const encodedTo = encodeURIComponent(email);
   const encodedCc = encodeURIComponent('dani90dna@gmail.com');
   const encodedSubject = encodeURIComponent(subject);
-  const encodedBody = encodeURIComponent(fullBody);
+  const encodedBody = encodeURIComponent(safeUrlBody);
 
-  // Gmail Compose 웹 URL (상세 전체 본문 100% 온전 전달)
+  // Gmail Compose 웹 URL (Google 400 Bad Request 원천 방지)
   const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&cc=${encodedCc}&su=${encodedSubject}&body=${encodedBody}`;
   
   return { gmailUrl, fullBody, customerName, fileName: pdfFileName };
