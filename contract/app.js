@@ -425,6 +425,7 @@ function escapeHtml(v) {
 function buildTermsDoc(fd, signedAt, sigDataUrl, hash, now) {
   const customerName = fd.get('customerName') || '-';
   const representative = fd.get('representative') || '-';
+  const birthDate = fd.get('birthDate') || '-';
   const bizNumber = fd.get('businessNumber') || '개인 고객 (해당없음)';
 
   const dateFormatted = new Intl.DateTimeFormat('ko-KR', {
@@ -441,6 +442,9 @@ function buildTermsDoc(fd, signedAt, sigDataUrl, hash, now) {
 
   const termsRepEl = document.querySelector('#termsRepresentative');
   if (termsRepEl) termsRepEl.textContent = representative;
+
+  const termsBirthEl = document.querySelector('#termsBirthDate');
+  if (termsBirthEl) termsBirthEl.textContent = birthDate;
 
   const termsBizEl = document.querySelector('#termsBizNumber');
   if (termsBizEl) termsBizEl.textContent = bizNumber;
@@ -595,6 +599,8 @@ async function buildSummary() {
     <dl>
       <dt>계약자 (고객사)</dt>
       <dd><strong>${escapeHtml(customerName)}</strong> (대표자/담당자: ${escapeHtml(representative)})</dd>
+      <dt>대표자 생년월일</dt>
+      <dd style="font-weight:700;color:#0f172a;">${escapeHtml(fd.get('birthDate') || '-')}</dd>
       <dt>연락처 / 이메일</dt>
       <dd>${escapeHtml(phone)} / <span style="color:var(--blue);">${escapeHtml(email)}</span></dd>
       <dt>사업자등록번호</dt>
@@ -604,7 +610,7 @@ async function buildSummary() {
       <dt>약정 기간 및 조건</dt>
       <dd style="color:var(--navy);font-weight:700;">${commitmentDesc}</dd>
       <dt>동의 이력</dt>
-      <dd>핵심 약관 승인 ✓ (제2조 의무약정 없음 확인) · 개인정보 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</dd>
+      <dd>핵심 약관 승인 ✓ (제2조 의무약정 없음 확인) · 개인정보 및 식별정보 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</dd>
       <dt>체결 일시</dt>
       <dd>${signedAt} (KST, 공식 타임스탬프)</dd>
       <dt>계약자 전자서명</dt>
@@ -620,6 +626,8 @@ async function buildSummary() {
   // 쌍방 대조표 반영
   document.querySelector('#partyCustomerName').textContent = customerName;
   document.querySelector('#partyRepresentative').textContent = representative;
+  const partyBirthEl = document.querySelector('#partyBirthDate');
+  if (partyBirthEl) partyBirthEl.textContent = fd.get('birthDate') || '-';
   document.querySelector('#partyBizNumber').textContent = bizNumber;
   document.querySelector('#partyContact').textContent = `${phone} / ${email}`;
   document.querySelector('#partySignedAt').textContent = signedAt;
@@ -653,7 +661,8 @@ function showStep(step) {
   }
   if (step === 5) {
     buildSummary();
-    uploadContractToGoogleDrive('step5_entry');
+    // [중요 수정] step5_entry 자동 업로드 완전 제거!
+    // 0원짜리 빈 껍데기가 먼저 전송되어 중복 파일이 생기는 문제를 원천 차단함.
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -712,14 +721,26 @@ function showToast(msg) {
   }, 3000);
 }
 
-// 9. Google Drive 자동 업로드 핵심 함수 (Apps Script WebApp 연동)
+// 9. Google Drive 자동 업로드 핵심 함수 (Apps Script WebApp 연동 - 중복 방지 & 3P 완결 디자인 내장)
+let isGoogleDriveUploading = false;
+let isGoogleDriveUploaded = false;
+
 async function uploadContractToGoogleDrive(triggerSource = 'auto') {
   if (!GAS_WEBAPP_URL) return;
+
+  // [중복 방어] 이미 업로드되었거나 업로드 중이면 2중 생성 원천 차단!
+  if (isGoogleDriveUploading || isGoogleDriveUploaded) {
+    console.log('이미 Google 드라이브에 단일 완결본이 업로드 완료되어 중복 전송을 차단합니다. (Trigger:', triggerSource, ')');
+    return;
+  }
+  isGoogleDriveUploading = true;
   
   try {
     const fd = new FormData(form);
     const customerName = (fd.get('customerName') || '고객사').trim();
     const representative = (fd.get('representative') || '대표자').trim();
+    const birthDate = (fd.get('birthDate') || '-').trim();
+    const corpNumber = (fd.get('corpNumber') || '').trim();
     const phone = (fd.get('phone') || '-').trim();
     const email = (fd.get('email') || '-').trim();
     const { subtotal, vat, total, checked } = calculatePricing();
@@ -728,16 +749,80 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
 
     const contractDoc = document.querySelector('#contractDoc');
     const statementDoc = document.querySelector('#statementDoc');
-    if (!contractDoc || !statementDoc) return;
+    const termsDoc = document.querySelector('#termsDoc');
+    if (!contractDoc || !statementDoc) {
+      isGoogleDriveUploading = false;
+      return;
+    }
 
     const contractHtml = contractDoc.outerHTML;
     const statementHtml = statementDoc.outerHTML;
-    const cssHref = document.querySelector('link[rel="stylesheet"]')?.href || '';
-    const combinedHtml = `<!doctype html><html><head><meta charset="utf-8"><title>${fileName}</title><style>${cssHref ? `@import url("${cssHref}");` : ''} body{font-family:sans-serif;padding:20px;color:#1e293b;background:#ffffff;}</style></head><body>${contractHtml}<div style="page-break-after:always;margin:40px 0;"></div>${statementHtml}</body></html>`;
+    const termsHtml = termsDoc ? termsDoc.outerHTML : '';
+
+    // [핵심] Google Apps Script의 PDF 엔진이 외부 CSS 없이도 100% 완벽한 디자인을 렌더링하도록 인라인 CSS 완전 내장!
+    const inlinePrintCss = `
+      * { box-sizing: border-box; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", helvetica, sans-serif; color: #1e293b; background: #ffffff; padding: 18px 24px; font-size: 11px; line-height: 1.45; }
+      .contract-doc-card, .statement-card, .legal-terms-doc-card { border: 2px solid #0d2242 !important; border-radius: 8px !important; padding: 16px 20px !important; margin-bottom: 24px !important; background: #ffffff !important; }
+      .doc-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0d2242; padding-bottom: 8px; margin-bottom: 12px; }
+      .doc-type { background: #0d2242; color: #ffffff; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block; }
+      .statement-type { background: #047857; color: #ffffff; }
+      .terms-type { background: #1e3a8a; color: #ffffff; }
+      .doc-title { font-size: 19px; font-weight: 800; color: #0d2242; margin: 4px 0 2px 0; }
+      .doc-subtitle { font-size: 11px; color: #64748b; }
+      .doc-seal .seal-circle { width: 56px; height: 56px; border: 2px solid #dc2626; color: #dc2626; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 9.5px; }
+      .summary-box dl { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 14px; margin-bottom: 14px; }
+      .summary-box dt { font-weight: bold; color: #475569; }
+      .summary-box dd { margin: 0; color: #0f172a; }
+      .payment-highlight-box { background: #eff6ff; border: 1.5px solid #3b82f6; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; }
+      .pay-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+      .badge-pay { background: #1d4ed8; color: #fff; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
+      .pay-grid { display: flex; justify-content: space-between; text-align: center; }
+      .pay-item .tit { display: block; font-size: 11px; color: #475569; margin-bottom: 4px; }
+      .pay-item .num { font-size: 14px; font-weight: 800; color: #1e293b; }
+      .pay-item.highlight .total-num { font-size: 18px; font-weight: 900; color: #1d4ed8; }
+      .bank-account-card { background: #fdfefe; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; }
+      .bank-brand strong { color: #0f172a; font-size: 13px; }
+      .account-number { font-size: 16px; font-weight: 800; color: #1e3a8a; }
+      .party-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+      .party-table th { background: #0d2242; color: #ffffff; padding: 6px 10px; font-size: 11px; text-align: left; }
+      .party-table td { padding: 8px 10px; border: 1px solid #cbd5e1; vertical-align: top; }
+      .party-table p { margin: 3px 0; }
+      .audit-stamp-bar { background: #f1f5f9; padding: 6px 10px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 9.5px; color: #64748b; }
+      .audit-stamp-bar code { font-weight: bold; color: #1d4ed8; font-family: monospace; }
+      .stmt-party-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 10px; }
+      .stmt-party-table th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px; }
+      .stmt-party-table td { border: 1px solid #cbd5e1; padding: 5px; }
+      .statement-total-bar { background: #f1f5f9; border: 1.5px solid #0d2242; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+      .statement-items-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 10px; }
+      .statement-items-table th { background: #0d2242; color: #ffffff; padding: 6px; text-align: center; }
+      .statement-items-table td { border: 1px solid #cbd5e1; padding: 6px; text-align: center; }
+      .statement-items-table .price-cell { text-align: right; }
+      .statement-footer-card { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px 14px; }
+      .terms-articles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+      .term-article-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 10px; border-radius: 6px; }
+      .article-title { font-size: 11px; font-weight: bold; color: #0d2242; margin-bottom: 4px; }
+      .article-text { font-size: 9.5px; color: #334155; line-height: 1.4; }
+      .terms-privacy-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 10px; }
+      .terms-privacy-table th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px; width: 22%; text-align: left; }
+      .terms-privacy-table td { border: 1px solid #cbd5e1; padding: 5px; }
+      .terms-consent-badges { background: #ecfdf5; border: 1px solid #10b981; padding: 8px 12px; border-radius: 6px; font-size: 10.5px; color: #065f46; margin-bottom: 12px; }
+      .terms-parties-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1.5px solid #0d2242; padding-top: 10px; }
+      .terms-party-col { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; position: relative; }
+      .party-role-tag { background: #334155; color: #ffffff; padding: 2px 6px; font-size: 9px; font-weight: bold; border-radius: 3px; display: inline-block; margin-bottom: 4px; }
+      .customer-tag { background: #1e40af; }
+      .signature-preview, .terms-sig-preview { max-height: 40px; max-width: 120px; object-fit: contain; }
+      .btn-copy, .btn-action, .agree-card, .complete-message, .toast { display: none !important; }
+      .print-page-break { page-break-after: always; height: 0; margin: 30px 0; }
+    `;
+
+    const combinedHtml = `<!doctype html><html><head><meta charset="utf-8"><title>${fileName}</title><style>${inlinePrintCss}</style></head><body>${contractHtml}<div class="print-page-break" style="page-break-after:always;margin:30px 0;"></div>${statementHtml}<div class="print-page-break" style="page-break-after:always;margin:30px 0;"></div>${termsHtml}</body></html>`;
 
     const payload = {
       customerName: customerName,
       representative: representative,
+      birthDate: birthDate,
+      corpNumber: corpNumber,
       phone: phone,
       email: email,
       products: products,
@@ -757,8 +842,11 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     }).then(() => {
-      showToast(`Google 드라이브에 [${customerName}] 계약서 및 거래명세서가 안전하게 전송되었습니다!`);
+      isGoogleDriveUploaded = true;
+      isGoogleDriveUploading = false;
+      showToast(`Google 드라이브에 [${customerName}] 공식 3페이지 계약서가 안전하게 저장되었습니다!`);
     }).catch(err => {
+      isGoogleDriveUploading = false;
       console.warn('Google Drive Sync Notice:', err);
     });
 

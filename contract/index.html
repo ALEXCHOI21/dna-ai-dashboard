@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>DNA AI 서비스 전자계약</title>
-  <link rel="stylesheet" href="styles.css?v=20261121_smartpass">
+  <link rel="stylesheet" href="styles.css?v=20261126_jeju_3p_v1">
   <script src="dani-asset.js?v=20261121_smartpass"></script>
 </head>
 <body>
@@ -255,37 +255,47 @@
           <div class="form-grid">
             <label class="form-group">
               <span class="form-label">회사명 / 상호 (성명) <b>*</b></span>
-              <input type="text" name="customerName" autocomplete="organization" required placeholder="예: 주식회사 디에르 / 둔산양식당">
+              <input type="text" name="customerName" autocomplete="organization" required placeholder="예: (주)제주오션팰리스호텔 / 디에르치과">
             </label>
             <label class="form-group">
               <span class="form-label">대표자명 / 담당자명 <b>*</b></span>
-              <input type="text" name="representative" autocomplete="name" required placeholder="예: 홍길동">
+              <input type="text" name="representative" autocomplete="name" required placeholder="예: 강민호">
+            </label>
+            <label class="form-group">
+              <span class="form-label">대표자 생년월일 <b>*</b> <em>(계약자 식별 및 법적 효력 필수)</em></span>
+              <input type="text" name="birthDate" maxlength="10" required placeholder="예: 780512 (또는 1978.05.12)">
+              <small class="helper-text">※ 전자서명 및 정식 계약 당사자 특정용 고유 식별정보</small>
+            </label>
+            <label class="form-group">
+              <span class="form-label">사업자등록번호 <b>*</b> <em>(세금계산서 필수)</em></span>
+              <input type="text" name="businessNumber" required inputmode="numeric" placeholder="예: 616-81-98765">
+              <small class="helper-text">※ 세금계산서 청구 및 국세청 전송용</small>
             </label>
             <label class="form-group">
               <span class="form-label">세금계산서 수신 이메일 <b>*</b></span>
-              <input type="email" name="email" autocomplete="email" required placeholder="ceo@example.com">
-              <small class="helper-text">※ 계약 완료본 PDF 및 세금계산서가 이 메일로 발송됩니다.</small>
+              <input type="email" name="email" autocomplete="email" required placeholder="reservation@oceanpalace.co.kr">
+              <small class="helper-text">※ 계약 완료본 PDF 및 세금계산서 수신 메일</small>
             </label>
             <label class="form-group">
               <span class="form-label">연락처 (휴대전화) <b>*</b></span>
-              <input type="tel" name="phone" autocomplete="tel" required placeholder="010-0000-0000">
-              <small class="helper-text">※ 작업 진행 및 긴급 알림 수신용</small>
-            </label>
-            <label class="form-group wide">
-              <span class="form-label">사업자등록번호 <em>(세금계산서 발행 시 필수)</em></span>
-              <input type="text" name="businessNumber" inputmode="numeric" placeholder="000-00-00000 (개인 고객인 경우 생년월일 6자리)">
+              <input type="tel" name="phone" autocomplete="tel" required placeholder="010-3849-5921">
+              <small class="helper-text">※ 계약 진행 및 긴급 알림 수신용</small>
             </label>
             <label class="form-group wide">
               <span class="form-label">사업장 주소 <em>(선택)</em></span>
-              <input type="text" name="businessAddress" placeholder="예: 대전광역시 서구 둔산로 123">
+              <input type="text" name="businessAddress" placeholder="예: 제주특별자치도 서귀포시 중앙로 14">
+            </label>
+            <label class="form-group wide">
+              <span class="form-label">법인등록번호 <em>(법인 고객사인 경우 입력)</em></span>
+              <input type="text" name="corpNumber" placeholder="예: 220111-0000000">
             </label>
           </div>
 
           <div class="info-alert">
             <span class="alert-icon">🛡️</span>
             <div>
-              <strong>수집하지 않는 민감 정보</strong>
-              <p>주민등록번호 뒷자리, 계좌 비밀번호, SNS 계정 비밀번호는 절대로 입력받지 않으며, 모든 권한은 플랫폼 공식 권한 위임 방식으로 안전하게 진행됩니다.</p>
+              <strong>계약 당사자 식별 및 고유정보 보호 규정</strong>
+              <p>수집된 대표자 생년월일 및 사업자 정보는 전자상거래법 제6조 및 전자서명법 제3조에 따라 정식 계약 체결, 본인확인 및 국세청 세금계산서 발급에만 사용되며 암호화되어 안전하게 관리됩니다.</p>
             </div>
           </div>
         </section>
@@ -380,7 +390,7 @@
                 </tr>
                 <tr>
                   <th>수집 항목</th>
-                  <td>상호(성명), 대표자명, 이메일, 휴대전화번호, 사업자등록번호, 사업장주소, 전자서명 데이터</td>
+                  <td>상호(성명), 대표자명, <strong>대표자 생년월일(고유식별정보)</strong>, 법인등록번호, 사업자등록번호, 휴대전화번호, 이메일, 사업장주소, 전자서명 데이터</td>
                 </tr>
                 <tr>
                   <th>보유 및 이용기간</th>
@@ -522,7 +532,7 @@
                     </td>
                     <td>
                       <p><strong>상호(성명):</strong> <span id="partyCustomerName">-</span></p>
-                      <p><strong>대표자/담당자:</strong> <span id="partyRepresentative">-</span></p>
+                      <p><strong>대표자/담당자:</strong> <span id="partyRepresentative">-</span> (생년월일: <span id="partyBirthDate">-</span>)</p>
                       <p><strong>사업자번호:</strong> <span id="partyBizNumber">-</span></p>
                       <p><strong>연락처 / 메일:</strong> <span id="partyContact">-</span></p>
                       <p><strong>체결 일시:</strong> <span id="partySignedAt">-</span></p>
@@ -802,7 +812,7 @@
               <div class="terms-party-col customer-col">
                 <div class="party-role-tag customer-tag">서비스 이용자 (계약자)</div>
                 <p><strong>고객사명:</strong> <span id="termsCustomerName">-</span></p>
-                <p><strong>대표자/담당자:</strong> <span id="termsRepresentative">-</span></p>
+                <p><strong>대표자/담당자:</strong> <span id="termsRepresentative">-</span> (생년월일: <span id="termsBirthDate">-</span>)</p>
                 <p><strong>사업자등록번호:</strong> <span id="termsBizNumber">-</span></p>
                 <div class="terms-sign-wrap">
                   <span class="sign-label">전자서명 날인:</span>
@@ -946,6 +956,6 @@
 
   </div> <!-- /#mainAppWrapper -->
 
-  <script src="app.js?v=20261124_full_director_v3"></script>
+  <script src="app.js?v=20261126_jeju_3p_v1"></script>
 </body>
 </html>
