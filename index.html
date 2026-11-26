@@ -4301,9 +4301,15 @@
           if (!res.ok) throw new Error(res.error || '조회 실패');
           window._customerAuditEvidence = window._customerAuditEvidence || {};
           window._customerAuditEvidence.competitors = res;
-          const kList = res.kakao_nearby?.candidates || [];
+          const normS = (s) => String(s || '').replace(/\s+/g, '').toLowerCase();
+          const kList = (res.kakao_nearby?.candidates || []).filter(c => {
+            if (km?.id && c.id === km.id) return false;
+            if (c.distance === 0) return false;
+            if (km?.name && normS(c.name) === normS(km.name)) return false;
+            return true;
+          });
           const gList = res.google_nearby?.candidates || [];
-          const rows = kList.slice(0, 6).map(c => {
+          const rows = kList.slice(0, 8).map(c => {
             const gMatch = gList.find(g => (g.name || '').replace(/\s+/g,'').includes((c.name || '').replace(/\s+/g,'')));
             return `<tr style="border-bottom:1px solid #e2e8f0;">
               <td style="padding:8px;font-weight:700;">${c.name}</td>
@@ -4313,7 +4319,7 @@
               <td style="padding:8px;">${gMatch ? `⭐ ${gMatch.rating ?? '-'} (${gMatch.review_count ?? 0}건)` : statusBadgeHtml('NOT_FOUND_IN_SCOPE')}</td>
             </tr>`;
           }).join('');
-          box.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f0fdfa;border-bottom:2px solid #99f6e4;text-align:left;"><th style="padding:8px;">경쟁사명</th><th style="padding:8px;">거리</th><th style="padding:8px;">도로명주소</th><th style="padding:8px;">전화</th><th style="padding:8px;">🔵 구글 평점/리뷰</th></tr></thead><tbody>${rows || '<tr><td colspan="5" style="padding:10px;">반경 1km 내 결과 없음</td></tr>'}</tbody></table></div><div style="margin-top:6px;font-size:11px;color:#94a3b8;">질의: ${res.category_query} · 반경 ${res.radius}m · 조회 시각: ${res.audited_at}</div>`;
+          box.innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f0fdfa;border-bottom:2px solid #99f6e4;text-align:left;"><th style="padding:8px;">경쟁사명</th><th style="padding:8px;">거리</th><th style="padding:8px;">도로명주소</th><th style="padding:8px;">전화</th><th style="padding:8px;">🔵 구글 평점/리뷰</th></tr></thead><tbody>${rows || '<tr><td colspan="5" style="padding:12px;color:#059669;font-weight:700;text-align:center;">✅ 반경 1km 내 동일 업종 경쟁사 0곳 (인근 상권 독점)</td></tr>'}</tbody></table></div><div style="margin-top:6px;font-size:11px;color:#94a3b8;">질의: ${res.category_query} · 반경 ${res.radius}m · 조회 시각: ${res.audited_at}</div>`;
         } catch (e) {
           box.innerHTML = `<span style="color:#dc2626;">조회 오류: ${e.message}</span>`;
         }
