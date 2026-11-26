@@ -1416,63 +1416,7 @@ async function uploadContractToGoogleDrive(triggerSource = 'auto') {
   }
 }
 
-    // 2) 대시보드 고객 관리 대장(CRM) 로컬스토리지 실시간 자동 누적 업데이트
-    try {
-      const crmKey = 'dna_client_crm_data';
-      let crmList = JSON.parse(localStorage.getItem(crmKey) || '[]');
-      const now = new Date();
-      const dateStr = now.toISOString().slice(0, 10);
-      const dayNum = now.getDate();
-      const existingIdx = crmList.findIndex(c => c.customerName === customerName);
-      
-      // [대표님 지침 규칙] 고객사명에 '테스트' 또는 'test'가 포함된 경우만 테스트 계약으로 인지하여 CRM 대장 누적 제외
-      const lowerName = (customerName || '').toLowerCase().trim();
-      if (lowerName.includes('테스트') || lowerName.includes('test')) {
-        console.log('테스트 계약으로 인지하여 CRM 대장 업데이트를 제외합니다:', customerName);
-        return;
-      }
 
-      const crmRecord = {
-        no: existingIdx >= 0 ? crmList[existingIdx].no : (crmList.length + 1),
-        customerName: customerName,
-        industry: checked.map(c => c.dataset.label).join(', ') || 'AI 마케팅 솔루션',
-        representative: representative,
-        phone: phone,
-        address: (fd.get('businessAddress') || '').trim() || '-',
-        email: email,
-        bizNumber: (fd.get('businessNumber') || '').trim() || '-',
-        plan: products,
-        monthlyFee: money(subtotal),
-        feeNumber: subtotal || 100000,
-        commitmentMonths: 0,
-        startDate: dateStr,
-        vat: money(vat),
-        totalFee: money(total),
-        paymentCycle: '월 정기구독 (의무 약정 없음)',
-        paymentDay: `매월 ${dayNum}일`,
-        alertDay: `매월 ${Math.max(1, dayNum - 3)}일 (D-3 알림)`,
-        paymentMethod: '계좌이체 (카카오뱅크 3333-38-9917516)',
-        paymentStatus: '입금대기 (계약체결완료)',
-        updatedAt: dateStr,
-        platformUrl: window.location.href,
-        accessCode: document.querySelector('#cryptoHash')?.textContent || 'DNA-HASH-' + Math.random().toString(36).substring(2, 10).toUpperCase(),
-        memo: `공식 온라인 전자계약 체결 완료 (공급가: ${money(subtotal)}, VAT: ${money(vat)}, 의무 약정 없음 / 자유 해지)`
-      };
-
-      if (existingIdx >= 0) {
-        crmList[existingIdx] = { ...crmList[existingIdx], ...crmRecord };
-      } else {
-        crmList.push(crmRecord);
-      }
-      localStorage.setItem(crmKey, JSON.stringify(crmList));
-    } catch (crmErr) {
-      console.warn('Local CRM Sync Notice:', crmErr);
-    }
-
-  } catch (err) {
-    console.warn('Drive Upload Error:', err);
-  }
-}
 
 // 10. 공식 계약서·거래명세표·약관동의서 3페이지 합본 PDF 저장 (인쇄)
 const completeBtn = document.querySelector('#completeContract');
