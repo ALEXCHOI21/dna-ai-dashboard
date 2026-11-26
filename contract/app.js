@@ -32,9 +32,9 @@ let lastFullMailBody = '';
 const daniMessages = {
   1: "대표님, 반가워요! DNA AI 최고급 마케팅 비서 <strong>DANI</strong>예요. 24시간 쉬지 않고 우리 매장을 알려줄 맞춤형 AI 솔루션을 선택해 보세요. 부가세(VAT 10%) 포함 최종 입금액까지 투명하게 실시간 계산해 드릴게요! ✨",
   2: "대표님, 정식 계약 체결과 세금계산서 발행에 꼭 필요한 <strong>대표자 생년월일(식별정보)</strong>과 <strong>사업자등록번호</strong>를 정확히 입력해 주세요. 법적 효력을 갖는 안전한 전자문서로 암호화 보존됩니다! 🔒",
-  3: "서로 간의 투명한 신뢰를 위한 핵심 약관이에요. <strong>의무 계약기간(의무 약정) 없이</strong> 월 단위 정기구독으로 언제든 자유롭게 해지하실 수 있으며, AI 결과물 책임 한계와 안전한 데이터 보호 방침을 차근차근 확인해 주세요. 📜",
+  3: "서로 간의 투명한 신뢰를 위한 핵심 약관이에요. <strong>의무 약정 없이</strong> 월 단위 정기구독으로 언제든 자유롭게 해지하실 수 있으며, <strong>48시간 이내 미입금 시 자동 실효 특약</strong>과 <strong>상호 역할 분담(R&R)</strong> 규정을 차근차근 확인해 주세요. 📜",
   4: "이제 법적 효력을 갖는 전자서명 단계예요. 개인정보 및 고유식별정보 5년 보존 동의를 확인하신 뒤, 터치나 마우스로 멋지게 서명해 주세요! ✍️",
-  5: "축하합니다, 대표님! <strong>계약서(1P), 거래명세표(2P), 서비스표준약관 및 개인정보동의서(3P)</strong> 공식 3페이지 세트가 완성되었어요. 🎉 VAT 포함 <strong>최종 입금금액</strong>과 <strong>카카오뱅크 입금계좌</strong>를 확인하시고, <strong>[PDF 저장]</strong> 후 <strong>[Gmail로 전송]</strong>을 누르시면 대표님의 메일함으로 즉시 발송됩니다!"
+  5: "축하합니다, 대표님! <strong>계약서(1P), 거래명세표(2P), 서비스표준약관 및 개인정보동의서(3P)</strong> 공식 3페이지 세트가 완성되었어요. 🎉 체결일시 기준 <strong>48시간 이내</strong>에 안내된 공식 계좌로 입금해 주시면 즉시 시스템 셋팅에 착수하며, 48시간 경과 시 계약은 자동 취소됩니다. <strong>[PDF 저장]</strong> 후 <strong>[Gmail로 전송]</strong>을 누르시면 대표님의 메일함으로 즉시 발송됩니다!"
 };
 
 function updateDaniMessage(step) {
@@ -915,8 +915,15 @@ function buildGasCompatible3PHtml({
         </td>
       </tr>
       <tr>
-        <td style="padding: 0 12px 8px 12px; font-size: 10px; color: #64748b;">
+        <td style="padding: 0 12px 6px 12px; font-size: 10px; color: #64748b;">
           ※ 입금 시 계약자 상호명(<strong>${customerName}</strong>)으로 입금해 주시면 확인 즉시 전담 마케팅 셋팅이 착수됩니다.
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 12px 8px 12px;">
+          <div style="background: #fef2f2; border: 1px solid #f87171; border-radius: 4px; padding: 4px 8px; font-size: 9.5px; color: #991b1b;">
+            ⏳ <strong>[입금 기한 엄수 특약]</strong> 계약 체결일시 기준 <strong>48시간 이내</strong> 미입금 시 본 계약은 별도 통보 없이 <strong>즉시 자동 실효(해지)</strong>되며 효력을 상실합니다.
+          </div>
         </td>
       </tr>
     </table>
@@ -1137,21 +1144,22 @@ function buildGasCompatible3PHtml({
           <td width="2%"></td>
           <!-- 제2조 -->
           <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #eff6ff; padding: 7px 9px;">
-            <strong style="color: #1e40af; font-size: 10.5px; display: block; margin-bottom: 3px;">제2조 (이용요금 및 결제 규정 - 의무 약정 없음)</strong>
+            <strong style="color: #1e40af; font-size: 10.5px; display: block; margin-bottom: 3px;">제2조 (이용요금, 결제 규정 및 48시간 자동 실효)</strong>
             ① 모든 서비스 비용은 부가가치세(VAT 10%)가 별도로 산정되며, 최종 입금 금액에 합산 청구됩니다.<br>
             ② <strong>[의무 약정 없음]</strong> 본 서비스는 고객사의 운영 자율성을 위해 <strong>의무 계약기간(의무 약정)이 적용되지 않으며</strong>, 월 단위 정기구독으로 자유롭게 이용 및 해지할 수 있습니다.<br>
             ③ 월 구독은 체결 시 '초기 셋팅비 + 1회차 구독료' 선납 후, 2회차부터 매월 약정일에 정기 청구됩니다.<br>
-            ④ 입금 확인 즉시 국세청 홈택스 전자세금계산서 또는 현금영수증이 자동 발행됩니다.
+            ④ 입금 확인 즉시 국세청 홈택스 전자세금계산서 또는 현금영수증이 자동 발행됩니다.<br>
+            ⑤ <strong>[48시간 자동 실효]</strong> 체결 후 48시간 이내 미입금 시 본 계약은 별도 최고 없이 즉시 자동 실효(해지)되며 공급자의 서비스 제공 의무는 면책됩니다.
           </td>
         </tr>
         <tr><td colspan="3" height="6"></td></tr>
         <tr>
           <!-- 제3조 -->
           <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 7px 9px;">
-            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제3조 (고객 검수 의무 및 AI 결과물 책임 한계)</strong>
-            ① 생성형 AI 원고는 고객의 고유 브랜드 가치와 사실관계를 반영하므로, 고객은 사전 공유된 원고에 대해 지정 기간 내 검수를 진행합니다.<br>
-            ② 공급자는 최적화된 마케팅 알고리즘을 제공하나, 개별 매장의 실제 매출액이나 팔로워 수 등 특정 정량 성과를 절대 보장하지 않습니다.<br>
-            ③ 공급자의 고의 또는 중대한 과실로 인하여 발생한 법적 손해는 관련 법령에 따라 책임을 부담합니다.
+            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제3조 (역할 분담 및 매출 보장 한계)</strong>
+            ① <strong>[역할 분담]</strong> 공급자는 타겟 트래픽 유입 및 AI 인프라 구축을 전담하고, 고객사는 현장 접객, 서비스 품질 관리 및 실제 매출 창출을 전담합니다.<br>
+            ② <strong>[매출 보장 한계]</strong> 공급자는 최적화된 마케팅 알고리즘을 제공하나, 개별 매장의 실제 매출액이나 팔로워 수 등 특정 정량 성과를 절대 보장하지 않습니다.<br>
+            ③ 사전 공유된 AI 원고는 고객이 검수하며, 고의/중과실 손해는 관련 법령에 따릅니다.
           </td>
           <td width="2%"></td>
           <!-- 제4조 -->
@@ -1479,11 +1487,16 @@ ${itemsText}
 ★ 총 청구/입금금액: 일금 ${korTotal} 원정 (${money(total)}, VAT 포함)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[2. 공식 지정 입금 계좌 안내]
+[2. 공식 지정 입금 계좌 및 입금 기한 안내]
 • 입금 은행: 카카오뱅크 (KakaoBank)
 • 계좌 번호: 3333-38-9917516
 • 예금주: 정성윤 (투어티플레이스)
 * 입금 시 계약자 상호명(${customerName})으로 입금 부탁드립니다.
+
+⚡ [입금 기한 엄수 및 자동 실효 특약]
+• 본 계약은 체결일시 기준 [48시간 이내] 전액 입금 시 최종 효력이 발생합니다.
+• 48시간 이내 미입금 시 별도의 최고나 통보 절차 없이 즉시 [자동 실효(해지)] 처리되며 계약 효력이 상실됩니다.
+• 입금 확인 즉시 전담 마케팅 셋팅이 착수되며 국세청 전자세금계산서가 자동 발행됩니다.
 
 [3. 전자문서 무결성 감사 코드]
 • SHA-256 검증 해시: ${hash}
