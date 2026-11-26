@@ -2238,9 +2238,22 @@
       <!-- URL Input & Preset Bar -->
       <div class="no-print" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;box-shadow:0 4px 15px -3px rgba(15,23,42,0.06);margin-bottom:24px;">
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-          <input type="text" id="audit-input-url" placeholder="지도 링크 또는 '지역명 + 상호명'을 입력하세요 (예: 대전 동구 용인대현대태권도)" 
+          <input type="text" id="audit-input-url" placeholder="카카오맵, 네이버 플레이스, 또는 구글 지도 링크를 입력하세요 (예: https://place.map.kakao.com/503157844)" 
                  value="https://place.map.kakao.com/26912720"
-                 style="flex:1;min-width:280px;padding:12px 16px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;" />
+                 style="flex:1;min-width:260px;padding:12px 16px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;" />
+          <select id="audit-actual-industry" title="실제 업종 선택 (추상적 상호명 판별용)"
+                  style="padding:12px 14px;border:1px solid #cbd5e1;border-radius:10px;font-size:13px;font-weight:600;color:#0f172a;background:#f8fafc;cursor:pointer;">
+            <option value="">🏷️ 실제 업종: 자동 감지</option>
+            <option value="육류,고기">🥩 육류 · 고기구이 · 갈비</option>
+            <option value="바,펍,라운지,라이브카페">🍸 바 · 펍 · 라운지 · 라이브카페</option>
+            <option value="카페,디저트">☕ 카페 · 디저트 · 베이커리</option>
+            <option value="한식,백반,국밥">🍚 한식 · 백반 · 국밥</option>
+            <option value="양식,일식,중식">🍽️ 양식 · 일식 · 중식</option>
+            <option value="치과,의원,병원">🏥 병의원 · 치과 · 한의원</option>
+            <option value="태권도,학원,교습소">🥋 학원 · 태권도 · 교습소</option>
+            <option value="미용실,뷰티,네일">💇 미용 · 뷰티 · 네일</option>
+            <option value="전세버스,여행,운수">🚌 전세버스 · 여행 · 운수</option>
+          </select>
           <button type="button" id="btn-run-audit" style="background:linear-gradient(135deg, #7c3aed, #4f46e5);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(124,58,237,0.3);">
             🚀 1초 정밀 분석 실행
           </button>
@@ -3920,7 +3933,30 @@
           ? `<button type="button" class="no-print" onclick="runLiveCrossAudit('${esc(data.input.raw_query)}','${plat}')" style="margin-top:6px;background:#dc2626;color:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">🔄 ${plat.toUpperCase()}만 다시 조회</button>`
           : '';
 
+        const actualInd = (document.getElementById('audit-actual-industry')?.value || '').trim();
+        const kCatClean = (km?.category || '').split('>').pop().trim();
+        const nCatClean = (nm?.category || '').split('>').pop().trim();
+        const isNaverGenericHansik = (nCatClean === '한식' && kCatClean && kCatClean !== '한식');
+        const actualIndTokens = actualInd ? actualInd.split(',').map(s => s.trim()) : [];
+        const isActualMismatch = actualInd && (
+          (nCatClean && !actualIndTokens.some(t => nCatClean.includes(t))) ||
+          (kCatClean && !actualIndTokens.some(t => kCatClean.includes(t)))
+        );
+
         const issues = [];
+        if (isActualMismatch) {
+          issues.push({
+            title: `실제 업종(${actualInd.split(',')[0]}) 대비 포털 카테고리 불일치`,
+            evidence: `선택 업종(${actualInd.split(',')[0]}) ≠ 카카오(${kCatClean || '미확인'}) / 네이버(${nCatClean || '미확인'})`,
+            action: '스마트플레이스·카카오맵 대표 업종을 실제 업태에 맞는 세부 카테고리로 즉시 변경'
+          });
+        } else if (isNaverGenericHansik) {
+          issues.push({
+            title: `포털 간 업종 불일치 (네이버 대분류 '한식' 방치 의심)`,
+            evidence: `카카오맵은 '${kCatClean}'으로 세분화되어 있으나 네이버는 '${nCatClean}'으로만 등록됨`,
+            action: `네이버 스마트플레이스 대표 업종을 '${kCatClean}' 등 실제 세부 업종으로 변경`
+          });
+        }
         if (g?.match?.match_status === 'NOT_FOUND_IN_SCOPE') {
           issues.push({ title: '구글 동일 업체 정합성 추가 확인 필요', evidence: g.match.reason, action: '구글 지도 실제 화면에서 프로필 존재·소유권·주소·전화번호를 확인' });
         }
@@ -4169,6 +4205,37 @@
             </div>
           </div>
 `;
+        if (viewSalesBox) {
+          const salesPoints = [];
+          if (isActualMismatch || isNaverGenericHansik) {
+            salesPoints.push(`<li><strong>[업종 오분류 공략]</strong> "사장님, 카카오맵에는 <b>'${esc(kCatClean || actualInd.split(',')[0])}'</b>(으)로 들어가 있는데 네이버만 <b>'${esc(nCatClean)}'</b>으로 뭉뚱그려져 있어서, 정작 손님들이 찾는 키워드 검색에서 아예 빠지고 있습니다."</li>`);
+          }
+          if (g?.match?.match_status === 'NOT_FOUND_IN_SCOPE') {
+            salesPoints.push(`<li><strong>[구글 미등록 공략]</strong> "현재 구글 지도에 아예 등록이 안 되어 있어, 지도 앱·차량 내비·외국인 유입 고객이 경쟁사로 빠져나가고 있습니다."</li>`);
+          }
+          if (nm && (!nm.link || !nm.phone)) {
+            salesPoints.push(`<li><strong>[연락·예약 단절 공략]</strong> "네이버 지역 정보에 ${!nm.phone ? '대표번호' : ''}${!nm.phone && !nm.link ? '와 ' : ''}${!nm.link ? '공식 링크' : ''}가 비어 있어 고객이 바로 문의하지 못하고 이탈합니다."</li>`);
+          }
+          if (n?.blog_total !== null && n?.blog_total !== undefined) {
+            salesPoints.push(`<li><strong>[블로그 자산 활용]</strong> "현재 네이버 블로그 누적 언급이 <b>${Number(n.blog_total).toLocaleString()}건</b>이나 있는데, 플레이스 기본 세팅만 잡으셔도 바로 문의 전환으로 이어집니다."</li>`);
+          }
+          if (salesPoints.length === 0) {
+            salesPoints.push(`<li><strong>[고도화 공략]</strong> "3대 지도 기본 정보는 잘 갖춰져 있으므로, 이제 <b>키워드 4유형 노출 확대</b>와 <b>AI 검색(GEO) 추천 점유율</b>을 선점하실 타이밍입니다."</li>`);
+          }
+          viewSalesBox.innerHTML = `
+            <div style="background:#0f172a;color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:20px;">
+              <span style="display:inline-block;background:#dc2626;color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:8px;">🔒 영업팀 현장 지원용 · 고객 출력 제외</span>
+              <h2 style="margin:0 0 6px;font-size:20px;font-weight:800;color:#fff;">${esc(storeName)} 현장 영업 핵심 강조 포인트 (실측 기반)</h2>
+              <p style="margin:0;font-size:12px;color:#cbd5e1;">방금 조회된 3대 지도 실측 데이터를 바탕으로, 현장에서 바로 읽고 설득하실 수 있는 팩트 멘트입니다.</p>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-left:5px solid #2563eb;border-radius:12px;padding:20px;margin-bottom:16px;">
+              <h3 style="margin:0 0 12px;font-size:15px;color:#0f172a;">🎯 지금 바로 꺼내 쓸 현장 팩트 멘트</h3>
+              <ul style="margin:0;padding-left:18px;font-size:13px;color:#334155;line-height:1.9;">
+                ${salesPoints.join('')}
+              </ul>
+            </div>
+          `;
+        }
         viewCustomerBox.style.display = 'block';
         if (viewSalesBox) viewSalesBox.style.display = 'none';
         viewCustomerBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
