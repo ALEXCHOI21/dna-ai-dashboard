@@ -1539,7 +1539,7 @@ function generateGmailData() {
 
   // 2. 친절하고 간결한 이메일 본문 (첫인사 + 4대 핵심 정보 + 끝인사)
   const cleanEmailBody = `안녕하세요, ${customerName} ${representative} 대표님!
-최고급 AI 마케팅 비서 DNA AI SUIT (투어티플레이스)입니다.
+최고급 AI 마케팅 비서 DNA AI SUITE (투어티플레이스)입니다.
 
 금일 체결해 주신 서비스 이용 계약서 및 공식 거래명세표 내역을 안내해 드립니다.
 (상세 계약 조항 및 세부 명세는 첨부된 전자계약서 원본 파일에서 확인하실 수 있습니다.)
@@ -1559,7 +1559,7 @@ function generateGmailData() {
 
 감사합니다.
 
-DNA AI SUIT / 투어티플레이스 드림
+DNA AI SUITE / 투어티플레이스 드림
 • 공식 웹사이트: https://dnaai.co.kr/
 • 대표전화: 010-8587-0235 | 기술팀: 010-8806-8318
 • 공식 이메일: dani90dna@gmail.com`;
