@@ -1522,76 +1522,50 @@ function generateGmailData() {
   const customerName = fd.get('customerName') || '고객사';
   const representative = fd.get('representative') || '대표자';
   const email = fd.get('email') || '';
-  const hash = document.querySelector('#cryptoHash').textContent || '';
-  const korTotal = numberToKorean(total);
   const pdfFileName = `${contractFileTitle()}.pdf`;
 
-  // 거래명세 품목 텍스트 표
-  let itemsText = '';
+  // 1. 계약 상품명 정리 (6개월 약정 여부 명확히 표기)
+  const productList = [];
   checked.forEach(p => {
     if (p.value === 'threads') {
-      itemsText += `  • [품목] SNS-Threads 콘텐츠 자동화 월 정기구독료 (1회차)\n    - 수량: 1개월 | 공급가액: 190,000원 | VAT: 19,000원\n`;
-      itemsText += `  • [품목] SNS-Threads 초기 환경 셋팅비 (페르소나 기획 및 계정 셋업)\n    - 수량: 1식   | 공급가액: 100,000원 | VAT: 10,000원\n`;
+      productList.push('SNS-Threads 콘텐츠 자동화 (기본 6개월 약정)');
+    } else if (p.value === 'consulting') {
+      productList.push('AI 상권분석 및 마케팅 컨설팅 (1회성 단건)');
     } else {
-      itemsText += `  • [품목] AI 상권분석 및 마케팅 컨설팅 리포트 (SEO/GBP/GEO 정밀처방전)\n    - 수량: 1식   | 공급가액: 490,000원 | VAT: 49,000원\n`;
+      productList.push(p.dataset.label || 'DNA AI 솔루션');
     }
   });
+  const productsSummary = productList.join(' + ') || 'DNA AI 마케팅 솔루션';
 
-  // [상세 전체 본문 (Gmail 작성창에 100% 온전하게 입력되는 정밀 전문)]
-  const fullBody = `안녕하세요, ${representative} 대표님!
+  // 2. 친절하고 간결한 이메일 본문 (첫인사 + 4대 핵심 정보 + 끝인사)
+  const cleanEmailBody = `안녕하세요, ${customerName} ${representative} 대표님!
 최고급 AI 마케팅 비서 DNA AI SUIT (투어티플레이스)입니다.
 
-금일 체결해주신 DNA AI 솔루션 이용계약서 및 공식 거래명세표 내역을 전달드립니다.
+금일 체결해 주신 서비스 이용 계약서 및 공식 거래명세표 내역을 안내해 드립니다.
+(상세 계약 조항 및 세부 명세는 첨부된 전자계약서 원본 파일에서 확인하실 수 있습니다.)
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[1. 전자계약 및 거래명세표 요약]
-• 공급자: 투어티플레이스 (사업자등록번호: 546-12-01988, 대표: 정성윤)
-• 공급받는자: ${customerName} (${representative} 대표님)
-• 계약 품목 상세 내역:
-${itemsText}
-• 공급가액 합계: ${money(subtotal)}
-• 부가가치세 (VAT 10%): ${money(vat)}
-★ 총 청구/입금금액: 일금 ${korTotal} 원정 (${money(total)}, VAT 포함)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[계약 및 입금 안내]
+• 계약 상품: ${productsSummary}
+• 입금 금액: ${money(total)} (VAT 포함)
+• 입금 계좌: 카카오뱅크 3333-38-9917516 (예금주: 정성윤)
+• 입금 기한: 계약 체결 후 48시간 이내
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[2. 공식 지정 입금 계좌 및 입금 기한 안내]
-• 입금 은행: 카카오뱅크 (KakaoBank)
-• 계좌 번호: 3333-38-9917516
-• 예금주: 정성윤 (투어티플레이스)
-* 입금 시 계약자 상호명(${customerName})으로 입금 부탁드립니다.
+입금 확인 즉시 전담 마케팅 셋팅 및 국세청 전자세금계산서가 발행됩니다.
+대표님의 성공적인 비즈니스 성장을 위해 정성을 다해 서포트하겠습니다.
 
-⚡ [입금 기한 엄수 및 자동 실효 특약]
-• 본 계약은 체결일시 기준 [48시간 이내] 전액 입금 시 최종 효력이 발생합니다.
-• 48시간 이내 미입금 시 별도의 최고나 통보 절차 없이 즉시 [자동 실효(해지)] 처리되며 계약 효력이 상실됩니다.
-• 입금 확인 즉시 전담 마케팅 셋팅이 착수되며 국세청 전자세금계산서가 자동 발행됩니다.
-
-[3. 전자문서 무결성 감사 코드]
-• SHA-256 검증 해시: ${hash}
-• 법적 보존 근거: 전자상거래법 제6조에 의거 5년간 안전하게 보존
-
-[4. Google Drive 안전 보관 및 실시간 열람]
-• 본 계약서 및 거래명세표 정식 원본은 당사 보안 Google Drive 클라우드에 영구 백업되어 안전하게 보존됩니다.
-• Google Drive 보관 위치: [공식] DNA_AI_계약관리_공유드라이브/01_체결완료_전자계약서/
-• 지메일 하단의 [Google 드라이브 아이콘 ▲]을 누르시면 해당 첨부파일을 1초 만에 확인하실 수 있습니다.
-
-※ 첨부된 [${pdfFileName}] 파일을 확인해 주시기 바라며, 회신 메일 또는 입금 확인 즉시 전담 마케팅 셋팅이 착수되고 국세청 홈택스 전자세금계산서가 발행됩니다.
+진행 중 궁금하신 점은 언제든 편하게 말씀해 주세요.
 
 감사합니다.
 
 DNA AI SUIT / 투어티플레이스 드림
 • 공식 웹사이트: https://dnaai.co.kr/
-• Director: 010-8587-0235 | 최두리 CTO: 010-8806-8318
-• 공식 이메일: dani90dna@gmail.com
-`;
+• 대표전화: 010-8587-0235 | 기술팀: 010-8806-8318
+• 공식 이메일: dani90dna@gmail.com`;
 
-  // Gmail Compose 웹 URL 전용 안전 본문 (Google 400 Bad Request 방지: URI 길이 1,500자 이내 엄수)
-  const safeUrlBody = `[DNA AI 공식 계약서 및 입금 안내]
-• 고객사: ${customerName} (${representative} 대표님)
-• 입금액: ${money(total)} (VAT포함)
-• 계좌: 카카오뱅크 3333-38-9917516 (정성윤)
-• 기한: 체결후 48시간 이내 (미입금시 자동실효)
-
-※ 상세 거래명세 및 약관 전문이 클립보드에 자동 복사되었습니다. (본문에 Ctrl+V를 누르시면 전체 전문이 입력됩니다.)`;
+  const fullBody = cleanEmailBody;
+  const safeUrlBody = cleanEmailBody;
 
   const subject = `[DNA AI 전자계약] ${customerName} 체결본 및 입금안내`;
   const encodedTo = encodeURIComponent(email);
@@ -1599,7 +1573,7 @@ DNA AI SUIT / 투어티플레이스 드림
   const encodedSubject = encodeURIComponent(subject);
   const encodedBody = encodeURIComponent(safeUrlBody);
 
-  // Gmail Compose 웹 URL (Google 400 Bad Request 원천 방지)
+  // Gmail Compose 웹 URL (Google 400 에러 없이 즉시 정상 오픈)
   const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&cc=${encodedCc}&su=${encodedSubject}&body=${encodedBody}`;
   
   return { gmailUrl, fullBody, customerName, fileName: pdfFileName };
