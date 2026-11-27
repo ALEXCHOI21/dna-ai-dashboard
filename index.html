@@ -39,31 +39,33 @@
     }
     @media screen { #customer-print-report { display: none; } }
     :root {
-      --bg: #f3f6fb;
+      /* Hermès Luxury Color Tokens */
+      --bg: #FAF9F6;
       --surface: #ffffff;
-      --surface-soft: #f8fafc;
-      --border: #e2e8f0;
-      --border-strong: #cbd5e1;
-      --ink: #0f172a;
-      --ink-muted: #475569;
-      --ink-subtle: #64748b;
-      --navy: #0f1f3d;
-      --navy-2: #1a3260;
-      --accent: #2563eb;
-      --accent-soft: #eff6ff;
-      --ok: #059669;
-      --ok-soft: #ecfdf5;
-      --ok-border: #a7f3d0;
-      --warn: #d97706;
-      --warn-soft: #fffbeb;
-      --warn-border: #fde68a;
-      --alert: #dc2626;
-      --alert-soft: #fef2f2;
-      --alert-border: #fecaca;
+      --surface-soft: #F8F6F2;
+      --border: #E8E2D8;
+      --border-strong: #D5CEBE;
+      --ink: #141312;
+      --ink-muted: #595652;
+      --ink-subtle: #8C867E;
+      --navy: #141312;
+      --navy-2: #24221F;
+      --accent: #F37021;
+      --accent-soft: #FFF5EB;
+      --accent-border: #FCDDC7;
+      --ok: #0D9488;
+      --ok-soft: #F0FDFA;
+      --ok-border: #99F6E4;
+      --warn: #D97706;
+      --warn-soft: #FFFBEB;
+      --warn-border: #FDE68A;
+      --alert: #DC2626;
+      --alert-soft: #FEF2F2;
+      --alert-border: #FECACA;
       --radius: 14px;
       --radius-sm: 10px;
-      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.04);
-      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 4px 10px -4px rgba(15, 23, 42, 0.04);
+      --shadow-sm: 0 1px 3px rgba(20, 19, 18, 0.04), 0 1px 2px rgba(20, 19, 18, 0.03);
+      --shadow-md: 0 12px 30px -8px rgba(20, 19, 18, 0.08), 0 4px 10px -4px rgba(20, 19, 18, 0.04);
       --font-sans: "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -85,10 +87,11 @@
 
     /* Top Executive Header */
     .hero-banner {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 65%, #1e40af 100%);
+      background: linear-gradient(135deg, #141312 0%, #1C1A18 65%, #292622 100%);
       color: #ffffff;
       padding: 28px 20px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: 3px solid var(--accent);
+      box-shadow: 0 10px 25px -5px rgba(20, 19, 18, 0.15);
     }
     .container {
       max-width: 1220px;
@@ -107,12 +110,12 @@
       align-items: center;
       gap: 8px;
       font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #bfdbfe;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      padding: 4px 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #FFB380;
+      background: rgba(243, 112, 33, 0.15);
+      border: 1px solid rgba(243, 112, 33, 0.35);
+      padding: 4px 12px;
       border-radius: 999px;
       margin-bottom: 10px;
     }
@@ -120,8 +123,8 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #34d399;
-      box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.28);
+      background: #F37021;
+      box-shadow: 0 0 0 3px rgba(243, 112, 33, 0.35);
       display: inline-block;
     }
     h1.hero-title {
@@ -191,10 +194,10 @@
       background: var(--accent-soft);
     }
     .tab-btn.active {
-      background: var(--navy);
+      background: var(--accent);
       color: #ffffff;
-      border-color: var(--navy);
-      box-shadow: 0 2px 6px rgba(15, 31, 61, 0.22);
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(243, 112, 33, 0.35);
     }
 
     main { padding: 24px 0 56px; }
@@ -1180,22 +1183,37 @@
   <header class="hero-banner">
     <div class="container">
       <div class="hero-top">
-        <div>
+        <div style="flex: 1; min-width: 300px;">
           <div class="brand-eyebrow">
             <span class="dot-live" aria-hidden="true"></span>
-            DNA AI SUIT · 통합 현황 요약 대시보드
+            HERMÈS ORANGE SUITE · DNA AI 통합 현황
           </div>
-          <h1 class="hero-title">DNA AI 슈트 (DNA AI SUIT) 통합 사업 진행 현황</h1>
+          <h1 class="hero-title">DNA AI 슈트 (DNA AI SUITE) 통합 사업 진행 현황</h1>
           <p class="hero-sub">
             모빌리티 예약 · SNS 마케팅 SaaS · 상권/GEO 진단 · AI 통화비서 · 브레인스토밍 기획룸 &amp; 공식 브랜드 허브까지 전체 트랙의 완료율, 실서버 상태, 남은 의사결정을 한눈에 정리한 요약판입니다.
           </p>
         </div>
+
+        <!-- DANI 전속 AI 비서 컨시어지 케어 위젯 -->
+        <div style="display:flex;align-items:center;gap:14px;background:rgba(20,19,18,0.6);border:1px solid rgba(243,112,33,0.4);border-radius:14px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,0.3);backdrop-filter:blur(8px);max-width:440px;">
+          <img src="contract/dani-mascot.png" alt="전속 AI 비서 DANI" style="width:58px;height:58px;border-radius:50%;object-fit:cover;object-position:center 10%;border:2px solid #F37021;box-shadow:0 0 12px rgba(243,112,33,0.4);background:#0B1B33;flex-shrink:0;">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+              <span style="font-size:13px;font-weight:800;color:#FFF;">AI 비서 실장 <strong style="color:#F37021;">DANI</strong></span>
+              <span style="font-size:10px;background:rgba(243,112,33,0.25);color:#FFB380;padding:2px 6px;border-radius:4px;font-weight:700;">LIVE CARE</span>
+            </div>
+            <p style="margin:0;font-size:12px;color:#E8E2D8;line-height:1.45;">
+              대표님, DNA AI 전 권역 마케팅 및 전자계약 솔루션이 에르메스 럭셔리 표준에 맞춰 안전하게 가동 중입니다.
+            </p>
+          </div>
+        </div>
+
         <div class="hero-meta-box">
           <span class="meta-pill">운영 사업자: <strong>투어티플레이스 (Tour-Tplace)</strong></span>
-          <span class="meta-pill" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;">
-            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;"></span>
+          <span class="meta-pill" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(243,112,33,0.3);color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F37021;box-shadow:0 0 8px #F37021;"></span>
             <span>표준시 (KST 실시간):</span>
-            <strong id="live-standard-clock" style="font-family:'Pretendard',monospace;font-size:13px;letter-spacing:0.5px;color:#a7f3d0;">2026-11-26 16:45:00 KST</strong>
+            <strong id="live-standard-clock" style="font-family:'Pretendard',monospace;font-size:13px;letter-spacing:0.5px;color:#FFB380;">2026-11-26 16:45:00 KST</strong>
           </span>
         </div>
       </div>

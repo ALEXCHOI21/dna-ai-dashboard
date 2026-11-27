@@ -1,22 +1,35 @@
 :root {
-  --navy-deep: #0a192f;
-  --navy: #0d2242;
-  --navy-light: #173564;
-  --gold: #cfa852;
-  --gold-deep: #b88d37;
-  --gold-bg: #fdfaf3;
-  --gold-border: #f0debb;
-  --blue: #2563eb;
-  --blue-hover: #1d4ed8;
-  --blue-light: #eff6ff;
-  --ink: #1e293b;
-  --ink-light: #475569;
-  --muted: #64748b;
-  --line: #e2e8f0;
-  --bg: #f8fafc;
+  /* Hermès Luxury Color Tokens */
+  --hermes-orange: #F37021;
+  --hermes-orange-deep: #D95408;
+  --hermes-orange-light: #FFF5EB;
+  --hermes-orange-border: #FCDDC7;
+  --hermes-glow: rgba(243, 112, 33, 0.25);
+
+  --noir-deep: #141312;
+  --noir: #181715;
+  --noir-light: #24221F;
+  --parchment: #FAF9F6;
+  --parchment-line: #E8E2D8;
+
+  --navy-deep: #141312;
+  --navy: #181715;
+  --navy-light: #24221F;
+  --gold: #F37021;
+  --gold-deep: #D95408;
+  --gold-bg: #FFF5EB;
+  --gold-border: #FCDDC7;
+  --blue: #F37021;
+  --blue-hover: #D95408;
+  --blue-light: #FFF5EB;
+  --ink: #141312;
+  --ink-light: #4A4641;
+  --muted: #736E66;
+  --line: #E8E2D8;
+  --bg: #FAF9F6;
   --white: #ffffff;
-  --green: #059669;
-  --green-bg: #ecfdf5;
+  --green: #0D9488;
+  --green-bg: #F0FDFA;
   --red: #dc2626;
   --red-bg: #fef2f2;
 }
@@ -166,12 +179,12 @@ body {
 
 /* DANI 캐릭터 안내 카드 */
 .dani-card {
-  background: linear-gradient(145deg, #0d2242, #142e58);
+  background: linear-gradient(145deg, #181715, #24221F);
   border-radius: 20px;
   padding: 24px 20px;
   color: var(--white);
-  box-shadow: 0 16px 36px rgba(13, 34, 66, 0.22);
-  border: 1px solid rgba(207, 168, 82, 0.25);
+  box-shadow: 0 16px 36px rgba(20, 19, 18, 0.15);
+  border: 1px solid rgba(243, 112, 33, 0.35);
   position: relative;
   overflow: hidden;
 }
@@ -183,7 +196,7 @@ body {
   right: -60px;
   width: 160px;
   height: 160px;
-  background: radial-gradient(circle, rgba(207, 168, 82, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--hermes-glow) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -203,8 +216,10 @@ body {
   border-radius: 50%;
   object-fit: cover;
   object-position: center 10%;
-  border: 3px solid var(--gold);
-  background: #11284d;
+  border: 2px solid var(--hermes-orange);
+  background: #0B1B33;
+  box-shadow: 0 0 16px var(--hermes-glow);
+}
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   animation: daniFloat 4s ease-in-out infinite;
   z-index: 2;
@@ -2792,17 +2807,21 @@ canvas {
    Custom Price & 6-Month Commitment Styles (현장 유연 가격 네고/인상 지원)
    ========================================================================== */
 .custom-price-control {
-  margin: 12px 0 8px;
-  padding: 12px 14px;
-  background: #f1f5f9;
-  border: 1.5px solid #cbd5e1;
+  display: block !important; /* 영업팀 현장 직접 금액 수정 상시 노출 */
+  margin: 14px 0 10px;
+  padding: 14px 16px;
+  background: var(--parchment, #FAF9F6);
+  border: 1px solid var(--parchment-line, #E8E2D8);
+  border-left: 3px solid var(--hermes-orange, #F37021);
   border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(20, 19, 18, 0.03);
   cursor: default;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 .custom-price-control:hover {
-  border-color: #94a3b8;
-  background: #f8fafc;
+  border-color: var(--hermes-orange-border);
+  background: #FFFFFF;
+  box-shadow: 0 4px 15px rgba(20, 19, 18, 0.04);
 }
 .price-input-row {
   display: flex;
@@ -2814,7 +2833,7 @@ canvas {
 .price-input-row label {
   font-size: 12.5px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--noir-deep);
   white-space: nowrap;
 }
 .price-input-wrapper {
@@ -2829,20 +2848,20 @@ canvas {
   width: 140px;
   height: 38px;
   padding: 6px 28px 6px 10px;
-  border: 2px solid #2563eb !important;
+  border: 1.5px solid var(--hermes-orange) !important;
   border-radius: 7px;
   font-size: 14.5px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--hermes-orange);
   text-align: right;
   background: #ffffff !important;
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 1px 3px rgba(243, 112, 33, 0.1);
   transition: all 0.2s ease;
 }
 .input-inline-price:focus {
   outline: none;
-  border-color: #1d4ed8 !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  border-color: var(--hermes-orange-deep) !important;
+  box-shadow: 0 0 0 3px var(--hermes-glow);
   background: #ffffff !important;
 }
 .price-unit-tag {
@@ -2850,7 +2869,7 @@ canvas {
   right: 8px;
   font-size: 12px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--muted);
   pointer-events: none;
 }
 .quick-preset-row {
