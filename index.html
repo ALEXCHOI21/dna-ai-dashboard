@@ -3900,8 +3900,9 @@
         `;
         return report;
       }
+      window.buildCustomerPrintReport = buildCustomerPrintReport;
 
-      // window.printCustomerAuditReport = function() {
+      window.printCustomerAuditReport = function() {
         const report = buildCustomerPrintReport();
         if (!report) {
           alert('먼저 사업장 정밀 분석을 실행해 주세요.');
