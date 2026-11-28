@@ -4988,7 +4988,7 @@
       // 기본 결제 단위: 월 단위 정기구독 (의무 약정 기간 없음 / 자유 해지, VAT 별도)
       const officialClients = [
         {
-          no: 1,
+                    no: 1,
           customerName: "디에르치과",
           industry: "치과의원 (수면임플란트/라미네이트)",
           representative: "이정성 대표원장",
@@ -5002,24 +5002,24 @@
           postedCount: 80,
           approvedCount: 0,
           draftCount: 40,
-          activeScheduler: false,
+          activeScheduler: true,
           monthlyFee: "100,000원",
           feeNumber: 100000,
           setupFee: 0,
           planType: "스탠다드 AI 솔루션",
           isDiscounted: true,
           discountReason: "초기 파트너십 특별할인 (월 10만)",
-          commitmentMonths: 6,
-          startDate: "2026-10-28", // 계약 시작일
+          commitmentMonths: 1,
+          startDate: "2026-10-28", // 계약 시작일 (2회차 결제 완료)
           paymentCycle: "월 정기구독 (의무 약정 없음)",
           paymentDay: "매월 28일",
           alertDay: "매월 25일 (D-3 알림)",
           paymentMethod: "계좌이체 (세금계산서)",
-          paymentStatus: "입금완료 (10/28)",
-          updatedAt: "2026-11-22",
+          paymentStatus: "입금완료 (11/28)",
+          updatedAt: "2026-11-28",
           platformUrl: "https://growth.104-207-80-198.sslip.io/",
-          accessCode: "9ac52f12c348e20df5a402c06d505b6a03dfaebc799be194e2340c6b93fcee7e",
-          memo: "월 정기구독 (자유 해지) / 80건 완주 발행 완료 / 신규 40건 초안 승인 대기 / 매월 28일 정기 결제"
+          memo: "2회차 입금완료 (2026-11-28). 월 정기구독 (자유 해지) / 80건 완주 발행 완료 / 신규 40건 초안 승인 대기 / 차기 결제일 12월 28일"
+       
         },
         {
           no: 2,
@@ -5090,7 +5090,8 @@
 
         // Calculate next monthly payment date
         let nextPayment = new Date(today.getFullYear(), today.getMonth(), dayOfMonth);
-        if (nextPayment < today) {
+        // If today is payment day and already paid, or past payment day, roll over to next month
+        if (nextPayment <= today) {
           nextPayment = new Date(today.getFullYear(), today.getMonth() + 1, dayOfMonth);
         }
 
@@ -5161,7 +5162,14 @@
           if (isTestClientName(c.customerName) || c.customerName.trim() === '용인대') return;
 
           if (map.has(c.customerName)) {
-            map.set(c.customerName, { ...map.get(c.customerName), ...c });
+            const official = map.get(c.customerName);
+            // 공식 대장의 paymentStatus 및 updatedAt 최신 데이터 우선 적용
+            map.set(c.customerName, {
+              ...c,
+              ...official,
+              feeNumber: c.feeNumber || official.feeNumber,
+              monthlyFee: c.monthlyFee || official.monthlyFee
+            });
           } else {
             // 신규 정규 계약자: 기본 스탠다드 19만 원 (셋팅비 10만 원 별도)
             const feeNum = c.feeNumber ? c.feeNumber : (c.plan && c.plan.includes('consulting') ? 490000 : 190000);
