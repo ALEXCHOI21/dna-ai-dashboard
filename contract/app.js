@@ -1540,11 +1540,11 @@ function generateGmailData() {
   const email = fd.get('email') || '';
   const pdfFileName = `${contractFileTitle()}.pdf`;
 
-  // 1. 계약 상품명 정리 (6개월 약정 여부 명확히 표기)
+  // 1. 계약 상품명 정리 (월 정기구독 표기)
   const productList = [];
   checked.forEach(p => {
     if (p.value === 'threads') {
-      productList.push('SNS-Threads 콘텐츠 자동화 (기본 6개월 약정)');
+      productList.push('SNS-Threads 콘텐츠 자동화 (월 정기구독 / 의무 약정 없음)');
     } else if (p.value === 'consulting') {
       productList.push('AI 상권분석 및 마케팅 컨설팅 (1회성 단건)');
     } else {
