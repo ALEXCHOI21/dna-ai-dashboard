@@ -677,7 +677,7 @@ async function buildSummary() {
       <dt>약정 기간 및 조건</dt>
       <dd style="color:var(--navy);font-weight:700;">${commitmentDesc}</dd>
       <dt>동의 이력</dt>
-      <dd>핵심 약관 승인 ✓ (제2조 의무약정 없음 확인) · 개인정보 및 식별정보 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</dd>
+      <dd>핵심 약관 승인 ✓ (제2조 의무약정 없음 확인) · 개인정보 5년 안전 보존 동의 ✓ · 전자서명 효력 인정 ✓</dd>
       <dt>체결 일시</dt>
       <dd>${signedAt} (KST, 공식 타임스탬프)</dd>
       <dt>계약자 전자서명</dt>
@@ -932,7 +932,7 @@ function buildGasCompatible3PHtml({
       </tr>
       <tr>
         <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">법적 동의 확인</td>
-        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #059669; font-weight: bold;">핵심 약관 승인 ✓ (제2조 의무약정 없음 확인) · 식별정보 수집 및 5년 보존 동의 ✓ · 전자서명 효력 인정 ✓</td>
+        <td style="border-bottom: 1px solid #cbd5e1; padding: 6px 10px; color: #059669; font-weight: bold;">핵심 약관 승인 ✓ (제2조 의무약정 없음 확인) · 개인정보 수집 및 5년 안전 보존 동의 ✓ · 전자서명 효력 인정 ✓</td>
       </tr>
       <tr>
         <td style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 6px 10px; font-weight: bold; color: #334155;">체결 일시</td>
@@ -1202,39 +1202,55 @@ function buildGasCompatible3PHtml({
       <table style="margin-bottom: 10px; font-size: 9.5px; line-height: 1.45;">
         <tr>
           <!-- 제1조 -->
-          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 7px 9px;">
-            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제1조 (서비스 제공 범위 및 운영 원칙)</strong>
-            ① 공급자는 고객이 선택한 솔루션(SNS-Threads 콘텐츠 자동화 또는 AI 마케팅 분석 컨설팅)을 성실히 수행합니다.<br>
-            ② 콘텐츠 자동화의 세부 발행 채널, 타겟 페르소나, 주간 발행 횟수 및 검수 일정은 사전 상호 확정합니다.<br>
-            ③ 소셜 미디어 플랫폼(Meta 등)의 정책 변경 시 공급자는 즉각 대체 방안을 마련하여 고객에게 안내합니다.
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 7px 9px; vertical-align: top;">
+            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제1조 (계약의 목적 및 법적 성질)</strong>
+            ① 공급자는 선택된 솔루션(SNS 콘텐츠 자동화 또는 AI 분석 컨설팅)을 성실히 수행합니다.<br>
+            ② 세부 발행 채널, 타겟 페르소나, 주간 횟수 및 검수 일정은 사전 상호 확정합니다.<br>
+            ③ 본 계약은 결과 완성을 보증하는 도급이 아니며 성실 이행을 목적으로 하는 <strong>민법상 위임(준위임) 계약</strong>입니다.
           </td>
           <td width="2%"></td>
           <!-- 제2조 -->
-          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #eff6ff; padding: 7px 9px;">
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #eff6ff; padding: 7px 9px; vertical-align: top;">
             <strong style="color: #1e40af; font-size: 10.5px; display: block; margin-bottom: 3px;">제2조 (이용요금, 결제 규정 및 48시간 자동 실효)</strong>
-            ① 모든 서비스 비용은 부가가치세(VAT 10%)가 별도로 산정되며, 최종 입금 금액에 합산 청구됩니다.<br>
-            ② <strong>[의무 약정 없음]</strong> 본 서비스는 고객사의 운영 자율성을 위해 <strong>의무 계약기간(의무 약정)이 적용되지 않으며</strong>, 월 단위 정기구독으로 자유롭게 이용 및 해지할 수 있습니다.<br>
-            ③ 월 구독은 체결 시 '초기 셋팅비 + 1회차 구독료' 선납 후, 2회차부터 매월 약정일에 정기 청구됩니다.<br>
-            ④ 입금 확인 즉시 국세청 홈택스 전자세금계산서 또는 현금영수증이 자동 발행됩니다.<br>
-            ⑤ <strong>[48시간 자동 실효]</strong> 체결 후 48시간 이내 미입금 시 본 계약은 별도 최고 없이 즉시 자동 실효(해지)되며 공급자의 서비스 제공 의무는 면책됩니다.
+            ① 모든 비용은 부가세(VAT 10%) 별도이며 최종 입금액에 합산 청구됩니다.<br>
+            ② <strong>[의무 약정 없음]</strong> 의무 계약기간이 없으며 월 단위 구독으로 자유롭게 해지 가능합니다.<br>
+            ③ 체결 시 초기 셋팅비+1회차 구독료 선납 후 매월 약정일에 정기 청구됩니다.<br>
+            ④ <strong>[48시간 자동 실효]</strong> 체결 후 48시간 이내 미입금 시 최고 없이 <strong>자동 실효(해제)</strong>되며 공급자의 의무는 전면 면책됩니다.
           </td>
         </tr>
         <tr><td colspan="3" height="6"></td></tr>
         <tr>
           <!-- 제3조 -->
-          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 7px 9px;">
-            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제3조 (역할 분담 및 매출 보장 한계)</strong>
-            ① <strong>[역할 분담]</strong> 공급자는 타겟 트래픽 유입 및 AI 인프라 구축을 전담하고, 고객사는 현장 접객, 서비스 품질 관리 및 실제 매출 창출을 전담합니다.<br>
-            ② <strong>[매출 보장 한계]</strong> 공급자는 최적화된 마케팅 알고리즘을 제공하나, 개별 매장의 실제 매출액이나 팔로워 수 등 특정 정량 성과를 절대 보장하지 않습니다.<br>
-            ③ 사전 공유된 AI 원고는 고객이 검수하며, 고의/중과실 손해는 관련 법령에 따릅니다.
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 7px 9px; vertical-align: top;">
+            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제3조 (역할 분담 및 성과 보장 배제)</strong>
+            ① <strong>[역할 분담]</strong> 공급자는 타겟 유입 및 AI 인프라 구축을 전담하고, 고객사는 현장 접객, 상품 품질 및 실제 매출 전환을 전담합니다.<br>
+            ② <strong>[성과 보장 배제]</strong> 공급자는 실제 매출액, 순이익, 팔로워 수 등 <strong>정량적 수치를 절대 보증하지 않습니다.</strong><br>
+            ③ 사전 공유된 AI 원고는 고객이 검수하며 브랜드 사실관계를 확인합니다.
           </td>
           <td width="2%"></td>
           <!-- 제4조 -->
-          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #eff6ff; padding: 7px 9px;">
-            <strong style="color: #1e40af; font-size: 10.5px; display: block; margin-bottom: 3px;">제4조 (계약 해지, 위약금 면제 및 환불 규정)</strong>
-            ① 월 구독 서비스는 의무 약정 기간이 없으므로, 차기 결제일 7일 전까지 서면(이메일/메신저) 통지로 자유롭게 해지 가능하며 <strong>별도 위약금이 일체 발생하지 않습니다.</strong><br>
-            ② 이미 셋팅 완료된 초기 셋팅비 및 해당 월 정상 발행 원고에 대해서는 일할 정산 후 잔여액을 환불합니다.<br>
-            ③ 계약 종료 시 계정 연동 권한을 즉시 해제하고 기획 자료를 안전하게 인계 및 파기합니다.
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #eff6ff; padding: 7px 9px; vertical-align: top;">
+            <strong style="color: #1e40af; font-size: 10.5px; display: block; margin-bottom: 3px;">제4조 (계약 해지 및 환불 기준)</strong>
+            ① 차기 결제일 7일 전 서면 통지로 자유롭게 해지 가능하며 <strong>위약금은 일체 없습니다.</strong><br>
+            ② <strong>[셋팅비 비환불]</strong> 작업 착수 후 초기 셋팅비는 환불 불가하며, 당월 정상 발행분을 일할 차감한 잔여 구독료만 환불됩니다.<br>
+            ③ 계약 종료 시 계정 연동 권한을 즉시 해제하고 자료를 안전하게 파기합니다.
+          </td>
+        </tr>
+        <tr><td colspan="3" height="6"></td></tr>
+        <tr>
+          <!-- 제5조 -->
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 7px 9px; vertical-align: top;">
+            <strong style="color: #0d2242; font-size: 10.5px; display: block; margin-bottom: 3px;">제5조 (지식재산권의 귀속 및 이용 허락)</strong>
+            ① 공급자가 활용한 AI 프롬프트, 알고리즘, 마스터 템플릿의 지식재산권은 <strong>공급자(DNA AI)에게 단독 귀속</strong>됩니다.<br>
+            ② 고객 SNS 채널에 최종 게시된 결과물에 대해 고객은 해당 마케팅 목적의 <strong>비독점적 사용권</strong>을 가집니다.<br>
+            ③ 고객은 공급자의 사전 동의 없이 프롬프트/산출물을 제3자에게 배포, 양도, 재판매할 수 없습니다.
+          </td>
+          <td width="2%"></td>
+          <!-- 제6조 -->
+          <td width="49%" style="border: 1px solid #cbd5e1; border-radius: 5px; background: #eff6ff; padding: 7px 9px; vertical-align: top;">
+            <strong style="color: #1e40af; font-size: 10.5px; display: block; margin-bottom: 3px;">제6조 (플랫폼 면책 및 손해배상 한도)</strong>
+            ① <strong>[플랫폼 면책]</strong> Meta(Threads, Instagram) 정책 변경·필터링으로 인한 <strong>계정 제재, 노출 제한, 영구 정지</strong>에 대해 고의/중과실 없는 한 공급자는 면책됩니다.<br>
+            ② <strong>[책임 한도]</strong> 공급자의 손해배상 책임은 고객의 직접 손해에 한하며, 배상 총액은 <strong>직전 1개월간 실제 납부한 이용료</strong>를 초과할 수 없습니다. 간접/영업 손실은 배상하지 않습니다.
           </td>
         </tr>
       </table>
@@ -1253,7 +1269,7 @@ function buildGasCompatible3PHtml({
         </tr>
         <tr>
           <th style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left;">수집 항목</th>
-          <td style="border: 1px solid #cbd5e1; padding: 5px 8px;">상호(성명), 대표자명, <strong>대표자 생년월일(고유식별정보)</strong>, 법인등록번호, 사업자등록번호, 휴대전화번호, 이메일, 사업장주소, 전자서명 데이터</td>
+          <td style="border: 1px solid #cbd5e1; padding: 5px 8px;">상호(성명), 대표자명, <strong>대표자 생년월일</strong>, 법인등록번호, 사업자등록번호, 휴대전화번호, 이메일, 사업장주소, 전자서명 데이터</td>
         </tr>
         <tr>
           <th style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 8px; text-align: left;">보유 및 이용기간</th>
