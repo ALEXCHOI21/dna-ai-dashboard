@@ -1248,7 +1248,7 @@
           <span><strong>아이디어 브레인스토밍 (SparkRoom)</strong><br><small>Tour-Tplace × ChoiGPT AI 기획룸</small></span>
           <span class="launch">가동 중 (200) · 밝은 테마 반영 대기 · 열기 ↗</span>
         </a>
-        <a class="service-link" href="https://growth.104-207-80-198.sslip.io/" target="_blank" rel="noopener noreferrer">
+        <a class="service-link" href="https://growth.104-207-80-198.sslip.io/dier/" target="_blank" rel="noopener noreferrer">
           <span><strong>DNA Growth 통합 포털</strong><br><small>SNS 자동화 SaaS · 디에르치과 단독관</small></span>
           <span class="launch">정상 운영 (HTTPS 200) · 열기 ↗</span>
         </a>
@@ -1642,7 +1642,7 @@
               <li><strong id="guide-4-code-label">선택 사업장 전용 관리자 접속 코드 (외부 공유 엄금):</strong></li>
             </ul>
             <div style="margin-top:10px;padding:10px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
-              <code style="font-size:11px;color:#b91c1c;word-break:break-all;" id="admin-access-code">74d7d8e90dc2c75276a04793c7ae17476de20ae849a99bd39ce912ee26ca13be</code>
+              <code style="font-size:11px;color:#b91c1c;word-break:break-all;" id="admin-access-code">9ac52f12c348e20df5a402c06d505b6a03dfaebc799be194e2340c6b93fcee7e</code>
               <button type="button" class="btn-copy-template" style="position:static;white-space:nowrap;" id="btn-copy-admin-code">코드 복사</button>
             </div>
             <p style="margin:6px 0 0;font-size:11.5px;color:#dc2626;">※ 본 코드는 운영자 전용입니다. 고객 전달본·공개 저장소·일반 배포 파일에 포함하지 않습니다.</p>
@@ -4456,9 +4456,9 @@
           paymentMethod: "계좌이체 (세금계산서)",
           paymentStatus: "입금완료 (11/28)",
           updatedAt: "2026-11-28",
-          platformUrl: "https://growth.104-207-80-198.sslip.io/",
+          platformUrl: "https://growth.104-207-80-198.sslip.io/dier/",
+          accessCode: "9ac52f12c348e20df5a402c06d505b6a03dfaebc799be194e2340c6b93fcee7e",
           memo: "2회차 입금완료 (2026-11-28). 월 정기구독 (자유 해지) / 80건 완주 발행 완료 / 신규 40건 초안 승인 대기 / 차기 결제일 12월 28일"
-       
         },
         {
           no: 2,
@@ -4602,10 +4602,12 @@
 
           if (map.has(c.customerName)) {
             const official = map.get(c.customerName);
-            // 공식 대장의 paymentStatus 및 updatedAt 최신 데이터 우선 적용
+            // 공식 대장의 paymentStatus, platformUrl, accessCode 및 updatedAt 최신 데이터 우선 적용
             map.set(c.customerName, {
               ...c,
               ...official,
+              platformUrl: official.platformUrl,
+              accessCode: official.accessCode,
               feeNumber: c.feeNumber || official.feeNumber,
               monthlyFee: c.monthlyFee || official.monthlyFee
             });
@@ -4920,7 +4922,7 @@
               ${isCash ? '<span style="font-size:10.5px;color:#d97706;font-weight:700;display:block;margin-top:2px;">(현금 결제)</span>' : ''}
             </td>
             <td>${escapeHtml(c.updatedAt || cycle.start)}</td>
-            <td>${c.platformUrl ? `<a href="${c.platformUrl}" target="_blank" style="font-size:11px;font-weight:600;">접속 ↗</a>` : '-'}</td>
+            <td>${c.platformUrl ? `<a href="${c.accessCode ? `${c.platformUrl}?code=${c.accessCode}` : c.platformUrl}" target="_blank" style="font-size:11px;font-weight:600;">접속 ↗</a>` : '-'}</td>
             <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(c.memo || '')}">${escapeHtml(c.memo || '-')}</td>
             <td><a href="./contract/index.html" target="_blank" style="font-weight:600;color:var(--accent);">계약서 ↗</a></td>
           `;
@@ -5074,14 +5076,15 @@ ${client.customerName}의 Threads SNS 자동 홍보 익월 서비스 유지를 �
           g4CodeLabel.textContent = `[${client.customerName}] 전용 관리자 접속 코드 (외부 공유 엄금):`;
         }
         if (adminAccessCode) {
-          adminAccessCode.textContent = client.accessCode || '74d7d8e90dc2c75276a04793c7ae17476de20ae849a99bd39ce912ee26ca13be';
+          adminAccessCode.textContent = client.accessCode || '9ac52f12c348e20df5a402c06d505b6a03dfaebc799be194e2340c6b93fcee7e';
         }
         if (g4ClientLink) {
           if (client.platformUrl) {
+            const targetUrl = client.accessCode ? `${client.platformUrl}?code=${client.accessCode}` : client.platformUrl;
             g4ClientLink.innerHTML = `
               <div style="padding:8px 10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:12px;color:#1e40af;">🌐 [${escapeHtml(client.customerName)}] 전용 자동화 플랫폼</span>
-                <a href="${client.platformUrl}" target="_blank" style="font-size:12px;font-weight:700;color:#1d4ed8;text-decoration:none;">플랫폼 바로 접속 ↗</a>
+                <a href="${targetUrl}" target="_blank" style="font-size:12px;font-weight:700;color:#1d4ed8;text-decoration:none;">플랫폼 바로 접속 ↗</a>
               </div>
             `;
           } else {
